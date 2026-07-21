@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/shadows.css">
+</helmet>
+<div style="width:100%;height:100%;display:flex;flex-direction:column;background:#fff;border:1px solid var(--border-default);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,14,53,0.06);transition:box-shadow .2s ease,transform .2s ease;cursor:pointer;font-family:var(--font-sans,system-ui)" style-hover="box-shadow:0 10px 28px rgba(0,14,53,0.12);transform:translateY(-3px)" onClick="{{ open }}">
+  <div style="position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,#f4f4f6,#e9eaee);display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <div style="width:56%;height:56%;border-radius:14px;background:repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9 10px,#eeeef1 10px,#eeeef1 20px);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.03)">
+      <span style="color:#b4b7c0;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:0 8px">{{ product.short }}</span>
+    </div>
+    <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px">
+      <sc-if value="{{ product.badgeLabel }}" hint-placeholder-val="{{ true }}">
+        <span style="display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em;background: {{ product.badgeBg }};color: {{ product.badgeFg }}">{{ product.badgeLabel }}</span>
+      </sc-if>
+    </div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:5px;flex:1">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9AA0AD">{{ product.catLabel }}</span>
+    <span style="font-size:15.5px;font-weight:700;color:#232323;line-height:1.3">{{ product.name }}</span>
+    <div style="margin-top:4px;display:flex;align-items:baseline;gap:6px">
+      <span style="font-size:12px;color:#6E7484">Mulai</span>
+      <span style="font-size:17px;font-weight:700;color:#E11D2E;font-family:var(--font-mono,monospace)">{{ product.priceLabel }}</span>
+    </div>
+    <span style="font-size:12.5px;color:#6E7484">Min. order {{ product.moqLabel }} pcs</span>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button onClick="{{ wa }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:42px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:13.5px;font-weight:600;font-family:var(--font-sans,system-ui);cursor:pointer;transition:background .15s ease" style-hover="background:#C41626">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.01c-.24.68-1.42 1.31-1.95 1.35-.53.05-1.02.24-3.42-.71-2.9-1.14-4.75-4.11-4.9-4.3-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.11 1-2.4.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.42.29.14.45.12.62-.07.17-.19.71-.83.9-1.12.19-.29.38-.24.64-.14.26.09 1.67.79 1.96.93.29.14.48.21.55.33.07.12.07.68-.17 1.36z"/></svg>
+        WhatsApp
+      </button>
+      <button onClick="{{ add }}" title="Tambah ke keranjang" style="width:42px;height:42px;flex:none;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border-strong,#C3C7D1);border-radius:12px;background:#fff;color:#232323;cursor:pointer;transition:background .15s ease,border-color .15s ease" style-hover="background:#F7F7F8;border-color:#9AA0AD">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:300,&quot;height&quot;:400},&quot;product&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;onOpen&quot;:{&quot;editor&quot;:null},&quot;onAdd&quot;:{&quot;editor&quot;:null},&quot;onWa&quot;:{&quot;editor&quot;:null}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props.product || {};
+    return {
+      product: p,
+      open: () => this.props.onOpen && this.props.onOpen(p.sku),
+      wa: (e) => { if (e) e.stopPropagation(); this.props.onWa && this.props.onWa(p); },
+      add: (e) => { if (e) e.stopPropagation(); this.props.onAdd && this.props.onAdd(p); },
+    };
+  }
+}
+</script>
+</body>
+</html>

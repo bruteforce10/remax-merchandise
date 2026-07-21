@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/shadows.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{background:#F8F9FA;color:#14161B;font-family:var(--font-sans),system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:#E11D2E;text-decoration:none}
+    a:hover{color:#C41626}
+    button{font-family:inherit}
+    input,textarea,select{font-family:inherit}
+    ::selection{background:#FDECEE;color:#B01523}
+    .dsb-scroll::-webkit-scrollbar{width:8px;height:8px}
+    .dsb-scroll::-webkit-scrollbar-thumb{background:#DFE1E6;border-radius:999px}
+    .dsb-scroll::-webkit-scrollbar-track{background:transparent}
+    @keyframes dsb-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @keyframes dsb-shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+    @keyframes dsb-pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    @keyframes dsb-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
+    @keyframes dsb-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  </style>
+</helmet>
+<div style="display:flex;min-height:100vh;background:#F8F9FA">
+
+  <!-- ============ SIDEBAR ============ -->
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+    <aside style="width:256px;flex:none;background:#fff;border-right:1px solid #EEF0F2;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:40">
+      <div style="padding:22px 20px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F2F3F5">
+        <img src="assets/logo-mark.png" style="height:30px">
+        <div><div style="font-size:15px;font-weight:800;letter-spacing:-0.01em">RE/MAX <span style="color:#E11D2E">Admin</span></div><div style="font-size:11px;color:#9AA0AD;font-weight:600">Merchandise CMS</div></div>
+      </div>
+      <nav class="dsb-scroll" style="flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+          <div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;cursor:pointer;color: {{ n.color }};background: {{ n.bg }};font-size:14.5px;font-weight:600;transition:background .15s,color .15s" style-hover="background:#F6F7F9">
+            <i data-lucide="{{ n.icon }}" style="width:18px;height:18px"></i><span style="flex:1">{{ n.label }}</span>
+            <sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#FDECEE;color:#E11D2E;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono),monospace">{{ n.badge }}</span></sc-if>
+          </div>
+        </sc-for>
+        <div style="height:1px;background:#F2F3F5;margin:10px 4px"></div>
+        <div onClick="{{ goProfile }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;cursor:pointer;color: {{ profileColor }};background: {{ profileBg }};font-size:14.5px;font-weight:600" style-hover="background:#F6F7F9"><i data-lucide="user" style="width:18px;height:18px"></i>Profil</div>
+        <div onClick="{{ doLogout }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;cursor:pointer;color:#D6362C;font-size:14.5px;font-weight:600" style-hover="background:#FDECEE"><i data-lucide="log-out" style="width:18px;height:18px"></i>Keluar</div>
+      </nav>
+      <div style="padding:14px;border-top:1px solid #F2F3F5">
+        <div onClick="{{ goProfile }}" style="display:flex;align-items:center;gap:11px;padding:8px;border-radius:12px;cursor:pointer" style-hover="background:#F6F7F9">
+          <div style="width:38px;height:38px;flex:none;border-radius:50%;background:linear-gradient(135deg,#E11D2E,#B01523);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">AD</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Admin REMAX</div><div style="font-size:11.5px;color:#9AA0AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">admin@remax.co.id</div></div>
+          <i data-lucide="chevron-right" style="width:16px;height:16px;color:#C3C7D1"></i>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- mobile sidebar drawer -->
+  <sc-if value="{{ mobileSidebar }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:90;background:rgba(20,22,27,0.45)" onClick="{{ closeMobileSidebar }}">
+      <div onClick="{{ stop }}" style="position:absolute;top:0;left:0;bottom:0;width:264px;background:#fff;display:flex;flex-direction:column;animation:dsb-slide .25s ease">
+        <div style="padding:20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F2F3F5"><div style="display:flex;align-items:center;gap:10px"><img src="assets/logo-mark.png" style="height:28px"><span style="font-size:15px;font-weight:800">RE/MAX <span style="color:#E11D2E">Admin</span></span></div><button onClick="{{ closeMobileSidebar }}" style="width:36px;height:36px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="x" style="width:18px;height:18px"></i></button></div>
+        <nav class="dsb-scroll" style="flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8"><div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;cursor:pointer;color: {{ n.color }};background: {{ n.bg }};font-size:15px;font-weight:600"><i data-lucide="{{ n.icon }}" style="width:19px;height:19px"></i>{{ n.label }}</div></sc-for>
+        </nav>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:35;background:rgba(255,255,255,0.9);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid #EEF0F2;padding:12px 24px;display:flex;align-items:center;gap:16px">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ openMobileSidebar }}" style="width:42px;height:42px;flex:none;border:1px solid #EEF0F2;background:#fff;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="menu" style="width:20px;height:20px"></i></button></sc-if>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9AA0AD"><span>CMS</span><i data-lucide="chevron-right" style="width:13px;height:13px"></i><span style="color:#14161B;font-weight:600">{{ pageTitle }}</span></div>
+      </div>
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:9px;height:42px;width:280px;padding:0 14px;border:1px solid #EEF0F2;border-radius:11px;background:#F8F9FA" style-focus-within="border-color:#E11D2E;background:#fff"><i data-lucide="search" style="width:17px;height:17px;color:#9AA0AD"></i><input placeholder="Cari apa saja…" style="flex:1;border:none;outline:none;background:transparent;font-size:14px"><span style="font-size:11px;color:#C3C7D1;border:1px solid #E4E5E9;border-radius:6px;padding:2px 6px;font-family:var(--font-mono),monospace">⌘K</span></div>
+      </sc-if>
+      <button style="width:42px;height:42px;flex:none;position:relative;border:1px solid #EEF0F2;background:#fff;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#F6F7F9"><i data-lucide="bell" style="width:19px;height:19px"></i><span style="position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#E11D2E;border:2px solid #fff"></span></button>
+      <button onClick="{{ newProduct }}" style="display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border:none;border-radius:11px;background:#E11D2E;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s" style-hover="background:#C41626"><i data-lucide="plus" style="width:17px;height:17px"></i><sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">Produk Baru</sc-if></button>
+    </header>
+
+    <div class="dsb-scroll" style="flex:1;overflow-y:auto">
+      <div style="max-width:1600px;margin:0 auto;padding:28px 24px 96px">
+
+        <!-- ===== DASHBOARD ===== -->
+        <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+              <div><h1 style="margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-0.02em">Selamat pagi, Admin 👋</h1><p style="margin:0;color:#6E7484;font-size:15px">Ringkasan performa katalog merchandise hari ini.</p></div>
+              <div style="display:flex;gap:10px"><button style="height:42px;padding:0 16px;border:1px solid #EEF0F2;background:#fff;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px" style-hover="background:#F6F7F9"><i data-lucide="calendar" style="width:16px;height:16px;color:#6E7484"></i>7 Hari Terakhir</button><button style="height:42px;padding:0 16px;border:1px solid #EEF0F2;background:#fff;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px" style-hover="background:#F6F7F9"><i data-lucide="download" style="width:16px;height:16px;color:#6E7484"></i>Export</button></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:22px">
+              <sc-for list="{{ statCards }}" as="c" hint-placeholder-count="8">
+                <div style="padding:20px;background:#fff;border:1px solid #EEF0F2;border-radius:16px;box-shadow:0 1px 2px rgba(0,14,53,0.04);transition:box-shadow .2s,transform .2s" style-hover="box-shadow:0 8px 24px rgba(0,14,53,0.07);transform:translateY(-2px)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="width:40px;height:40px;border-radius:11px;background: {{ c.tint }};display:flex;align-items:center;justify-content:center;color: {{ c.iconColor }}"><i data-lucide="{{ c.icon }}" style="width:20px;height:20px"></i></span><span style="display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color: {{ c.deltaColor }}"><i data-lucide="{{ c.deltaIcon }}" style="width:13px;height:13px"></i>{{ c.delta }}</span></div>
+                  <div style="font-size:28px;font-weight:800;letter-spacing:-0.01em;font-family:var(--font-mono),monospace">{{ c.value }}</div>
+                  <div style="font-size:13.5px;color:#6E7484;margin-top:2px">{{ c.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><h3 style="margin:0;font-size:16px;font-weight:800">Tampilan Produk (14 hari)</h3><span style="font-size:13px;color:#9AA0AD">Total <strong style="color:#14161B">18.240</strong></span></div>
+                  <div style="display:flex;align-items:flex-end;gap:6px;height:150px;margin-top:16px">
+                    <sc-for list="{{ viewsChart }}" as="b" hint-placeholder-count="14"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%"><div title="{{ b.v }}" style="width:100%;max-width:26px;border-radius:6px 6px 0 0;background: {{ b.color }};height: {{ b.h }};transform-origin:bottom;animation:dsb-grow .5s ease"></div><span style="font-size:10px;color:#C3C7D1">{{ b.label }}</span></div></sc-for>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;overflow:hidden">
+                  <div style="padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F2F3F5"><h3 style="margin:0;font-size:16px;font-weight:800">Produk Terbaru</h3><a onClick="{{ goProducts }}" style="font-size:13px;font-weight:600;cursor:pointer">Lihat semua</a></div>
+                  <sc-for list="{{ latestProducts }}" as="p" hint-placeholder-count="4">
+                    <div onClick="{{ p.edit }}" style="display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #F6F7F9;cursor:pointer" style-hover="background:#FAFBFC">
+                      <div style="width:44px;height:44px;flex:none;border-radius:10px;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);display:flex;align-items:center;justify-content:center;color:#B4B7C0"><i data-lucide="package" style="width:20px;height:20px"></i></div>
+                      <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</div><div style="font-size:12.5px;color:#9AA0AD">{{ p.catLabel }} · {{ p.priceLabel }}</div></div>
+                      <span style="display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background: {{ p.statusBg }};color: {{ p.statusFg }}">{{ p.statusLabel }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;overflow:hidden">
+                  <div style="padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F2F3F5"><h3 style="margin:0;font-size:16px;font-weight:800">Leads Terbaru</h3><a onClick="{{ goLeads }}" style="font-size:13px;font-weight:600;cursor:pointer">Lihat semua</a></div>
+                  <sc-for list="{{ latestLeads }}" as="l" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #F6F7F9">
+                      <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#EAF6EF;display:flex;align-items:center;justify-content:center;color:#1A9A5B"><i data-lucide="message-circle" style="width:18px;height:18px"></i></span>
+                      <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ l.product }}</div><div style="font-size:12.5px;color:#9AA0AD">{{ l.qty }} pcs · {{ l.device }} · {{ l.date }}</div></div>
+                      <span style="display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background: {{ l.statusBg }};color: {{ l.statusFg }}">{{ l.statusLabel }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:20px">
+                  <h3 style="margin:0 0 14px;font-size:15px;font-weight:800">Aksi Cepat</h3>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <sc-for list="{{ quickActions }}" as="q" hint-placeholder-count="4"><button onClick="{{ q.go }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px;border:1px solid #EEF0F2;border-radius:13px;background:#fff;cursor:pointer;text-align:left;transition:border-color .15s,background .15s" style-hover="border-color:#F6C9CE;background:#FEF7F8"><span style="width:34px;height:34px;border-radius:9px;background:#FDECEE;display:flex;align-items:center;justify-content:center;color:#E11D2E"><i data-lucide="{{ q.icon }}" style="width:17px;height:17px"></i></span><span style="font-size:13px;font-weight:700">{{ q.label }}</span></button></sc-for>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:20px">
+                  <h3 style="margin:0 0 14px;font-size:15px;font-weight:800">Paling Populer</h3>
+                  <sc-for list="{{ popularProducts }}" as="p" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #F6F7F9">
+                      <span style="width:24px;font-size:14px;font-weight:800;color:#C3C7D1;font-family:var(--font-mono),monospace">{{ p.rank }}</span>
+                      <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</div><div style="font-size:11.5px;color:#9AA0AD">{{ p.views }} views · {{ p.clicks }} klik WA</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="background:#FEF7F8;border:1px solid #F8D2D7;border-radius:16px;padding:20px">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:34px;height:34px;border-radius:9px;background:#FDECEE;display:flex;align-items:center;justify-content:center;color:#E11D2E"><i data-lucide="triangle-alert" style="width:18px;height:18px"></i></span><h3 style="margin:0;font-size:15px;font-weight:800">Peringatan Kualitas Gambar</h3></div>
+                  <p style="margin:0 0 12px;font-size:13px;color:#8A5560;line-height:1.5"><strong>4 produk</strong> memiliki gambar beresolusi rendah. Perbarui untuk tampilan katalog yang lebih premium.</p>
+                  <button onClick="{{ goMedia }}" style="height:38px;padding:0 14px;border:none;border-radius:10px;background:#E11D2E;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Perbaiki Sekarang</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PRODUCTS ===== -->
+        <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+              <div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Produk</h1><p style="margin:0;color:#6E7484;font-size:14.5px">{{ productTotal }} produk dalam katalog</p></div>
+              <button onClick="{{ newProduct }}" style="display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#C41626"><i data-lucide="plus" style="width:18px;height:18px"></i>Tambah Produk</button>
+            </div>
+
+            <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;overflow:hidden">
+              <div style="padding:16px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #F2F3F5">
+                <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:9px;height:42px;padding:0 14px;border:1px solid #EEF0F2;border-radius:11px;background:#F8F9FA" style-focus-within="border-color:#E11D2E;background:#fff"><i data-lucide="search" style="width:17px;height:17px;color:#9AA0AD"></i><input value="{{ pSearch }}" onInput="{{ onPSearch }}" placeholder="Cari produk atau SKU…" style="flex:1;border:none;outline:none;background:transparent;font-size:14px"></div>
+                <select value="{{ pCat }}" onChange="{{ onPCat }}" style="height:42px;padding:0 12px;border:1px solid #EEF0F2;border-radius:11px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#383D48"><option value="all">Semua Kategori</option><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
+                <select value="{{ pStatus }}" onChange="{{ onPStatus }}" style="height:42px;padding:0 12px;border:1px solid #EEF0F2;border-radius:11px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#383D48"><option value="all">Semua Status</option><option value="published">Published</option><option value="draft">Draft</option></select>
+                <select value="{{ pSort }}" onChange="{{ onPSort }}" style="height:42px;padding:0 12px;border:1px solid #EEF0F2;border-radius:11px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#383D48"><option value="recent">Terbaru</option><option value="views">Views Terbanyak</option><option value="price-desc">Harga Tertinggi</option><option value="price-asc">Harga Terendah</option></select>
+              </div>
+
+              <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:12px 18px;display:flex;align-items:center;gap:12px;background:#FEF7F8;border-bottom:1px solid #F8D2D7;flex-wrap:wrap">
+                  <span style="font-size:13.5px;font-weight:700;color:#B01523">{{ selectionCount }} dipilih</span>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-left:auto">
+                    <button style="height:34px;padding:0 12px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i data-lucide="check-circle-2" style="width:15px;height:15px;color:#1A9A5B"></i>Publish</button>
+                    <button style="height:34px;padding:0 12px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i data-lucide="eye-off" style="width:15px;height:15px;color:#6E7484"></i>Unpublish</button>
+                    <button style="height:34px;padding:0 12px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i data-lucide="download" style="width:15px;height:15px;color:#6E7484"></i>Export</button>
+                    <button onClick="{{ bulkDelete }}" style="height:34px;padding:0 12px;border:1px solid #F8D2D7;background:#fff;border-radius:9px;font-size:13px;font-weight:600;color:#D6362C;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i data-lucide="trash-2" style="width:15px;height:15px"></i>Hapus</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="overflow-x:auto" class="dsb-scroll">
+                <table style="width:100%;border-collapse:collapse;min-width:940px">
+                  <thead><tr style="background:#FAFBFC;border-bottom:1px solid #F2F3F5">
+                    <th style="padding:12px 18px;text-align:left;width:44px"><span onClick="{{ toggleAll }}" style="display:inline-flex;width:19px;height:19px;border-radius:6px;border:1.5px solid {{ allBorder }};background: {{ allBg }};cursor:pointer;align-items:center;justify-content:center"><sc-if value="{{ allChecked }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if></span></th>
+                    <th style="padding:12px 12px;text-align:left;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Produk</th>
+                    <th style="padding:12px 12px;text-align:left;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Kategori</th>
+                    <th style="padding:12px 12px;text-align:right;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Harga</th>
+                    <th style="padding:12px 12px;text-align:right;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">MOQ</th>
+                    <th style="padding:12px 12px;text-align:right;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Views</th>
+                    <th style="padding:12px 12px;text-align:right;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Klik WA</th>
+                    <th style="padding:12px 12px;text-align:left;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Status</th>
+                    <th style="padding:12px 12px;text-align:right;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">Aksi</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-if value="{{ tableLoading }}" hint-placeholder-val="{{ false }}">
+                      <sc-for list="{{ skeRows }}" as="r" hint-placeholder-count="6"><tr style="border-bottom:1px solid #F6F7F9"><td style="padding:16px 18px"><div style="width:19px;height:19px;border-radius:6px;background:#EEF0F2"></div></td><td style="padding:16px 12px"><div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#F2F2F4 25%,#E9E9EC 37%,#F2F2F4 63%);background-size:800px 100%;animation:dsb-shimmer 1.3s infinite linear"></div><div style="height:14px;width:150px;border-radius:6px;background:#EEF0F2"></div></div></td><td colspan="7" style="padding:16px 12px"><div style="height:14px;width:80%;border-radius:6px;background:#F2F3F5"></div></td></tr></sc-for>
+                    </sc-if>
+                    <sc-if value="{{ showRows }}" hint-placeholder-val="{{ true }}">
+                      <sc-for list="{{ productRows }}" as="p" hint-placeholder-count="6">
+                        <tr style="border-bottom:1px solid #F6F7F9;transition:background .12s" style-hover="background:#FAFBFC">
+                          <td style="padding:14px 18px"><span onClick="{{ p.toggle }}" style="display:inline-flex;width:19px;height:19px;border-radius:6px;border:1.5px solid {{ p.checkBorder }};background: {{ p.checkBg }};cursor:pointer;align-items:center;justify-content:center"><sc-if value="{{ p.checked }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if></span></td>
+                          <td style="padding:14px 12px"><div onClick="{{ p.edit }}" style="display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:44px;height:44px;flex:none;border-radius:10px;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);display:flex;align-items:center;justify-content:center;color:#B4B7C0"><i data-lucide="{{ p.icon }}" style="width:20px;height:20px"></i></div><div><div style="font-size:14px;font-weight:700">{{ p.name }}</div><div style="font-size:12px;color:#9AA0AD;font-family:var(--font-mono),monospace">{{ p.sku }}</div></div></div></td>
+                          <td style="padding:14px 12px;font-size:13.5px;color:#4F5563">{{ p.catLabel }}</td>
+                          <td style="padding:14px 12px;text-align:right;font-size:13.5px;font-weight:700;font-family:var(--font-mono),monospace">{{ p.priceLabel }}</td>
+                          <td style="padding:14px 12px;text-align:right;font-size:13.5px;color:#4F5563;font-family:var(--font-mono),monospace">{{ p.moq }}</td>
+                          <td style="padding:14px 12px;text-align:right;font-size:13.5px;color:#4F5563;font-family:var(--font-mono),monospace">{{ p.views }}</td>
+                          <td style="padding:14px 12px;text-align:right;font-size:13.5px;color:#4F5563;font-family:var(--font-mono),monospace">{{ p.clicks }}</td>
+                          <td style="padding:14px 12px"><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background: {{ p.statusBg }};color: {{ p.statusFg }}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>{{ p.statusLabel }}</span></td>
+                          <td style="padding:14px 12px"><div style="display:flex;gap:4px;justify-content:flex-end">
+                            <button onClick="{{ p.quick }}" title="Quick edit" style="width:34px;height:34px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="background:#F6F7F9;color:#E11D2E"><i data-lucide="pencil" style="width:15px;height:15px"></i></button>
+                            <button onClick="{{ p.duplicate }}" title="Duplikat" style="width:34px;height:34px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="background:#F6F7F9;color:#E11D2E"><i data-lucide="copy" style="width:15px;height:15px"></i></button>
+                            <button onClick="{{ p.del }}" title="Hapus" style="width:34px;height:34px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="background:#FDECEE;color:#D6362C;border-color:#F8D2D7"><i data-lucide="trash-2" style="width:15px;height:15px"></i></button>
+                          </div></td>
+                        </tr>
+                      </sc-for>
+                    </sc-if>
+                  </tbody>
+                </table>
+              </div>
+
+              <sc-if value="{{ productsEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center;padding:70px 20px"><div style="width:70px;height:70px;margin:0 auto 16px;border-radius:18px;background:#F6F7F9;display:flex;align-items:center;justify-content:center;color:#C3C7D1"><i data-lucide="package-search" style="width:32px;height:32px"></i></div><div style="font-size:17px;font-weight:700;margin-bottom:4px">Tidak ada produk</div><div style="font-size:14px;color:#9AA0AD;margin-bottom:18px">Coba ubah pencarian atau filter.</div><button onClick="{{ clearProductFilters }}" style="height:42px;padding:0 18px;border:1px solid #EEF0F2;background:#fff;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">Reset Filter</button></div>
+              </sc-if>
+
+              <sc-if value="{{ showRows }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #F2F3F5"><span style="font-size:13px;color:#9AA0AD">Menampilkan {{ rangeText }} dari {{ productTotal }}</span><div style="display:flex;gap:6px"><button onClick="{{ pPrev }}" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="chevron-left" style="width:16px;height:16px"></i></button><sc-for list="{{ pPages }}" as="pg" hint-placeholder-count="3"><button onClick="{{ pg.go }}" style="min-width:38px;height:38px;padding:0 8px;border:1px solid {{ pg.border }};background: {{ pg.bg }};color: {{ pg.fg }};border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--font-mono),monospace">{{ pg.n }}</button></sc-for><button onClick="{{ pNext }}" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="chevron-right" style="width:16px;height:16px"></i></button></div></div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CREATE / EDIT PRODUCT ===== -->
+        <sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px"><button onClick="{{ goProducts }}" style="width:42px;height:42px;border:1px solid #EEF0F2;background:#fff;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#F6F7F9"><i data-lucide="arrow-left" style="width:19px;height:19px"></i></button><div style="flex:1"><h1 style="margin:0;font-size:23px;font-weight:800;letter-spacing:-0.01em">{{ editorTitle }}</h1><p style="margin:2px 0 0;color:#9AA0AD;font-size:13.5px">{{ editorSub }}</p></div></div>
+            <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Informasi Dasar</h3>
+                  <div style="display:flex;flex-direction:column;gap:14px">
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Nama Produk</label><input value="{{ efName }}" onInput="{{ setEfName }}" placeholder="mis. Polo Shirt Lacoste Premium" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                      <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Slug</label><input value="{{ efSlug }}" placeholder="polo-shirt-lacoste-premium" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace;color:#6E7484" style-focus="border-color:#E11D2E;background:#fff"></div>
+                      <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">SKU</label><input value="{{ efSku }}" placeholder="PL001" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace" style-focus="border-color:#E11D2E;background:#fff"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Kategori</label><select style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;background:#F8F9FA;cursor:pointer"><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Deskripsi Singkat</label><input placeholder="Ringkasan satu kalimat" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Deskripsi Lengkap</label>
+                      <div style="border:1px solid #EEF0F2;border-radius:12px;overflow:hidden;background:#F8F9FA"><div style="display:flex;gap:2px;padding:8px 10px;border-bottom:1px solid #EEF0F2;background:#fff"><sc-for list="{{ rteTools }}" as="t" hint-placeholder-count="6"><button style="width:32px;height:32px;border:none;background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="background:#F6F7F9;color:#14161B"><i data-lucide="{{ t }}" style="width:16px;height:16px"></i></button></sc-for></div><textarea rows="4" placeholder="Tulis deskripsi produk…" style="width:100%;padding:12px 14px;border:none;outline:none;font-size:14.5px;background:transparent;resize:vertical"></textarea></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Harga & MOQ</h3>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Harga Mulai</label><div style="display:flex;align-items:center;gap:6px;height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;background:#F8F9FA" style-focus-within="border-color:#E11D2E;background:#fff"><span style="color:#9AA0AD;font-family:var(--font-mono),monospace">Rp</span><input value="{{ efPrice }}" onInput="{{ setEfPrice }}" placeholder="95.000" style="flex:1;border:none;outline:none;background:transparent;font-size:14.5px;font-family:var(--font-mono),monospace"></div></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Minimum Order (pcs)</label><input value="{{ efMoq }}" placeholder="24" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace" style-focus="border-color:#E11D2E;background:#fff"></div>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Varian</h3>
+                  <div style="display:flex;flex-direction:column;gap:16px">
+                    <div><label style="font-size:13px;font-weight:600;color:#4F5563;display:block;margin-bottom:8px">Ukuran</label><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ efSizes }}" as="s" hint-placeholder-count="5"><span style="height:36px;padding:0 14px;display:inline-flex;align-items:center;gap:7px;border:1px solid #EEF0F2;border-radius:999px;font-size:13px;font-weight:600;background:#F8F9FA">{{ s }}<i data-lucide="x" style="width:13px;height:13px;color:#C3C7D1;cursor:pointer"></i></span></sc-for><button style="height:36px;padding:0 12px;border:1px dashed #C3C7D1;border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:#6E7484;cursor:pointer">+ Tambah</button></div></div>
+                    <div><label style="font-size:13px;font-weight:600;color:#4F5563;display:block;margin-bottom:8px">Warna</label><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ efColors }}" as="c" hint-placeholder-count="4"><span style="height:36px;padding:0 12px 0 8px;display:inline-flex;align-items:center;gap:8px;border:1px solid #EEF0F2;border-radius:999px;font-size:13px;font-weight:600;background:#F8F9FA"><span style="width:16px;height:16px;border-radius:50%;background: {{ c.hex }};border:1px solid rgba(0,0,0,0.1)"></span>{{ c.name }}</span></sc-for><button style="height:36px;padding:0 12px;border:1px dashed #C3C7D1;border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:#6E7484;cursor:pointer">+ Tambah</button></div></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Material</label><input placeholder="Cotton Pique 220gsm" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Metode Branding</label><input placeholder="Bordir / Sablon / DTF" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div></div>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Gambar Produk</h3>
+                  <div style="border:2px dashed #DFE1E6;border-radius:14px;padding:34px;text-align:center;background:#FAFBFC;cursor:pointer;transition:border-color .15s,background .15s" style-hover="border-color:#E11D2E;background:#FEF7F8"><div style="width:52px;height:52px;margin:0 auto 12px;border-radius:14px;background:#fff;border:1px solid #EEF0F2;display:flex;align-items:center;justify-content:center;color:#E11D2E"><i data-lucide="upload-cloud" style="width:24px;height:24px"></i></div><div style="font-size:14.5px;font-weight:700">Seret & letakkan gambar di sini</div><div style="font-size:13px;color:#9AA0AD;margin-top:3px">PNG, JPG, WEBP hingga 5MB · min. 1000×1000px</div></div>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px"><sc-for list="{{ efGallery }}" as="g" hint-placeholder-count="4"><div style="position:relative;aspect-ratio:1/1;border-radius:11px;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);border:1px solid #EEF0F2;display:flex;align-items:center;justify-content:center;color:#C3C7D1"><i data-lucide="image" style="width:22px;height:22px"></i><sc-if value="{{ g.primary }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;left:6px;padding:2px 8px;border-radius:999px;background:#E11D2E;color:#fff;font-size:10px;font-weight:700">Utama</span></sc-if></div></sc-for></div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px"><i data-lucide="search-check" style="width:19px;height:19px;color:#E11D2E"></i><h3 style="margin:0;font-size:16px;font-weight:800">SEO</h3></div>
+                  <div style="display:flex;flex-direction:column;gap:14px">
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Meta Title</label><input placeholder="Polo Shirt Lacoste Premium | RE/MAX Merchandise" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Meta Description</label><textarea rows="2" placeholder="Deskripsi untuk hasil pencarian…" style="padding:12px 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;resize:vertical" style-focus="border-color:#E11D2E;background:#fff"></textarea></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Keywords</label><input placeholder="polo, seragam, corporate" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Canonical URL</label><input placeholder="/produk/polo-lacoste" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace;color:#6E7484" style-focus="border-color:#E11D2E;background:#fff"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:78px">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:20px">
+                  <h3 style="margin:0 0 14px;font-size:15px;font-weight:800">Status</h3>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ statusRadios }}" as="r" hint-placeholder-count="2"><label onClick="{{ r.go }}" style="display:flex;align-items:center;gap:11px;padding:12px 14px;border:1.5px solid {{ r.border }};border-radius:12px;cursor:pointer;background: {{ r.bg }}"><span style="width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid {{ r.ring }};display:flex;align-items:center;justify-content:center"><span style="width:9px;height:9px;border-radius:50%;background: {{ r.dot }}"></span></span><div><div style="font-size:14px;font-weight:700">{{ r.label }}</div><div style="font-size:12px;color:#9AA0AD">{{ r.desc }}</div></div></label></sc-for>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #F2F3F5"><i data-lucide="calendar-clock" style="width:17px;height:17px;color:#6E7484"></i><span style="font-size:13.5px;color:#4F5563;flex:1">Jadwalkan publish</span><input type="date" style="border:1px solid #EEF0F2;border-radius:9px;padding:6px 10px;font-size:13px;background:#F8F9FA"></div>
+                </div>
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:20px">
+                  <h3 style="margin:0 0 12px;font-size:15px;font-weight:800">Pratinjau</h3>
+                  <div style="border:1px solid #EEF0F2;border-radius:13px;overflow:hidden"><div style="aspect-ratio:1/1;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);display:flex;align-items:center;justify-content:center;color:#C3C7D1"><i data-lucide="package" style="width:34px;height:34px"></i></div><div style="padding:12px"><div style="font-size:11px;color:#9AA0AD;text-transform:uppercase;letter-spacing:.05em;font-weight:600">{{ efCatLabel }}</div><div style="font-size:14px;font-weight:700;margin:2px 0">{{ efPreviewName }}</div><div style="font-size:15px;font-weight:800;color:#E11D2E;font-family:var(--font-mono),monospace">{{ efPricePreview }}</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position:sticky;bottom:0;left:0;right:0;margin:24px -24px -96px;padding:14px 24px;background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border-top:1px solid #EEF0F2;display:flex;align-items:center;gap:12px;justify-content:flex-end;z-index:30"><span style="margin-right:auto;font-size:13px;color:#9AA0AD;display:inline-flex;align-items:center;gap:7px"><i data-lucide="info" style="width:15px;height:15px"></i>Perubahan belum disimpan</span><button onClick="{{ goProducts }}" style="height:46px;padding:0 20px;border:1px solid #EEF0F2;background:#fff;border-radius:12px;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#F6F7F9">Batal</button><button onClick="{{ saveProduct }}" style="height:46px;padding:0 22px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px" style-hover="background:#C41626"><i data-lucide="check" style="width:18px;height:18px"></i>Simpan Produk</button></div>
+        </sc-if>
+
+        <!-- ===== CATEGORIES ===== -->
+        <sc-if value="{{ isCategories }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+              <div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Kategori</h1><p style="margin:0;color:#6E7484;font-size:14.5px">{{ catCount }} kategori aktif</p></div>
+              <div style="display:flex;gap:10px"><div style="display:flex;align-items:center;gap:9px;height:44px;width:220px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;background:#fff"><i data-lucide="search" style="width:17px;height:17px;color:#9AA0AD"></i><input placeholder="Cari kategori…" style="flex:1;border:none;outline:none;font-size:14px"></div><button style="display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#C41626"><i data-lucide="plus" style="width:18px;height:18px"></i>Tambah Kategori</button></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+              <sc-for list="{{ categoryCards }}" as="c" hint-placeholder-count="8">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;overflow:hidden;transition:box-shadow .2s,transform .2s" style-hover="box-shadow:0 8px 24px rgba(0,14,53,0.07);transform:translateY(-2px)">
+                  <div style="height:88px;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);position:relative;display:flex;align-items:center;justify-content:center"><span style="width:48px;height:48px;border-radius:13px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;color:#E11D2E"><i data-lucide="{{ c.icon }}" style="width:24px;height:24px"></i></span><sc-if value="{{ c.featured }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:999px;background:#14161B;color:#fff;font-size:10.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px"><i data-lucide="star" style="width:11px;height:11px;fill:currentColor"></i>Unggulan</span></sc-if></div>
+                  <div style="padding:16px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:15.5px;font-weight:700">{{ c.label }}</div><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;background: {{ c.statusBg }};color: {{ c.statusFg }}">{{ c.statusLabel }}</span></div><div style="font-size:12.5px;color:#9AA0AD;font-family:var(--font-mono),monospace;margin:2px 0 8px">/{{ c.slug }}</div><div style="font-size:13px;color:#6E7484;line-height:1.5;height:38px;overflow:hidden">{{ c.desc }}</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #F2F3F5"><span style="font-size:12.5px;color:#9AA0AD"><strong style="color:#14161B">{{ c.count }}</strong> produk · urutan {{ c.order }}</span><div style="display:flex;gap:4px"><button style="width:32px;height:32px;border:1px solid #EEF0F2;background:#fff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="color:#E11D2E;background:#F6F7F9"><i data-lucide="pencil" style="width:14px;height:14px"></i></button><button style="width:32px;height:32px;border:1px solid #EEF0F2;background:#fff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="color:#D6362C;background:#FDECEE"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button></div></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== BANNERS ===== -->
+        <sc-if value="{{ isBanners }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px"><div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Banner Homepage</h1><p style="margin:0;color:#6E7484;font-size:14.5px">Kelola slider promosi di halaman utama</p></div><button style="display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#C41626"><i data-lucide="plus" style="width:18px;height:18px"></i>Tambah Banner</button></div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ banners }}" as="b" hint-placeholder-count="3">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#C3C7D1"><i data-lucide="grip-vertical" style="width:20px;height:20px;cursor:grab"></i><span style="font-size:16px;font-weight:800;font-family:var(--font-mono),monospace;color:#9AA0AD">{{ b.order }}</span></div>
+                  <div style="width:200px;height:96px;flex:none;border-radius:12px;background:linear-gradient(120deg,#26282e,#5a5e69);position:relative;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5)"><i data-lucide="image" style="width:26px;height:26px"></i><span style="position:absolute;bottom:6px;right:8px;font-size:10px;background:rgba(0,0,0,0.4);padding:2px 7px;border-radius:6px">Desktop 1440×480</span></div>
+                  <div style="flex:1;min-width:180px"><div style="font-size:16px;font-weight:700">{{ b.title }}</div><div style="font-size:13.5px;color:#6E7484;margin:3px 0">{{ b.subtitle }}</div><div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:#9AA0AD;margin-top:6px"><span style="display:inline-flex;align-items:center;gap:5px"><i data-lucide="mouse-pointer-click" style="width:13px;height:13px"></i>{{ b.btnText }}</span><span style="display:inline-flex;align-items:center;gap:5px"><i data-lucide="link" style="width:13px;height:13px"></i>{{ b.link }}</span><span style="display:inline-flex;align-items:center;gap:5px"><i data-lucide="calendar" style="width:13px;height:13px"></i>{{ b.date }}</span></div></div>
+                  <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;background: {{ b.statusBg }};color: {{ b.statusFg }}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>{{ b.statusLabel }}</span>
+                  <div style="display:flex;gap:6px"><button title="Preview" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="color:#E11D2E;background:#F6F7F9"><i data-lucide="eye" style="width:16px;height:16px"></i></button><button title="Edit" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="color:#E11D2E;background:#F6F7F9"><i data-lucide="pencil" style="width:16px;height:16px"></i></button><button title="Hapus" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6E7484" style-hover="color:#D6362C;background:#FDECEE"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== MEDIA LIBRARY ===== -->
+        <sc-if value="{{ isMedia }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px"><div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Media Library</h1><p style="margin:0;color:#6E7484;font-size:14.5px">Kelola gambar, PDF, ikon, dan video</p></div><button style="display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#C41626"><i data-lucide="upload" style="width:18px;height:18px"></i>Upload File</button></div>
+            <div style="display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:12px"><div style="font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px">Folder</div><sc-for list="{{ mediaFolders }}" as="f" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;color: {{ f.color }};background: {{ f.bg }};font-size:14px;font-weight:600" style-hover="background:#F6F7F9"><i data-lucide="{{ f.icon }}" style="width:17px;height:17px"></i><span style="flex:1">{{ f.label }}</span><span style="font-size:12px;color:#C3C7D1">{{ f.count }}</span></div></sc-for></div>
+                <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:18px"><div style="font-size:13px;font-weight:700;margin-bottom:12px">Penyimpanan</div><div style="height:8px;border-radius:999px;background:#F2F3F5;overflow:hidden;margin-bottom:10px"><div style="width:62%;height:100%;background:linear-gradient(90deg,#E11D2E,#FF4D5E);border-radius:999px"></div></div><div style="font-size:12.5px;color:#6E7484">6,2 GB dari 10 GB terpakai</div></div>
+              </div>
+              <div>
+                <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap"><div style="flex:1;min-width:200px;display:flex;align-items:center;gap:9px;height:42px;padding:0 14px;border:1px solid #EEF0F2;border-radius:11px;background:#fff"><i data-lucide="search" style="width:17px;height:17px;color:#9AA0AD"></i><input placeholder="Cari media…" style="flex:1;border:none;outline:none;font-size:14px"></div><div style="display:flex;border:1px solid #EEF0F2;border-radius:11px;overflow:hidden"><button style="width:42px;height:42px;border:none;background:#FDECEE;color:#E11D2E;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></button><button style="width:42px;height:42px;border:none;background:#fff;color:#9AA0AD;cursor:pointer;display:flex;align-items:center;justify-content:center;border-left:1px solid #EEF0F2"><i data-lucide="list" style="width:18px;height:18px"></i></button></div></div>
+                <div style="border:2px dashed #DFE1E6;border-radius:14px;padding:22px;text-align:center;background:#fff;margin-bottom:18px;cursor:pointer" style-hover="border-color:#E11D2E;background:#FEF7F8"><span style="display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#6E7484"><i data-lucide="upload-cloud" style="width:20px;height:20px;color:#E11D2E"></i>Seret & letakkan file untuk mengunggah</span></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px">
+                  <sc-for list="{{ mediaItems }}" as="m" hint-placeholder-count="8">
+                    <div style="background:#fff;border:1px solid #EEF0F2;border-radius:14px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .2s" style-hover="box-shadow:0 8px 24px rgba(0,14,53,0.08);transform:translateY(-2px)">
+                      <div style="aspect-ratio:1/1;background: {{ m.bg }};display:flex;align-items:center;justify-content:center;color: {{ m.iconColor }};position:relative"><i data-lucide="{{ m.icon }}" style="width:30px;height:30px"></i><span style="position:absolute;top:8px;right:8px;padding:2px 7px;border-radius:6px;background:rgba(20,22,27,0.6);color:#fff;font-size:9.5px;font-weight:700;text-transform:uppercase">{{ m.type }}</span></div>
+                      <div style="padding:10px 12px"><div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</div><div style="font-size:11px;color:#9AA0AD;margin-top:1px">{{ m.size }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== LEADS ===== -->
+        <sc-if value="{{ isLeads }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px"><div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Leads Penawaran</h1><p style="margin:0;color:#6E7484;font-size:14.5px">Klik WhatsApp & permintaan quotation</p></div><button style="display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:1px solid #EEF0F2;background:#fff;border-radius:12px;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#F6F7F9"><i data-lucide="download" style="width:18px;height:18px;color:#6E7484"></i>Export CSV</button></div>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+              <sc-for list="{{ leadRanges }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.go }}" style="height:38px;padding:0 16px;border:1px solid {{ r.border }};background: {{ r.bg }};color: {{ r.fg }};border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer">{{ r.label }}</button></sc-for>
+              <div style="flex:1"></div>
+              <sc-for list="{{ leadStatusFilters }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.go }}" style="height:38px;padding:0 14px;border:1px solid {{ r.border }};background: {{ r.bg }};color: {{ r.fg }};border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background: {{ r.dot }}"></span>{{ r.label }}</button></sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;overflow:hidden">
+              <div style="overflow-x:auto" class="dsb-scroll"><table style="width:100%;border-collapse:collapse;min-width:900px">
+                <thead><tr style="background:#FAFBFC;border-bottom:1px solid #F2F3F5"><sc-for list="{{ leadCols }}" as="c" hint-placeholder-count="8"><th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:#9AA0AD;text-transform:uppercase;letter-spacing:.04em">{{ c }}</th></sc-for></tr></thead>
+                <tbody>
+                  <sc-for list="{{ leadRows }}" as="l" hint-placeholder-count="8">
+                    <tr style="border-bottom:1px solid #F6F7F9" style-hover="background:#FAFBFC">
+                      <td style="padding:14px 16px;font-size:13px;color:#4F5563;white-space:nowrap">{{ l.date }}</td>
+                      <td style="padding:14px 16px"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;flex:none;border-radius:9px;background:linear-gradient(135deg,#f1f2f4,#e6e7ea);display:flex;align-items:center;justify-content:center;color:#B4B7C0"><i data-lucide="package" style="width:17px;height:17px"></i></div><span style="font-size:13.5px;font-weight:600">{{ l.product }}</span></div></td>
+                      <td style="padding:14px 16px;font-size:13.5px;font-family:var(--font-mono),monospace">{{ l.qty }} pcs</td>
+                      <td style="padding:14px 16px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#1A9A5B;font-weight:600"><i data-lucide="message-circle" style="width:15px;height:15px"></i>{{ l.waTime }}</span></td>
+                      <td style="padding:14px 16px;font-size:12.5px;color:#9AA0AD;font-family:var(--font-mono),monospace">{{ l.session }}</td>
+                      <td style="padding:14px 16px;font-size:13px;color:#4F5563">{{ l.country }}</td>
+                      <td style="padding:14px 16px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#4F5563"><i data-lucide="{{ l.deviceIcon }}" style="width:15px;height:15px;color:#9AA0AD"></i>{{ l.device }}</span></td>
+                      <td style="padding:14px 16px"><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background: {{ l.statusBg }};color: {{ l.statusFg }}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>{{ l.statusLabel }}</span></td>
+                      <td style="padding:14px 16px"><button style="height:32px;padding:0 12px;border:1px solid #EEF0F2;background:#fff;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px" style-hover="background:#F6F7F9;color:#E11D2E"><i data-lucide="eye" style="width:14px;height:14px"></i>Detail</button></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ANALYTICS ===== -->
+        <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px"><div><h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Analitik</h1><p style="margin:0;color:#6E7484;font-size:14.5px">Performa katalog 30 hari terakhir</p></div></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px">
+              <sc-for list="{{ analyticsCards }}" as="c" hint-placeholder-count="5"><div style="padding:20px;background:#fff;border:1px solid #EEF0F2;border-radius:16px"><div style="display:flex;align-items:center;gap:8px;color:#9AA0AD;margin-bottom:10px"><i data-lucide="{{ c.icon }}" style="width:17px;height:17px"></i><span style="font-size:13px;font-weight:600">{{ c.label }}</span></div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono),monospace">{{ c.value }}</div><div style="font-size:12.5px;font-weight:700;color: {{ c.deltaColor }};margin-top:4px">{{ c.delta }}</div></div></sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start;margin-bottom:20px">
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="margin:0;font-size:16px;font-weight:800">Tampilan Harian</h3><div style="display:flex;gap:14px;font-size:12.5px"><span style="display:inline-flex;align-items:center;gap:6px;color:#6E7484"><span style="width:9px;height:9px;border-radius:2px;background:#E11D2E"></span>Views</span><span style="display:inline-flex;align-items:center;gap:6px;color:#6E7484"><span style="width:9px;height:9px;border-radius:2px;background:#F8C4CA"></span>Klik WA</span></div></div>
+                <div style="display:flex;align-items:flex-end;gap:5px;height:180px;margin-top:16px">
+                  <sc-for list="{{ dailyChart }}" as="b" hint-placeholder-count="14"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%"><div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;height:100%"><div style="width:100%;border-radius:5px 5px 0 0;background:#E11D2E;height: {{ b.h1 }};transform-origin:bottom;animation:dsb-grow .5s ease"></div><div style="width:100%;border-radius:0 0 5px 5px;background:#F8C4CA;height: {{ b.h2 }}"></div></div><span style="font-size:9.5px;color:#C3C7D1">{{ b.label }}</span></div></sc-for>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px">
+                <h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Perangkat</h3>
+                <div style="display:flex;align-items:center;justify-content:center;margin-bottom:18px"><div style="width:150px;height:150px;border-radius:50%;background: {{ deviceDonut }};display:flex;align-items:center;justify-content:center"><div style="width:96px;height:96px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:22px;font-weight:800;font-family:var(--font-mono),monospace">100%</span><span style="font-size:11px;color:#9AA0AD">Sesi</span></div></div></div>
+                <sc-for list="{{ deviceLegend }}" as="d" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:10px;padding:7px 0"><span style="width:10px;height:10px;border-radius:3px;background: {{ d.color }}"></span><span style="flex:1;font-size:13.5px;font-weight:600">{{ d.label }}</span><span style="font-size:13.5px;font-weight:700;font-family:var(--font-mono),monospace">{{ d.pct }}</span></div></sc-for>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 16px;font-size:15px;font-weight:800">Produk Terpopuler</h3><sc-for list="{{ topProducts }}" as="p" hint-placeholder-count="5"><div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="font-weight:600">{{ p.name }}</span><span style="color:#9AA0AD;font-family:var(--font-mono),monospace">{{ p.views }}</span></div><div style="height:7px;border-radius:999px;background:#F2F3F5;overflow:hidden"><div style="height:100%;border-radius:999px;background:#E11D2E;width: {{ p.pct }};transform-origin:left;animation:dsb-grow .5s ease"></div></div></div></sc-for></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 16px;font-size:15px;font-weight:800">Kata Kunci Populer</h3><div style="display:flex;flex-wrap:wrap;gap:9px"><sc-for list="{{ keywords }}" as="k" hint-placeholder-count="8"><span style="padding:7px 14px;border-radius:999px;background:#F6F7F9;font-size:13px;font-weight:600;color:#383D48;display:inline-flex;align-items:center;gap:7px">{{ k.label }}<span style="font-size:11px;color:#9AA0AD;font-family:var(--font-mono),monospace">{{ k.count }}</span></span></sc-for></div><h3 style="margin:22px 0 14px;font-size:15px;font-weight:800">Negara Teratas</h3><sc-for list="{{ countries }}" as="c" hint-placeholder-count="4"><div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F6F7F9"><span style="font-size:13.5px;font-weight:600">{{ c.name }}</span><span style="font-size:13px;color:#9AA0AD;font-family:var(--font-mono),monospace">{{ c.pct }}</span></div></sc-for></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== SETTINGS ===== -->
+        <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease;max-width:820px">
+            <h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Pengaturan Website</h1><p style="margin:0 0 24px;color:#6E7484;font-size:14.5px">Konfigurasi informasi perusahaan, SEO, dan sosial media</p>
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Informasi Perusahaan</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><sc-for list="{{ companyFields }}" as="f" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:6px; {{ f.span }}"><label style="font-size:13px;font-weight:600;color:#4F5563">{{ f.label }}</label><input value="{{ f.value }}" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div></sc-for></div></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 18px;font-size:16px;font-weight:800">SEO Website</h3><div style="display:flex;flex-direction:column;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Default Meta Title</label><input value="RE/MAX Merchandise — Premium Corporate Merchandise" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Default Meta Description</label><textarea rows="2" style="padding:12px 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;resize:vertical" style-focus="border-color:#E11D2E;background:#fff">Katalog merchandise premium & custom untuk jaringan RE/MAX Indonesia.</textarea></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Google Analytics ID</label><input value="G-XXXXXXXXXX" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Search Console</label><input value="Terverifikasi" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div></div></div></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Sosial Media</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><sc-for list="{{ socialFields }}" as="f" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563;display:flex;align-items:center;gap:7px"><i data-lucide="{{ f.icon }}" style="width:15px;height:15px;color:#9AA0AD"></i>{{ f.label }}</label><input value="{{ f.value }}" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div></sc-for></div></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px"><button style="height:46px;padding:0 20px;border:1px solid #EEF0F2;background:#fff;border-radius:12px;font-size:14.5px;font-weight:600;cursor:pointer">Batal</button><button onClick="{{ saveSettings }}" style="height:46px;padding:0 22px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px" style-hover="background:#C41626"><i data-lucide="check" style="width:18px;height:18px"></i>Simpan Pengaturan</button></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PROFILE ===== -->
+        <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:dsb-fade .3s ease;max-width:820px">
+            <h1 style="margin:0 0 4px;font-size:24px;font-weight:800;letter-spacing:-0.01em">Profil Admin</h1><p style="margin:0 0 24px;color:#6E7484;font-size:14.5px">Kelola akun dan keamanan</p>
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap"><div style="width:76px;height:76px;flex:none;border-radius:50%;background:linear-gradient(135deg,#E11D2E,#B01523);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px">AD</div><div style="flex:1;min-width:180px"><div style="font-size:19px;font-weight:800">Admin REMAX</div><div style="font-size:14px;color:#6E7484">admin@remax.co.id</div><span style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 12px;border-radius:999px;background:#FDECEE;color:#E11D2E;font-size:12px;font-weight:700"><i data-lucide="shield" style="width:13px;height:13px"></i>Super Admin</span></div><button style="height:42px;padding:0 16px;border:1px solid #EEF0F2;background:#fff;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#F6F7F9">Ganti Foto</button></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 18px;font-size:16px;font-weight:800">Informasi Akun</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Nama</label><input value="Admin REMAX" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Email</label><input value="admin@remax.co.id" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Telepon</label><input value="0895 0904 6152" style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Peran</label><input value="Super Admin" disabled style="height:44px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14px;background:#F2F3F5;color:#9AA0AD"></div></div></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><h3 style="margin:0 0 6px;font-size:16px;font-weight:800">Keamanan</h3><div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid #F2F3F5;flex-wrap:wrap"><div><div style="font-size:14.5px;font-weight:700">Ubah Password</div><div style="font-size:13px;color:#9AA0AD">Terakhir diubah 3 bulan lalu</div></div><button style="height:38px;padding:0 14px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer">Ubah</button></div><div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;flex-wrap:wrap"><div><div style="font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px">Two-Factor Authentication <span style="padding:2px 9px;border-radius:999px;background:#EAF6EF;color:#1A9A5B;font-size:11px;font-weight:700">Aktif</span></div><div style="font-size:13px;color:#9AA0AD">Keamanan ekstra saat login</div></div><span onClick="{{ toggle2fa }}" style="width:46px;height:26px;border-radius:999px;background: {{ tfaBg }};cursor:pointer;position:relative;transition:background .2s;flex:none"><span style="position:absolute;top:3px;left: {{ tfaLeft }};width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></span></span></div></div>
+              <div style="background:#fff;border:1px solid #EEF0F2;border-radius:16px;padding:22px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="margin:0;font-size:16px;font-weight:800">Sesi Aktif</h3><button onClick="{{ doLogout }}" style="height:36px;padding:0 14px;border:1px solid #F8D2D7;background:#fff;color:#D6362C;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">Keluar dari semua perangkat</button></div><sc-for list="{{ sessions }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #F6F7F9"><span style="width:40px;height:40px;border-radius:10px;background:#F6F7F9;display:flex;align-items:center;justify-content:center;color:#6E7484"><i data-lucide="{{ s.icon }}" style="width:19px;height:19px"></i></span><div style="flex:1"><div style="font-size:13.5px;font-weight:700">{{ s.device }}</div><div style="font-size:12.5px;color:#9AA0AD">{{ s.meta }}</div></div><sc-if value="{{ s.current }}" hint-placeholder-val="{{ false }}"><span style="padding:3px 10px;border-radius:999px;background:#EAF6EF;color:#1A9A5B;font-size:11px;font-weight:700">Perangkat ini</span></sc-if></div></sc-for></div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DELETE MODAL ===== -->
+  <sc-if value="{{ deleteOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:100;background:rgba(20,22,27,0.5);display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ closeDelete }}">
+      <div onClick="{{ stop }}" style="width:100%;max-width:440px;background:#fff;border-radius:20px;padding:28px;animation:dsb-pop .2s ease;box-shadow:0 24px 60px rgba(0,0,0,0.25)">
+        <div style="width:56px;height:56px;border-radius:16px;background:#FDECEE;display:flex;align-items:center;justify-content:center;color:#D6362C;margin-bottom:18px"><i data-lucide="triangle-alert" style="width:28px;height:28px"></i></div>
+        <h3 style="margin:0 0 8px;font-size:20px;font-weight:800">Hapus Produk?</h3>
+        <p style="margin:0 0 24px;font-size:14.5px;color:#6E7484;line-height:1.6">Anda akan menghapus <strong style="color:#14161B">{{ deleteName }}</strong>. Tindakan ini tidak dapat dibatalkan dan data terkait akan hilang permanen.</p>
+        <div style="display:flex;gap:12px"><button onClick="{{ closeDelete }}" style="flex:1;height:48px;border:1px solid #EEF0F2;background:#fff;border-radius:12px;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:#F6F7F9">Batal</button><button onClick="{{ confirmDelete }}" style="flex:1;height:48px;border:none;border-radius:12px;background:#D6362C;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px" style-hover="background:#B4271E"><i data-lucide="trash-2" style="width:17px;height:17px"></i>Hapus</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== QUICK EDIT DRAWER ===== -->
+  <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:95;background:rgba(20,22,27,0.45)" onClick="{{ closeDrawer }}">
+      <div onClick="{{ stop }}" style="position:absolute;top:0;right:0;bottom:0;width:min(92vw,420px);background:#fff;display:flex;flex-direction:column;animation:dsb-slide .25s ease">
+        <div style="padding:20px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F2F3F5"><div><div style="font-size:12px;font-weight:600;color:#9AA0AD;text-transform:uppercase;letter-spacing:.05em">Quick Edit</div><div style="font-size:17px;font-weight:800">{{ drawerName }}</div></div><button onClick="{{ closeDrawer }}" style="width:38px;height:38px;border:1px solid #EEF0F2;background:#fff;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="x" style="width:18px;height:18px"></i></button></div>
+        <div class="dsb-scroll" style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Nama Produk</label><input value="{{ drawerName }}" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;outline:none;background:#F8F9FA" style-focus="border-color:#E11D2E;background:#fff"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Harga Mulai</label><div style="display:flex;align-items:center;gap:6px;height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;background:#F8F9FA"><span style="color:#9AA0AD;font-family:var(--font-mono),monospace">Rp</span><input value="{{ drawerPrice }}" style="flex:1;border:none;outline:none;background:transparent;font-size:14.5px;font-family:var(--font-mono),monospace"></div></div><div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">MOQ</label><input value="{{ drawerMoq }}" style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;outline:none;background:#F8F9FA;font-family:var(--font-mono),monospace" style-focus="border-color:#E11D2E;background:#fff"></div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#4F5563">Kategori</label><select style="height:46px;padding:0 14px;border:1px solid #EEF0F2;border-radius:12px;font-size:14.5px;background:#F8F9FA;cursor:pointer"><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px;font-weight:600;color:#4F5563">Status</label><div style="display:flex;gap:10px"><sc-for list="{{ drawerStatus }}" as="r" hint-placeholder-count="2"><button onClick="{{ r.go }}" style="flex:1;height:44px;border:1.5px solid {{ r.border }};background: {{ r.bg }};color: {{ r.fg }};border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">{{ r.label }}</button></sc-for></div></div>
+        </div>
+        <div style="padding:16px 22px;border-top:1px solid #F2F3F5;display:flex;gap:12px"><button onClick="{{ closeDrawer }}" style="flex:1;height:48px;border:1px solid #EEF0F2;background:#fff;border-radius:12px;font-size:14.5px;font-weight:600;cursor:pointer">Batal</button><button onClick="{{ saveDrawer }}" style="flex:1;height:48px;border:none;border-radius:12px;background:#E11D2E;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer" style-hover="background:#C41626">Simpan</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- mobile bottom nav -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid #EEF0F2;display:flex;padding:6px 4px">
+      <sc-for list="{{ bottomNav }}" as="n" hint-placeholder-count="5"><button onClick="{{ n.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border:none;background:none;cursor:pointer;color: {{ n.color }}"><i data-lucide="{{ n.icon }}" style="width:21px;height:21px"></i><span style="font-size:10.5px;font-weight:600">{{ n.label }}</span></button></sc-for>
+    </div>
+  </sc-if>
+
+  <!-- toast -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:28px;z-index:110;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border-radius:14px;background:#14161B;color:#fff;font-size:14.5px;font-weight:600;box-shadow:0 12px 32px rgba(0,0,0,0.28);animation:dsb-pop .2s ease"><i data-lucide="check-circle-2" style="width:18px;height:18px;color:#25D366"></i>{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.catMeta = {
+      polo:{label:'Polo Shirt',icon:'shirt'}, tshirt:{label:'T-Shirt',icon:'shirt'}, jacket:{label:'Jaket',icon:'shirt'},
+      hoodie:{label:'Hoodie',icon:'shirt'}, umbrella:{label:'Payung',icon:'umbrella'}, mug:{label:'Mug',icon:'coffee'},
+      tumbler:{label:'Tumbler',icon:'cup-soda'}, pen:{label:'Pulpen',icon:'pen-line'}, notebook:{label:'Notebook',icon:'notebook-pen'},
+      lanyard:{label:'Lanyard',icon:'tag'}, cap:{label:'Topi',icon:'shirt'}, tote:{label:'Tote Bag',icon:'shopping-bag'},
+      backpack:{label:'Backpack',icon:'backpack'}, idcard:{label:'ID Card',icon:'id-card'}, keychain:{label:'Gantungan Kunci',icon:'key-round'},
+    };
+    this.colorHex = {Merah:'#E11D2E',Navy:'#000E35',Putih:'#FFFFFF',Hitam:'#232323',Abu:'#9AA0AD',Silver:'#C3C7D1'};
+    this.products = [
+      {sku:'PL001',name:'Polo Shirt Lacoste Premium',cat:'polo',price:95000,moq:24,status:'published',views:2140,clicks:186},
+      {sku:'JK001',name:'Jaket Bomber Corporate',cat:'jacket',price:215000,moq:12,status:'published',views:1890,clicks:203},
+      {sku:'TB001',name:'Tumbler Stainless Vacuum',cat:'tumbler',price:85000,moq:50,status:'published',views:1760,clicks:154},
+      {sku:'HD001',name:'Hoodie Fleece Premium',cat:'hoodie',price:165000,moq:12,status:'published',views:1520,clicks:142},
+      {sku:'UM001',name:'Payung Lipat 3 Otomatis',cat:'umbrella',price:75000,moq:50,status:'published',views:1340,clicks:118},
+      {sku:'TT001',name:'Tote Bag Kanvas Blacu',cat:'tote',price:40000,moq:50,status:'published',views:1210,clicks:97},
+      {sku:'MG001',name:'Mug Keramik Custom',cat:'mug',price:35000,moq:50,status:'published',views:1080,clicks:88},
+      {sku:'CP001',name:'Topi Baseball Bordir',cat:'cap',price:55000,moq:24,status:'draft',views:640,clicks:34},
+      {sku:'PN001',name:'Pulpen Metal Gravir',cat:'pen',price:12000,moq:100,status:'published',views:980,clicks:76},
+      {sku:'LY001',name:'Lanyard Sublim Full Print',cat:'lanyard',price:15000,moq:100,status:'published',views:870,clicks:64},
+      {sku:'NB002',name:'Agenda Corporate + Pen',cat:'notebook',price:68000,moq:50,status:'draft',views:410,clicks:22},
+      {sku:'BP001',name:'Backpack Laptop Corporate',cat:'backpack',price:275000,moq:12,status:'published',views:1150,clicks:131},
+      {sku:'KC001',name:'Gantungan Kunci Akrilik',cat:'keychain',price:12000,moq:100,status:'draft',views:320,clicks:14},
+      {sku:'ID001',name:'ID Card + Lanyard Set',cat:'idcard',price:18000,moq:100,status:'published',views:560,clicks:41},
+      {sku:'TS001',name:'Kaos Cotton Combed 30s',cat:'tshirt',price:55000,moq:24,status:'published',views:1420,clicks:109},
+      {sku:'MG002',name:'Mug Magic Color Change',cat:'mug',price:48000,moq:50,status:'draft',views:290,clicks:18},
+    ];
+    this.leads = [
+      {date:'21 Jul, 09:42',product:'Jaket Bomber Corporate',qty:24,session:'#a4f92c',country:'Indonesia',device:'Desktop',status:'new'},
+      {date:'21 Jul, 08:15',product:'Polo Shirt Lacoste Premium',qty:50,session:'#b81e03',country:'Indonesia',device:'Mobile',status:'contacted'},
+      {date:'20 Jul, 16:30',product:'Tumbler Stainless Vacuum',qty:100,session:'#c92d1a',country:'Indonesia',device:'Mobile',status:'completed'},
+      {date:'20 Jul, 14:08',product:'Hoodie Fleece Premium',qty:36,session:'#d01f44',country:'Singapura',device:'Desktop',status:'new'},
+      {date:'20 Jul, 11:52',product:'Payung Lipat 3 Otomatis',qty:200,session:'#e11d2e',country:'Indonesia',device:'Tablet',status:'contacted'},
+      {date:'19 Jul, 15:21',product:'Tote Bag Kanvas Blacu',qty:150,session:'#f30a1b',country:'Indonesia',device:'Mobile',status:'completed'},
+      {date:'19 Jul, 10:03',product:'Backpack Laptop Corporate',qty:24,session:'#0a91cd',country:'Malaysia',device:'Desktop',status:'new'},
+      {date:'18 Jul, 17:45',product:'Mug Keramik Custom',qty:100,session:'#1b7fae',country:'Indonesia',device:'Mobile',status:'contacted'},
+    ];
+    this.banners = [
+      {order:1,title:'Premium Merchandise RE/MAX',subtitle:'Corporate merchandise & promotional gifts',btnText:'Lihat Produk',link:'/produk',date:'01 Jul 2026',status:'published'},
+      {order:2,title:'Seragam & Event Kit',subtitle:'Custom sesuai brand Anda',btnText:'Pesan Sekarang',link:'/kategori/jaket',date:'05 Jul 2026',status:'published'},
+      {order:3,title:'Promo Corporate Gift',subtitle:'Tumbler, payung & goodie bag',btnText:'Chat WhatsApp',link:'/kontak',date:'12 Jul 2026',status:'draft'},
+    ];
+    this.mediaData = [
+      {name:'polo-lacoste-01.jpg',type:'image',size:'1.2 MB'},{name:'jaket-bomber.jpg',type:'image',size:'980 KB'},
+      {name:'katalog-2026.pdf',type:'pdf',size:'4.5 MB'},{name:'tumbler-hero.jpg',type:'image',size:'1.8 MB'},
+      {name:'icon-whatsapp.svg',type:'icon',size:'12 KB'},{name:'hoodie-promo.jpg',type:'image',size:'1.1 MB'},
+      {name:'company-profile.mp4',type:'video',size:'18 MB'},{name:'banner-desktop.jpg',type:'image',size:'2.2 MB'},
+      {name:'mug-custom.jpg',type:'image',size:'860 KB'},{name:'icon-cart.svg',type:'icon',size:'8 KB'},
+      {name:'tote-bag-02.jpg',type:'image',size:'1.4 MB'},{name:'spec-sheet.pdf',type:'pdf',size:'2.1 MB'},
+    ];
+    this.pageSize = 8;
+    this.state = {
+      route:'dash', productId:null, editorMode:'create',
+      pSearch:'', pCat:'all', pStatus:'all', pSort:'recent', pPage:1, sel:{}, tableLoading:false,
+      leadRange:'7d', leadStatus:'all',
+      deleteOpen:false, deleteSku:null, drawerOpen:false, drawerSku:null, drawerStatusVal:'published',
+      efStatus:'draft', efName:'', efPrice:'',
+      tfa:true, mobileSidebar:false, toast:'',
+      vw:(typeof window!=='undefined'?window.innerWidth:1440),
+    };
+  }
+  componentDidMount(){ this._icons(); this._onResize=()=>this.setState({vw:window.innerWidth}); window.addEventListener('resize',this._onResize); }
+  componentDidUpdate(){ this._icons(); }
+  componentWillUnmount(){ window.removeEventListener('resize',this._onResize); clearTimeout(this.toastTimer); clearTimeout(this.loadTimer); }
+  _icons(){ requestAnimationFrame(()=>{ try{ window.lucide && window.lucide.createIcons(); }catch(e){} }); }
+  fmt(n){ return Number(n).toLocaleString('id-ID'); }
+  toastMsg(m){ this.setState({toast:m}); clearTimeout(this.toastTimer); this.toastTimer=setTimeout(()=>this.setState({toast:''}),1900); }
+  nav(patch){ const el=document.querySelector('.dsb-scroll'); this.setState(Object.assign({mobileSidebar:false},patch)); }
+  goRoute(r){ this.nav({route:r}); if(r==='products'){ this.setState({tableLoading:true}); clearTimeout(this.loadTimer); this.loadTimer=setTimeout(()=>this.setState({tableLoading:false}),450); } }
+
+  renderVals(){
+    const s=this.state;
+    const isMobile=s.vw<900, isDesktop=!isMobile;
+    const catKeys=Object.keys(this.catMeta);
+    const countOf=(k)=>this.products.filter(p=>p.cat===k).length;
+    const R=(r)=>()=>this.goRoute(r);
+    const badgeStatus=(st)=> st==='published'?{label:'Published',bg:'#EAF6EF',fg:'#0F5E38'}:{label:'Draft',bg:'#F2F3F5',fg:'#6E7484'};
+
+    // nav
+    const routeMap={dash:'Dashboard',products:'Produk',editor:'Editor Produk',categories:'Kategori',banners:'Banner',media:'Media Library',leads:'Leads',analytics:'Analitik',settings:'Pengaturan',profile:'Profil'};
+    const navDefs=[['dash','Dashboard','layout-dashboard'],['products','Produk','package'],['categories','Kategori','layers'],['banners','Banner','gallery-horizontal-end'],['media','Media Library','folder'],['leads','Leads','inbox'],['analytics','Analitik','bar-chart-3'],['settings','Pengaturan','settings']];
+    const activeRoute = (s.route==='editor')?'products':s.route;
+    const nav=navDefs.map(([r,label,icon])=>{ const active=activeRoute===r; return {label,icon,go:R(r),color:active?'#E11D2E':'#4F5563',bg:active?'#FDECEE':'transparent',badge: r==='leads'?String(this.leads.filter(l=>l.status==='new').length):''}; });
+    const bottomNav=[['dash','Home','layout-dashboard'],['products','Produk','package'],['leads','Leads','inbox'],['analytics','Analitik','bar-chart-3'],['profile','Profil','user']].map(([r,label,icon])=>{ const active=activeRoute===r; return {label,icon,go:R(r),color:active?'#E11D2E':'#9AA0AD'}; });
+
+    // dashboard
+    const pub=this.products.filter(p=>p.status==='published').length;
+    const draft=this.products.filter(p=>p.status==='draft').length;
+    const up={deltaColor:'#0F5E38',deltaIcon:'trending-up'}, down={deltaColor:'#D6362C',deltaIcon:'trending-down'};
+    const statCards=[
+      Object.assign({label:'Total Produk',value:String(this.products.length),icon:'package',tint:'#FDECEE',iconColor:'#E11D2E',delta:'+3'},up),
+      Object.assign({label:'Total Kategori',value:String(catKeys.length),icon:'layers',tint:'#E7EDFF',iconColor:'#0043FF',delta:'+1'},up),
+      Object.assign({label:'Produk Published',value:String(pub),icon:'check-circle-2',tint:'#EAF6EF',iconColor:'#1A9A5B',delta:'+2'},up),
+      Object.assign({label:'Produk Draft',value:String(draft),icon:'file-pen',tint:'#FDF3E2',iconColor:'#D98A0E',delta:'-1'},down),
+      Object.assign({label:'Total Leads',value:'248',icon:'inbox',tint:'#FDECEE',iconColor:'#E11D2E',delta:'+18'},up),
+      Object.assign({label:'Klik WA Hari Ini',value:'42',icon:'message-circle',tint:'#EAF6EF',iconColor:'#1A9A5B',delta:'+12'},up),
+      Object.assign({label:'Pencarian Populer',value:'1.284',icon:'search',tint:'#E7EDFF',iconColor:'#0043FF',delta:'+9%'},up),
+      Object.assign({label:'Produk Dilihat Hari Ini',value:'1.640',icon:'eye',tint:'#F2F3F5',iconColor:'#4F5563',delta:'+7%'},up),
+    ];
+    const enrichP=(p)=>({sku:p.sku,name:p.name,catLabel:this.catMeta[p.cat].label,icon:this.catMeta[p.cat].icon,priceLabel:'Rp '+this.fmt(p.price),moq:String(p.moq),views:this.fmt(p.views),clicks:String(p.clicks),statusLabel:badgeStatus(p.status).label,statusBg:badgeStatus(p.status).bg,statusFg:badgeStatus(p.status).fg,edit:()=>this.openEditor(p.sku)});
+    const latestProducts=this.products.slice(0,4).map(enrichP);
+    const latestLeads=this.leads.slice(0,4).map(l=>({product:l.product,qty:l.qty,device:l.device,date:l.date,statusLabel:this.leadStatusMeta(l.status).label,statusBg:this.leadStatusMeta(l.status).bg,statusFg:this.leadStatusMeta(l.status).fg}));
+    const quickActions=[{label:'Tambah Produk',icon:'plus',go:()=>this.newProduct()},{label:'Tambah Kategori',icon:'layers',go:R('categories')},{label:'Upload Banner',icon:'image',go:R('banners')},{label:'Upload Media',icon:'upload',go:R('media')}];
+    const popularProducts=this.products.slice().sort((a,b)=>b.views-a.views).slice(0,5).map((p,i)=>({rank:String(i+1).padStart(2,'0'),name:p.name,views:this.fmt(p.views),clicks:p.clicks}));
+    const vc=[42,55,48,62,70,58,75,80,68,88,95,82,90,100];
+    const viewsChart=vc.map((v,i)=>({v:String(v*24),h:v+'%',label:String(i+1),color:i===vc.length-1?'#E11D2E':'#F4B8BF'}));
+
+    // products table
+    let list=this.products.filter(p=>{
+      if(s.pSearch){ const q=s.pSearch.toLowerCase(); if(!(p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q))) return false; }
+      if(s.pCat!=='all' && p.cat!==s.pCat) return false;
+      if(s.pStatus!=='all' && p.status!==s.pStatus) return false;
+      return true;
+    });
+    if(s.pSort==='views') list.sort((a,b)=>b.views-a.views);
+    else if(s.pSort==='price-desc') list.sort((a,b)=>b.price-a.price);
+    else if(s.pSort==='price-asc') list.sort((a,b)=>a.price-b.price);
+    const productTotal=list.length;
+    const pageCount=Math.max(1,Math.ceil(productTotal/this.pageSize));
+    const curPage=Math.min(s.pPage,pageCount);
+    const pageSlice=list.slice((curPage-1)*this.pageSize,curPage*this.pageSize);
+    const productRows=pageSlice.map(p=>{ const checked=!!s.sel[p.sku]; const bs=badgeStatus(p.status); return {sku:p.sku,name:p.name,icon:this.catMeta[p.cat].icon,catLabel:this.catMeta[p.cat].label,priceLabel:'Rp '+this.fmt(p.price),moq:String(p.moq),views:this.fmt(p.views),clicks:String(p.clicks),statusLabel:bs.label,statusBg:bs.bg,statusFg:bs.fg,checked,checkBorder:checked?'#E11D2E':'#C3C7D1',checkBg:checked?'#E11D2E':'#fff',toggle:()=>this.toggleSel(p.sku),edit:()=>this.openEditor(p.sku),quick:()=>this.openDrawer(p.sku),duplicate:()=>this.toastMsg(p.name+' diduplikat'),del:()=>this.openDelete(p.sku)}; });
+    const selCount=Object.keys(s.sel).filter(k=>s.sel[k]).length;
+    const allChecked=pageSlice.length>0 && pageSlice.every(p=>s.sel[p.sku]);
+    const pPages=Array.from({length:pageCount},(_,i)=>i+1).map(n=>({n,go:()=>this.setState({pPage:n}),bg:n===curPage?'#E11D2E':'#fff',fg:n===curPage?'#fff':'#14161B',border:n===curPage?'#E11D2E':'#EEF0F2'}));
+    const rStart=productTotal===0?0:(curPage-1)*this.pageSize+1, rEnd=Math.min(curPage*this.pageSize,productTotal);
+
+    // editor
+    const pd=this.products.find(p=>p.sku===s.productId);
+    const efName=s.efName || (pd?pd.name:'');
+    const efPrice=s.efPrice || (pd?this.fmt(pd.price):'');
+    const efCat=pd?pd.cat:'polo';
+    const statusRadios=[['draft','Draft','Simpan tanpa dipublikasikan'],['published','Published','Tampil di katalog publik']].map(([v,label,desc])=>{ const active=s.efStatus===v; return {label,desc,go:()=>this.setState({efStatus:v}),border:active?'#E11D2E':'#EEF0F2',bg:active?'#FEF7F8':'#fff',ring:active?'#E11D2E':'#C3C7D1',dot:active?'#E11D2E':'transparent'}; });
+
+    // categories
+    const catDesc={polo:'Polo shirt katun premium untuk seragam & korporat.',tshirt:'Kaos combed untuk event & promosi.',jacket:'Jaket korporat tahan lama & profesional.',hoodie:'Hoodie fleece premium untuk komunitas.',umbrella:'Payung custom anti angin cetak logo.',mug:'Mug keramik souvenir kantor.',tumbler:'Tumbler stainless vacuum premium.',pen:'Pulpen custom promosi hemat.',notebook:'Notebook hard cover eksklusif.',lanyard:'Lanyard sublimasi full color.',cap:'Topi baseball bordir rapi.',tote:'Tote bag kanvas ramah lingkungan.',backpack:'Backpack korporat kompartemen laptop.',idcard:'Set ID card PVC + tali retractable.',keychain:'Gantungan kunci akrilik/metal.'};
+    const featuredCats=['polo','jacket','tumbler','umbrella'];
+    const categoryCards=catKeys.map((k,i)=>{ const st=i%5===3?'draft':'published'; const bs=badgeStatus(st); return {label:this.catMeta[k].label,icon:this.catMeta[k].icon,slug:k,desc:catDesc[k]||'',count:countOf(k),order:i+1,featured:featuredCats.includes(k),statusLabel:bs.label,statusBg:bs.bg,statusFg:bs.fg}; });
+
+    // banners
+    const banners=this.banners.map(b=>{ const bs=badgeStatus(b.status); return Object.assign({},b,{statusLabel:bs.label,statusBg:bs.bg,statusFg:bs.fg}); });
+
+    // media
+    const mediaTypeStyle={image:{bg:'linear-gradient(135deg,#f1f2f4,#e6e7ea)',iconColor:'#B4B7C0',icon:'image'},pdf:{bg:'#FDECEE',iconColor:'#E11D2E',icon:'file-text'},icon:{bg:'#E7EDFF',iconColor:'#0043FF',icon:'shapes'},video:{bg:'#F2EAFB',iconColor:'#8B3FD9',icon:'video'}};
+    const mediaItems=this.mediaData.map(m=>Object.assign({name:m.name,size:m.size,type:m.type},mediaTypeStyle[m.type]));
+    const mediaFolders=[['Semua File','folder',48,true],['Gambar','image',34,false],['PDF','file-text',6,false],['Ikon','shapes',5,false],['Video','video',3,false]].map(([label,icon,count,active])=>({label,icon,count,color:active?'#E11D2E':'#4F5563',bg:active?'#FDECEE':'transparent'}));
+
+    // leads
+    const leadRangesDef=[['today','Hari Ini'],['7d','7 Hari'],['30d','30 Hari'],['custom','Custom']];
+    const leadRanges=leadRangesDef.map(([v,label])=>{ const active=s.leadRange===v; return {label,go:()=>this.setState({leadRange:v}),border:active?'#E11D2E':'#EEF0F2',bg:active?'#E11D2E':'#fff',fg:active?'#fff':'#4F5563'}; });
+    const leadStatusDef=[['all','Semua','#9AA0AD'],['new','Baru','#E11D2E'],['contacted','Dihubungi','#D98A0E'],['completed','Selesai','#1A9A5B']];
+    const leadStatusFilters=leadStatusDef.map(([v,label,dot])=>{ const active=s.leadStatus===v; return {label,dot,go:()=>this.setState({leadStatus:v}),border:active?'#E11D2E':'#EEF0F2',bg:active?'#FDECEE':'#fff',fg:active?'#E11D2E':'#4F5563'}; });
+    const leadCols=['Tanggal','Produk','Qty','Klik WA','Sesi','Negara','Perangkat','Status','Aksi'];
+    const leadRows=this.leads.filter(l=>s.leadStatus==='all'||l.status===s.leadStatus).map(l=>{ const m=this.leadStatusMeta(l.status); return {date:l.date,product:l.product,qty:l.qty,session:l.session,country:l.country,device:l.device,deviceIcon:l.device==='Mobile'?'smartphone':l.device==='Tablet'?'tablet':'monitor',waTime:'Diklik',statusLabel:m.label,statusBg:m.bg,statusFg:m.fg}; });
+
+    // analytics
+    const analyticsCards=[{label:'Total Views',value:'18.240',icon:'eye',delta:'+12,4%',deltaColor:'#0F5E38'},{label:'Klik WhatsApp',value:'1.982',icon:'message-circle',delta:'+8,1%',deltaColor:'#0F5E38'},{label:'Produk Populer',value:'Jaket Bomber',icon:'flame',delta:'203 klik',deltaColor:'#9AA0AD'},{label:'Kategori Populer',value:'Polo Shirt',icon:'layers',delta:'2.140 views',deltaColor:'#9AA0AD'},{label:'Total Pencarian',value:'4.620',icon:'search',delta:'+15,2%',deltaColor:'#0F5E38'}];
+    const dc=[[60,20],[72,28],[55,18],[80,30],[92,38],[70,25],[100,42],[88,34],[76,26],[95,40],[110,45],[84,32],[98,41],[120,50]];
+    const maxD=170;
+    const dailyChart=dc.map((d,i)=>({h1:(d[0]/maxD*100)+'%',h2:(d[1]/maxD*100)+'%',label:String(i+1)}));
+    const dev=[['Mobile',58,'#E11D2E'],['Desktop',34,'#F4B8BF'],['Tablet',8,'#FBDDE1']];
+    let acc=0; const segs=dev.map(([label,pct,color])=>{ const seg=`${color} ${acc}% ${acc+pct}%`; acc+=pct; return seg; });
+    const deviceDonut='conic-gradient('+segs.join(',')+')';
+    const deviceLegend=dev.map(([label,pct,color])=>({label,pct:pct+'%',color}));
+    const topP=this.products.slice().sort((a,b)=>b.views-a.views).slice(0,5); const maxV=topP[0].views;
+    const topProducts=topP.map(p=>({name:p.name,views:this.fmt(p.views),pct:(p.views/maxV*100)+'%'}));
+    const keywords=[['polo shirt',420],['jaket',356],['tumbler',298],['payung',245],['tote bag',210],['hoodie',188],['mug',154],['lanyard',132]].map(([label,count])=>({label,count}));
+    const countries=[['Indonesia','86%'],['Singapura','7%'],['Malaysia','4%'],['Lainnya','3%']].map(([name,pct])=>({name,pct}));
+
+    // settings
+    const companyFields=[{label:'Nama Perusahaan',value:'RE/MAX Indonesia Merchandise',span:'grid-column:1 / -1'},{label:'Telepon',value:'0895 0904 6152',span:''},{label:'WhatsApp',value:'0895 0904 6152',span:''},{label:'Email',value:'merchandise@remax.co.id',span:''},{label:'Google Maps',value:'maps.google.com/remax-id',span:''},{label:'Alamat',value:'Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan',span:'grid-column:1 / -1'}];
+    const socialFields=[{label:'Instagram',icon:'instagram',value:'@remax.indonesia'},{label:'Facebook',icon:'facebook',value:'RE/MAX Indonesia'},{label:'LinkedIn',icon:'linkedin',value:'remax-indonesia'},{label:'YouTube',icon:'youtube',value:'@remaxindonesia'}];
+
+    // profile
+    const sessions=[{icon:'monitor',device:'Chrome · macOS',meta:'Jakarta, Indonesia · Aktif sekarang',current:true},{icon:'smartphone',device:'Safari · iPhone',meta:'Jakarta, Indonesia · 2 jam lalu',current:false},{icon:'monitor',device:'Edge · Windows',meta:'Bandung, Indonesia · Kemarin',current:false}];
+
+    // drawer / delete
+    const dItem=this.products.find(p=>p.sku===s.deleteSku);
+    const drItem=this.products.find(p=>p.sku===s.drawerSku);
+    const drawerStatus=[['published','Published'],['draft','Draft']].map(([v,label])=>{ const active=s.drawerStatusVal===v; return {label,go:()=>this.setState({drawerStatusVal:v}),border:active?'#E11D2E':'#EEF0F2',bg:active?'#FDECEE':'#fff',fg:active?'#E11D2E':'#4F5563'}; });
+
+    return {
+      isMobile,isDesktop,showSidebar:isDesktop,
+      nav,bottomNav,pageTitle:routeMap[s.route]||'',
+      isDash:s.route==='dash',isProducts:s.route==='products',isEditor:s.route==='editor',isCategories:s.route==='categories',isBanners:s.route==='banners',isMedia:s.route==='media',isLeads:s.route==='leads',isAnalytics:s.route==='analytics',isSettings:s.route==='settings',isProfile:s.route==='profile',
+      goProducts:R('products'),goProfile:R('profile'),goLeads:R('leads'),goMedia:R('media'),
+      profileColor:s.route==='profile'?'#E11D2E':'#4F5563',profileBg:s.route==='profile'?'#FDECEE':'transparent',
+      mobileSidebar:s.mobileSidebar,openMobileSidebar:()=>this.setState({mobileSidebar:true}),closeMobileSidebar:()=>this.setState({mobileSidebar:false}),stop:(e)=>e&&e.stopPropagation(),
+      doLogout:()=>this.toastMsg('Berhasil keluar'),newProduct:()=>this.newProduct(),
+      // dashboard
+      statCards,latestProducts,latestLeads,quickActions,popularProducts,viewsChart,
+      // products
+      productTotal:String(productTotal),pSearch:s.pSearch,onPSearch:(e)=>this.setState({pSearch:e.target.value,pPage:1}),
+      pCat:s.pCat,onPCat:(e)=>this.setState({pCat:e.target.value,pPage:1}),pStatus:s.pStatus,onPStatus:(e)=>this.setState({pStatus:e.target.value,pPage:1}),pSort:s.pSort,onPSort:(e)=>this.setState({pSort:e.target.value}),
+      catOptions:catKeys.map(k=>({value:k,label:this.catMeta[k].label})),
+      productRows,tableLoading:s.tableLoading,showRows:!s.tableLoading&&productTotal>0,productsEmpty:!s.tableLoading&&productTotal===0,skeRows:[1,2,3,4,5,6],
+      hasSelection:selCount>0,selectionCount:String(selCount),bulkDelete:()=>{ this.setState({sel:{}}); this.toastMsg(selCount+' produk dihapus'); },
+      allChecked,allBorder:allChecked?'#E11D2E':'#C3C7D1',allBg:allChecked?'#E11D2E':'#fff',toggleAll:()=>this.toggleAll(pageSlice),
+      clearProductFilters:()=>this.setState({pSearch:'',pCat:'all',pStatus:'all',pPage:1}),
+      pPages,pPrev:()=>this.setState(x=>({pPage:Math.max(1,x.pPage-1)})),pNext:()=>this.setState(x=>({pPage:Math.min(pageCount,x.pPage+1)})),rangeText:rStart+'–'+rEnd,
+      // editor
+      editorTitle:s.editorMode==='edit'?'Edit Produk':'Produk Baru',editorSub:s.editorMode==='edit'?('SKU '+(pd?pd.sku:'')):'Lengkapi detail produk baru',
+      efName,setEfName:(e)=>this.setState({efName:e.target.value}),efSlug:efName?efName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):'',efSku:pd?pd.sku:'',
+      efPrice,setEfPrice:(e)=>this.setState({efPrice:e.target.value}),efMoq:pd?String(pd.moq):'',
+      rteTools:['bold','italic','list','list-ordered','link','image'],
+      efSizes:['S','M','L','XL','XXL'],efColors:[{name:'Merah',hex:'#E11D2E'},{name:'Navy',hex:'#000E35'},{name:'Putih',hex:'#FFFFFF'},{name:'Hitam',hex:'#232323'}],
+      efGallery:[{primary:true},{primary:false},{primary:false},{primary:false}],
+      statusRadios,efCatLabel:this.catMeta[efCat].label,efPreviewName:efName||'Nama Produk',efPricePreview:'Rp '+(efPrice||'0'),
+      saveProduct:()=>{ this.toastMsg('Produk disimpan'); this.goRoute('products'); },
+      // categories
+      catCount:String(catKeys.length),categoryCards,
+      // banners
+      banners,
+      // media
+      mediaItems,mediaFolders,
+      // leads
+      leadRanges,leadStatusFilters,leadCols,leadRows,
+      // analytics
+      analyticsCards,dailyChart,deviceDonut,deviceLegend,topProducts,keywords,countries,
+      // settings
+      companyFields,socialFields,saveSettings:()=>this.toastMsg('Pengaturan disimpan'),
+      // profile
+      sessions,tfa:s.tfa,toggle2fa:()=>this.setState(x=>({tfa:!x.tfa})),tfaBg:s.tfa?'#E11D2E':'#DFE1E6',tfaLeft:s.tfa?'23px':'3px',
+      // delete modal
+      deleteOpen:s.deleteOpen,deleteName:dItem?dItem.name:'',closeDelete:()=>this.setState({deleteOpen:false}),confirmDelete:()=>{ this.setState({deleteOpen:false}); this.toastMsg('Produk dihapus'); },
+      // drawer
+      drawerOpen:s.drawerOpen,drawerName:drItem?drItem.name:'',drawerPrice:drItem?this.fmt(drItem.price):'',drawerMoq:drItem?String(drItem.moq):'',drawerStatus,closeDrawer:()=>this.setState({drawerOpen:false}),saveDrawer:()=>{ this.setState({drawerOpen:false}); this.toastMsg('Perubahan disimpan'); },
+      // toast
+      hasToast:!!s.toast,toast:s.toast,
+    };
+  }
+  leadStatusMeta(st){ return {new:{label:'Baru',bg:'#FDECEE',fg:'#B01523'},contacted:{label:'Dihubungi',bg:'#FDF3E2',fg:'#8A5C09'},completed:{label:'Selesai',bg:'#EAF6EF',fg:'#0F5E38'}}[st]||{label:st,bg:'#F2F3F5',fg:'#6E7484'}; }
+  toggleSel(sku){ const sel=Object.assign({},this.state.sel); if(sel[sku]) delete sel[sku]; else sel[sku]=true; this.setState({sel}); }
+  toggleAll(slice){ const all=slice.every(p=>this.state.sel[p.sku]); const sel=Object.assign({},this.state.sel); slice.forEach(p=>{ if(all) delete sel[p.sku]; else sel[p.sku]=true; }); this.setState({sel}); }
+  openEditor(sku){ this.nav({route:'editor',editorMode:'edit',productId:sku,efName:'',efPrice:'',efStatus:this.products.find(p=>p.sku===sku).status}); }
+  newProduct(){ this.nav({route:'editor',editorMode:'create',productId:null,efName:'',efPrice:'',efStatus:'draft'}); }
+  openDelete(sku){ this.setState({deleteOpen:true,deleteSku:sku}); }
+  openDrawer(sku){ const p=this.products.find(x=>x.sku===sku); this.setState({drawerOpen:true,drawerSku:sku,drawerStatusVal:p?p.status:'published'}); }
+}
+</script>
+</body>
+</html>

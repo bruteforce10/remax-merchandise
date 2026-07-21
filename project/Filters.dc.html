@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/re-max-indonesia-design-system-19230c4d-768e-4d48-85e5-454faca071b1/tokens/colors.css">
+</helmet>
+<div style="font-family:var(--font-sans),system-ui;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:16px;font-weight:800;color:#232323">Filter</span>
+    <sc-if value="{{ model.hasActive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ model.reset }}" style="border:none;background:none;font-size:13px;font-weight:600;color:#E11D2E;cursor:pointer">Reset ({{ model.activeCount }})</button></sc-if>
+  </div>
+
+  <div>
+    <div style="font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9AA0AD;margin-bottom:12px">Kategori</div>
+    <div style="display:flex;flex-direction:column;gap:3px;max-height:230px;overflow-y:auto">
+      <sc-for list="{{ model.cats }}" as="c" hint-placeholder-count="6">
+        <label onClick="{{ c.go }}" style="display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer" style-hover="background:#F7F7F8">
+          <sc-if value="{{ c.checked }}" hint-placeholder-val="{{ false }}"><span style="width:20px;height:20px;flex:none;border-radius:6px;background:#E11D2E;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span></sc-if>
+          <sc-if value="{{ c.unchecked }}" hint-placeholder-val="{{ true }}"><span style="width:20px;height:20px;flex:none;border-radius:6px;border:1.5px solid #C3C7D1;background:#fff"></span></sc-if>
+          <span style="flex:1;font-size:14px;color:#383D48">{{ c.label }}</span>
+          <span style="font-size:12px;color:#C3C7D1">{{ c.count }}</span>
+        </label>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid #EEEEF0;padding-top:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9AA0AD">Harga Maks.</span><span style="font-size:13px;font-weight:700;color:#E11D2E;font-family:var(--font-mono),monospace">{{ model.priceLabel }}</span></div>
+    <input type="range" min="10000" max="300000" step="5000" value="{{ model.priceMax }}" onInput="{{ model.onPrice }}" style="width:100%;accent-color:#E11D2E;cursor:pointer">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#C3C7D1;margin-top:4px"><span>Rp 10rb</span><span>Rp 300rb</span></div>
+  </div>
+
+  <div style="border-top:1px solid #EEEEF0;padding-top:20px">
+    <div style="font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9AA0AD;margin-bottom:12px">Warna</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <sc-for list="{{ model.colors }}" as="c" hint-placeholder-count="6">
+        <button onClick="{{ c.go }}" title="{{ c.name }}" style="width:34px;height:34px;border-radius:10px;cursor:pointer;background: {{ c.hex }};border:2px solid {{ c.ring }};box-shadow: {{ c.shadow }}"></button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid #EEEEF0;padding-top:20px">
+    <div style="font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9AA0AD;margin-bottom:12px">Min. Order</div>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <sc-for list="{{ model.moq }}" as="m" hint-placeholder-count="4">
+        <label onClick="{{ m.go }}" style="display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer" style-hover="background:#F7F7F8">
+          <span style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ m.ring }};background:#fff;display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;border-radius:50%;background: {{ m.dot }}"></span></span>
+          <span style="font-size:14px;color:#383D48">{{ m.label }}</span>
+        </label>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:250,&quot;height&quot;:460},&quot;model&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}"></script>
+</body>
+</html>
