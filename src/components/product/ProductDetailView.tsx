@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, ShieldCheck, ShoppingCart, Star, Truck } from "lucide-react";
+import { Info, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -81,7 +81,9 @@ export function ProductDetailView({
         <div>
           <div className="mb-3 flex gap-2">
             {product.badge && (
-              <Badge variant={product.badge}>{BADGE_LABELS[product.badge]}</Badge>
+              <Badge variant={product.badge}>
+                {BADGE_LABELS[product.badge]}
+              </Badge>
             )}
             <Link
               href={`/categories/${category.slug}`}
@@ -95,17 +97,6 @@ export function ProductDetailView({
             {product.name}
           </h1>
 
-          <div className="mt-1.5 flex items-center gap-2">
-            <span className="inline-flex text-[#E9A400]">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-[#E9A400]" />
-              ))}
-            </span>
-            <span className="text-[13px] text-gray-400">
-              4.9 · SKU {product.sku}
-            </span>
-          </div>
-
           <div className="mt-4 flex items-baseline gap-2.5 border-b border-gray-100 pb-4">
             <span className="text-[13px] text-gray-500">Mulai dari</span>
             <span className="font-mono text-[32px] font-extrabold text-brand">
@@ -115,10 +106,12 @@ export function ProductDetailView({
           </div>
 
           {product.stock !== null && (
-            <div className={cn(
-              "mt-3 mb-[14px] text-[13px] font-semibold",
-              product.stock > 0 ? "text-green-600" : "text-red-500",
-            )}>
+            <div
+              className={cn(
+                "mt-3 mb-[14px] text-[13px] font-semibold",
+                product.stock > 0 ? "text-green-600" : "text-red-500",
+              )}
+            >
               {product.stock > 0
                 ? `Stok tersedia: ${product.stock} pcs`
                 : "Stok habis"}
@@ -128,7 +121,9 @@ export function ProductDetailView({
 
           {/* Colors */}
           <div className="mb-[18px]">
-            <div className="mb-2.5 text-[13px] font-bold text-ink">Pilihan Warna</div>
+            <div className="mb-2.5 text-[13px] font-bold text-ink">
+              Pilihan Warna
+            </div>
             <div className="flex flex-wrap gap-2.5">
               {category.colors.map((name, i) => {
                 const active = i === colorIndex;
@@ -158,7 +153,9 @@ export function ProductDetailView({
           {/* Sizes */}
           {category.sizes.length > 0 && (
             <div className="mb-5">
-              <div className="mb-2.5 text-[13px] font-bold text-ink">Ukuran</div>
+              <div className="mb-2.5 text-[13px] font-bold text-ink">
+                Ukuran
+              </div>
               <div className="flex flex-wrap gap-2.5">
                 {category.sizes.map((label, i) => {
                   const active = i === sizeIndex;
@@ -238,7 +235,7 @@ export function ProductDetailView({
           </div>
 
           {/* Trust row */}
-          <div className="mt-[22px] flex flex-wrap gap-5 rounded-[14px] bg-gray-50 px-[18px] py-4">
+          <div className="mt-[22px] flex flex-wrap gap-5 px-[18px] py-4">
             <div className="flex items-center gap-2.5 text-[13.5px] text-gray-700">
               <Truck className="h-[17px] w-[17px] text-brand" />
               Kirim seluruh Indonesia
@@ -264,7 +261,9 @@ export function ProductDetailView({
           </p>
         </div>
         <div className="rounded-[18px] border border-gray-100 p-6.5">
-          <h3 className="mb-3.5 text-lg font-extrabold text-ink">Spesifikasi</h3>
+          <h3 className="mb-3.5 text-lg font-extrabold text-ink">
+            Spesifikasi
+          </h3>
           <div className="flex flex-col">
             {specs.map((s) => (
               <div
