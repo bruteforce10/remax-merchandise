@@ -1,4 +1,4 @@
-import { Gem, Palette, Truck, Zap, type LucideIcon } from "lucide-react";
+import { BadgeCheck, Gem, MessageCircle, Truck, type LucideIcon } from "lucide-react";
 import type { ReactElement } from "react";
 
 interface Feature {
@@ -9,9 +9,9 @@ interface Feature {
 
 const FEATURES: Feature[] = [
   {
-    icon: Zap,
-    title: "Produksi Cepat",
-    description: "Pengerjaan mulai 3 hari kerja untuk item ready stock.",
+    icon: BadgeCheck,
+    title: "Merchandise Resmi",
+    description: "Produk berlisensi resmi RE/MAX Indonesia, terjamin keasliannya.",
   },
   {
     icon: Gem,
@@ -19,9 +19,9 @@ const FEATURES: Feature[] = [
     description: "Bahan pilihan dengan kontrol kualitas yang ketat.",
   },
   {
-    icon: Palette,
-    title: "Corporate Branding",
-    description: "Bordir, sablon, laser, sublimasi sesuai identitas brand Anda.",
+    icon: MessageCircle,
+    title: "Mudah Dipesan",
+    description: "Tanya harga & ketersediaan langsung via WhatsApp, tanpa ribet.",
   },
   {
     icon: Truck,
