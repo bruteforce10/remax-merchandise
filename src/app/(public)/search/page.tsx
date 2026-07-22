@@ -6,7 +6,7 @@ import { SearchClient } from "@/components/search/SearchClient";
 export const metadata: Metadata = {
   title: "Cari Produk",
   description:
-    "Cari merchandise RE/MAX Indonesia berdasarkan nama atau kategori. Filter harga, warna, dan MOQ untuk menemukan produk yang tepat.",
+    "Cari merchandise RE/MAX Indonesia berdasarkan nama atau kategori. Filter harga dan warna untuk menemukan produk yang tepat.",
   alternates: { canonical: "/search" },
 };
 

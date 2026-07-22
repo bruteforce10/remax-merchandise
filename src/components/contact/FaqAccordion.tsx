@@ -10,8 +10,8 @@ interface Faq {
 
 const FAQS: Faq[] = [
   {
-    q: "Berapa minimum order (MOQ)?",
-    a: "MOQ berbeda tiap produk, umumnya mulai dari 12 pcs untuk apparel dan 50–100 pcs untuk item promosi. Detail MOQ tertera di setiap produk.",
+    q: "Apakah ada minimum order?",
+    a: "Banyak produk tersedia ready stock dan bisa dipesan dalam jumlah fleksibel. Untuk item custom, jumlah minimum menyesuaikan jenis produk — konfirmasikan kebutuhan Anda ke tim kami via WhatsApp.",
   },
   {
     q: "Berapa lama waktu produksi?",
