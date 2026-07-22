@@ -38,12 +38,16 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
   const catMenuRef = React.useRef<HTMLDivElement>(null);
 
   const suggestions = React.useMemo(() => searchSuggestions(query), [query]);
-  const showSuggest = focused && query.trim().length > 0 && suggestions.length > 0;
+  const showSuggest =
+    focused && query.trim().length > 0 && suggestions.length > 0;
 
   React.useEffect(() => {
     if (!catMenuOpen) return;
     const onDown = (e: MouseEvent): void => {
-      if (catMenuRef.current && !catMenuRef.current.contains(e.target as Node)) {
+      if (
+        catMenuRef.current &&
+        !catMenuRef.current.contains(e.target as Node)
+      ) {
         setCatMenuOpen(false);
       }
     };
@@ -74,7 +78,7 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-6 py-2">
           <span className="inline-flex items-center gap-[7px]">
             <BadgeCheck className="h-[15px] w-[15px] text-brand" />
-            Merchandise resmi &amp; custom untuk jaringan RE/MAX Indonesia
+            Merchandise resmi untuk jaringan RE/MAX Indonesia
           </span>
           <span className="hidden items-center gap-4 sm:inline-flex">
             <span className="inline-flex items-center gap-1.5">
@@ -101,7 +105,7 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
               priority
               className="h-[26px] w-auto"
             />
-            <span className="hidden border-l border-gray-200 pl-2.5 text-[13px] font-semibold tracking-[0.02em] text-gray-400 sm:inline">
+            <span className="hidden border-l border-gray-200 pl-2.5 mt-1.5 text-[13px] font-semibold tracking-[0.02em] text-gray-400 sm:inline">
               Merchandise
             </span>
           </Link>
@@ -128,9 +132,14 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
                       className="flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 hover:bg-gray-50"
                     >
                       <span className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-[9px] bg-brand-subtle text-brand">
-                        <CategoryIcon name={c.icon} className="h-[17px] w-[17px]" />
+                        <CategoryIcon
+                          name={c.icon}
+                          className="h-[17px] w-[17px]"
+                        />
                       </span>
-                      <span className="text-sm font-semibold text-ink">{c.name}</span>
+                      <span className="text-sm font-semibold text-ink">
+                        {c.name}
+                      </span>
                     </Link>
                   ))}
                 </div>
@@ -154,7 +163,10 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
                 />
               </div>
               {showSuggest && (
-                <SuggestionList suggestions={suggestions} onSelect={goSuggestion} />
+                <SuggestionList
+                  suggestions={suggestions}
+                  onSelect={goSuggestion}
+                />
               )}
             </div>
           </div>
@@ -193,7 +205,11 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
       </header>
 
       {/* Mobile menu drawer */}
-      <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} ariaLabel="Menu">
+      <Drawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ariaLabel="Menu"
+      >
         <div className="flex flex-col overflow-y-auto p-5">
           <div className="mb-4 flex items-center justify-between">
             <Image
@@ -272,7 +288,10 @@ interface SuggestionListProps {
   onSelect: (href: string) => void;
 }
 
-function SuggestionList({ suggestions, onSelect }: SuggestionListProps): React.JSX.Element {
+function SuggestionList({
+  suggestions,
+  onSelect,
+}: SuggestionListProps): React.JSX.Element {
   return (
     <div className="absolute top-[52px] right-0 left-0 z-40 rounded-[14px] border border-gray-100 bg-white p-2 shadow-menu">
       {suggestions.map((s) => (
@@ -285,7 +304,10 @@ function SuggestionList({ suggestions, onSelect }: SuggestionListProps): React.J
           }}
           className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left hover:bg-gray-50"
         >
-          <CategoryIcon name={s.icon} className="h-[17px] w-[17px] text-gray-400" />
+          <CategoryIcon
+            name={s.icon}
+            className="h-[17px] w-[17px] text-gray-400"
+          />
           <span className="text-[14.5px] text-ink">{s.label}</span>
           <span className="ml-auto text-xs text-gray-300">{s.meta}</span>
         </button>

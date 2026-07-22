@@ -14,9 +14,9 @@ const QUICK_LINKS = [
 ];
 
 export function SiteFooter(): ReactElement {
-  const footerCategories = FOOTER_CATEGORY_SLUGS.map((slug) => CATEGORY_MAP[slug]).filter(
-    (c): c is NonNullable<typeof c> => Boolean(c),
-  );
+  const footerCategories = FOOTER_CATEGORY_SLUGS.map(
+    (slug) => CATEGORY_MAP[slug],
+  ).filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (
     <footer className="mt-6 bg-gray-900 text-gray-300">
@@ -34,10 +34,6 @@ export function SiteFooter(): ReactElement {
               RE/MAX <span className="text-brand">Merchandise</span>
             </span>
           </div>
-          <p className="mb-4 max-w-[280px] text-sm leading-relaxed">
-            Katalog merchandise premium &amp; custom untuk agen, kantor, dan mitra
-            korporat RE/MAX Indonesia.
-          </p>
           <div className="flex gap-2.5">
             {SOCIALS.map((s) => (
               <a
@@ -112,8 +108,8 @@ export function SiteFooter(): ReactElement {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-6 py-5 text-[13px] text-gray-500">
           <span>
-            © {new Date().getFullYear()} RE/MAX Indonesia Merchandise. Seluruh hak
-            cipta dilindungi.
+            © {new Date().getFullYear()} RE/MAX Indonesia Merchandise. Seluruh
+            hak cipta dilindungi.
           </span>
           <span>Bukan platform pembayaran — hanya permintaan penawaran.</span>
         </div>

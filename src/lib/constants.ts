@@ -3,7 +3,8 @@
  * Supabase `Setting` model; WhatsApp number and site URL come from env.
  */
 
-export const WA_NUMBER: string = process.env.NEXT_PUBLIC_WA_NUMBER ?? "6289509046152";
+export const WA_NUMBER: string =
+  process.env.NEXT_PUBLIC_WA_NUMBER ?? "6289509046152";
 
 export const SITE_URL: string =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -11,7 +12,7 @@ export const SITE_URL: string =
 export const SITE_NAME = "RE/MAX Merchandise";
 
 export const SITE_DESCRIPTION =
-  "Katalog merchandise premium & custom untuk agen, kantor, dan mitra korporat RE/MAX Indonesia — polo, jaket, hoodie, payung, tumbler, tote bag, dan corporate gift.";
+  "Katalog merchandise RE/MAX Indonesia premium  — polo, jaket, hoodie, payung, tumbler, tote bag, dll";
 
 export interface CompanyInfo {
   name: string;
@@ -30,7 +31,7 @@ export interface CompanyInfo {
 export const COMPANY: CompanyInfo = {
   name: "RE/MAX Indonesia Merchandise",
   shortName: SITE_NAME,
-  tagline: "Merchandise resmi & custom untuk jaringan RE/MAX Indonesia",
+  tagline: "Merchandise resmi untuk jaringan RE/MAX Indonesia",
   phoneDisplay: "0895 0904 6152",
   whatsappDisplay: "0895 0904 6152",
   email: "merchandise@remax.co.id",
