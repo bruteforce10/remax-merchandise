@@ -55,7 +55,7 @@ export function CartView(): React.JSX.Element {
         <>
           <div className="flex flex-col gap-3.5">
             {lines.map((line) => {
-              const step = Math.max(1, Math.round(line.product.moq / 4));
+              const step = 1;
               return (
                 <div
                   key={line.product.sku}
@@ -112,9 +112,6 @@ export function CartView(): React.JSX.Element {
                       >
                         +
                       </button>
-                    </div>
-                    <div className="text-[11.5px] text-gray-400">
-                      Min. {line.product.moq} pcs
                     </div>
                     <button
                       type="button"

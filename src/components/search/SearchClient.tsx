@@ -32,7 +32,6 @@ const DEFAULT_FILTERS: FilterValue = {
   categories: [],
   priceMax: PRICE_MAX,
   colors: [],
-  maxMoq: null,
 };
 
 const RECENT_KEY = "remax_recent";
@@ -106,7 +105,6 @@ export function SearchClient(): React.JSX.Element {
   const activeCount =
     filters.categories.length +
     filters.colors.length +
-    (filters.maxMoq !== null ? 1 : 0) +
     (filters.priceMax < PRICE_MAX ? 1 : 0);
   const hasActiveFilters = activeCount > 0;
   const hasActiveSearch =
@@ -119,7 +117,6 @@ export function SearchClient(): React.JSX.Element {
       categories: filters.categories,
       priceMax: filters.priceMax,
       colors: filters.colors,
-      maxMoq: filters.maxMoq,
     });
     return sortProducts(filtered, sort);
   }, [committedQuery, filters, sort]);

@@ -10,8 +10,8 @@ export interface Product {
   categorySlug: string;
   /** Starting price in IDR (integer rupiah). */
   price: number;
-  /** Minimum order quantity (pcs). */
-  moq: number;
+  /** Remaining stock in pcs. null = not tracked. */
+  stock: number | null;
   badge: ProductBadge | null;
 }
 

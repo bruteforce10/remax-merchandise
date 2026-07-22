@@ -50,13 +50,9 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
             {formatPrice(product.price)}
           </span>
         </div>
-        <span className="text-[12.5px] text-gray-500">
-          Min. order {product.moq} pcs
-        </span>
-
         <div className="mt-3 flex gap-2">
           <a
-            href={waLink(productMessage(product, product.moq))}
+            href={waLink(productMessage(product, 1))}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-[42px] flex-1 items-center justify-center gap-[7px] rounded-btn bg-brand text-[13.5px] font-semibold text-white transition-colors hover:bg-brand-hover"

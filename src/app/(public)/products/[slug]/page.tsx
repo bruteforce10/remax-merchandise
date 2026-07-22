@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const product = await getProductBySlug(slug);
   if (!product) return {};
   const category = await getCategoryBySlug(product.categorySlug);
-  const description = `${product.name} — mulai ${formatPrice(product.price)}/pcs, minimum order ${product.moq} pcs. ${category?.description ?? ""}`;
+  const description = `${product.name} — mulai ${formatPrice(product.price)}/pcs. ${category?.description ?? ""}`;
 
   return {
     title: product.name,
@@ -62,13 +62,10 @@ export default async function ProductPage({ params }: PageProps): Promise<ReactN
       "@type": "Offer",
       priceCurrency: "IDR",
       price: product.price,
-      availability: "https://schema.org/InStock",
+      availability: product.stock === null || product.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       url: `${SITE_URL}/products/${slug}`,
-      eligibleQuantity: {
-        "@type": "QuantitativeValue",
-        minValue: product.moq,
-        unitText: "pcs",
-      },
     },
   };
 

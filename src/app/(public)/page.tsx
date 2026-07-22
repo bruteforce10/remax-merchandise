@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { CtaBanner } from "@/components/home/CtaBanner";
 import { FeatureCards } from "@/components/home/FeatureCards";
 import { HeroSlider } from "@/components/home/HeroSlider";
 import { HomeProducts } from "@/components/home/HomeProducts";
@@ -45,7 +44,6 @@ export default async function HomePage(): Promise<ReactNode> {
       <PopularCategories items={popularItems} />
       <HomeProducts products={products} />
       <FeatureCards />
-      <CtaBanner />
     </>
   );
 }

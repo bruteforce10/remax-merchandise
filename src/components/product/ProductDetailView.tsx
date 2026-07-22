@@ -1,6 +1,6 @@
 "use client";
 
-import { Palette, ShieldCheck, ShoppingCart, Star, Truck } from "lucide-react";
+import { Info, ShieldCheck, ShoppingCart, Star, Truck } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -27,22 +27,20 @@ export function ProductDetailView({
   related,
 }: ProductDetailViewProps): React.JSX.Element {
   const { add } = useCart();
-  const step = Math.max(1, Math.round(product.moq / 4));
+  const step = 1;
 
   const [galleryIndex, setGalleryIndex] = React.useState(0);
   const [colorIndex, setColorIndex] = React.useState(0);
   const [sizeIndex, setSizeIndex] = React.useState(0);
-  const [qty, setQty] = React.useState(product.moq);
+  const [qty, setQty] = React.useState(1);
 
-  const finalQty = Math.max(product.moq, qty);
+  const finalQty = qty;
   const color = category.colors[colorIndex];
   const size = category.sizes.length ? category.sizes[sizeIndex] : undefined;
 
   const specs: { k: string; v: string }[] = [
     { k: "Bahan", v: category.material },
-    { k: "Waktu Produksi", v: category.productionTime },
     { k: "Metode Branding", v: category.branding },
-    { k: "Min. Order", v: `${product.moq} pcs` },
     { k: "Kategori", v: category.name },
   ];
 
@@ -108,15 +106,25 @@ export function ProductDetailView({
             </span>
           </div>
 
-          <div className="mt-4 mb-[18px] flex items-baseline gap-2.5 border-b border-gray-100 pb-4">
+          <div className="mt-4 flex items-baseline gap-2.5 border-b border-gray-100 pb-4">
             <span className="text-[13px] text-gray-500">Mulai dari</span>
             <span className="font-mono text-[32px] font-extrabold text-brand">
               {formatPrice(product.price)}
             </span>
-            <span className="text-[13px] text-gray-400">
-              /pcs · Min. {product.moq} pcs
-            </span>
+            <span className="text-[13px] text-gray-400">/pcs</span>
           </div>
+
+          {product.stock !== null && (
+            <div className={cn(
+              "mt-3 mb-[14px] text-[13px] font-semibold",
+              product.stock > 0 ? "text-green-600" : "text-red-500",
+            )}>
+              {product.stock > 0
+                ? `Stok tersedia: ${product.stock} pcs`
+                : "Stok habis"}
+            </div>
+          )}
+          {product.stock === null && <div className="mb-[18px]" />}
 
           {/* Colors */}
           <div className="mb-[18px]">
@@ -181,7 +189,7 @@ export function ProductDetailView({
               <button
                 type="button"
                 aria-label="Kurangi"
-                onClick={() => setQty(Math.max(product.moq, finalQty - step))}
+                onClick={() => setQty(Math.max(1, finalQty - step))}
                 className="h-[46px] w-11 bg-white text-xl text-gray-600 hover:bg-gray-50"
               >
                 −
@@ -190,7 +198,7 @@ export function ProductDetailView({
                 value={finalQty}
                 onChange={(e) => {
                   const v = parseInt(e.target.value, 10);
-                  setQty(Number.isNaN(v) ? product.moq : v);
+                  setQty(Number.isNaN(v) || v < 1 ? 1 : v);
                 }}
                 inputMode="numeric"
                 aria-label="Jumlah"
@@ -205,9 +213,7 @@ export function ProductDetailView({
                 +
               </button>
             </div>
-            <span className="text-[12.5px] text-gray-400">
-              pcs (min. {product.moq})
-            </span>
+            <span className="text-[12.5px] text-gray-400">pcs</span>
           </div>
 
           {/* Actions */}
@@ -241,9 +247,9 @@ export function ProductDetailView({
               <ShieldCheck className="h-[17px] w-[17px] text-brand" />
               Garansi kualitas
             </div>
-            <div className="flex items-center gap-2.5 text-[13.5px] text-gray-700">
-              <Palette className="h-[17px] w-[17px] text-brand" />
-              Custom branding
+            <div className="flex items-center gap-2 rounded-[8px] bg-amber-50 px-2.5 py-1 text-[13.5px] font-semibold text-amber-700">
+              <Info className="h-[16px] w-[16px] flex-none text-amber-500" />
+              Harga belum termasuk ongkir
             </div>
           </div>
         </div>

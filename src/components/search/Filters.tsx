@@ -11,7 +11,6 @@ export interface FilterValue {
   categories: string[];
   priceMax: number;
   colors: string[];
-  maxMoq: number | null;
 }
 
 export interface CategoryCount {
@@ -27,13 +26,6 @@ interface FiltersProps {
   categories: CategoryCount[];
   activeCount: number;
 }
-
-const MOQ_OPTIONS: { value: number | null; label: string }[] = [
-  { value: null, label: "Semua" },
-  { value: 24, label: "≤ 24 pcs" },
-  { value: 50, label: "≤ 50 pcs" },
-  { value: 100, label: "≤ 100 pcs" },
-];
 
 const SECTION_LABEL =
   "mb-3 text-[12.5px] font-bold tracking-[0.04em] text-gray-400 uppercase";
@@ -163,37 +155,6 @@ export function Filters({
         </div>
       </div>
 
-      {/* MOQ */}
-      <div className="border-t border-gray-100 pt-5">
-        <div className={SECTION_LABEL}>Min. Order</div>
-        <div className="flex flex-col gap-0.5">
-          {MOQ_OPTIONS.map((m) => {
-            const checked = value.maxMoq === m.value;
-            return (
-              <label
-                key={m.label}
-                onClick={() => onChange({ maxMoq: m.value })}
-                className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1 py-1.5 hover:bg-gray-50"
-              >
-                <span
-                  className={cn(
-                    "flex h-5 w-5 flex-none items-center justify-center rounded-full border bg-white",
-                    checked ? "border-brand" : "border-gray-300",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "h-2.5 w-2.5 rounded-full",
-                      checked ? "bg-brand" : "bg-transparent",
-                    )}
-                  />
-                </span>
-                <span className="text-sm text-gray-700">{m.label}</span>
-              </label>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }

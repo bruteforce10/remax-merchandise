@@ -7,7 +7,6 @@ export interface Category {
   name: string;
   icon: string;
   material: string;
-  productionTime: string;
   branding: string;
   colors: string[];
   sizes: string[];

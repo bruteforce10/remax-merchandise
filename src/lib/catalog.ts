@@ -58,7 +58,6 @@ export interface ProductFilters {
   categories: string[];
   priceMax: number;
   colors: string[];
-  maxMoq: number | null;
 }
 
 export function filterProducts(
@@ -81,7 +80,6 @@ export function filterProducts(
       const pc = categoryColors(p.categorySlug);
       if (!filters.colors.some((c) => pc.includes(c))) return false;
     }
-    if (filters.maxMoq && p.moq > filters.maxMoq) return false;
     return true;
   });
 }

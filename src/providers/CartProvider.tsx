@@ -81,7 +81,7 @@ export function CartProvider({
   }, [items, hydrated]);
 
   const add = React.useCallback((product: Product, qty?: number): void => {
-    const amount = qty ?? product.moq;
+    const amount = qty ?? 1;
     setItems((prev) => ({
       ...prev,
       [product.sku]: (prev[product.sku] ?? 0) + amount,
@@ -90,8 +90,7 @@ export function CartProvider({
   }, []);
 
   const setQty = React.useCallback((sku: string, qty: number): void => {
-    const min = PRODUCT_MAP[sku]?.moq ?? 1;
-    const value = Number.isNaN(qty) ? min : Math.max(min, qty);
+    const value = Number.isNaN(qty) || qty < 1 ? 1 : qty;
     setItems((prev) => ({ ...prev, [sku]: value }));
   }, []);
 

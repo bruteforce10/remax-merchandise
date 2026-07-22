@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -32,36 +31,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
       >
         <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.05)_0,rgba(255,255,255,0.05)_22px,transparent_22px,transparent_44px)] opacity-50" />
 
-        <div
-          key={index}
-          className="relative w-full animate-[rmx-fade_.45s_ease] px-8 py-12 sm:px-12 lg:px-16"
-        >
-          <div className="max-w-[600px]">
-            <span className="mb-4 inline-flex items-center rounded-pill bg-white/15 px-3.5 py-1.5 text-[12.5px] font-semibold tracking-wide">
-              {current.kicker}
-            </span>
-            <h1 className="text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-[44px]">
-              {current.title}
-            </h1>
-            <p className="mt-3 max-w-[520px] text-[15px] leading-relaxed text-white/80 sm:text-base">
-              {current.subtitle}
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href="/search"
-                className="inline-flex h-12 items-center justify-center rounded-btn bg-white px-6 text-[15px] font-bold text-brand-dark transition-transform hover:-translate-y-0.5"
-              >
-                Lihat Produk
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex h-12 items-center justify-center rounded-btn border border-white/40 px-6 text-[15px] font-bold text-white transition-colors hover:bg-white/10"
-              >
-                Kontak
-              </Link>
-            </div>
-          </div>
-        </div>
+        <div key={index} className="relative w-full animate-[rmx-fade_.45s_ease]" />
 
         {count > 1 && (
           <>
