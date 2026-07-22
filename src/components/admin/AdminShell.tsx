@@ -74,17 +74,22 @@ export function AdminShell({
     pathname === href || pathname.startsWith(`${href}/`);
   const title = pageTitle(pathname, nav);
 
-  const sidebarBody = (onNavigate?: () => void): React.JSX.Element => (
+  const sidebarBody = (
+    onNavigate?: () => void,
+    showLogo = true,
+  ): React.JSX.Element => (
     <>
-      <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 pt-5 pb-[18px]">
-        <Image src="/assets/logo-mark.png" alt="RE/MAX" width={182} height={207} className="h-[30px] w-auto" />
-        <div>
-          <div className="text-[15px] font-extrabold tracking-tight text-ink">
-            RE/MAX <span className="text-brand">Admin</span>
+      {showLogo && (
+        <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 pt-5 pb-[18px]">
+          <Image src="/assets/logo-mark.png" alt="RE/MAX" width={182} height={207} className="h-[30px] w-auto" />
+          <div>
+            <div className="text-[15px] font-extrabold tracking-tight text-ink">
+              RE/MAX <span className="text-brand">Admin</span>
+            </div>
+            <div className="text-[11px] font-semibold text-gray-400">Merchandise CMS</div>
           </div>
-          <div className="text-[11px] font-semibold text-gray-400">Merchandise CMS</div>
         </div>
-      </div>
+      )}
       <nav className="rmx-scrollbar flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
         {nav.map((n) => {
           const active = isActive(n.href);
@@ -175,7 +180,7 @@ export function AdminShell({
           </button>
         </div>
         <div className="flex flex-1 flex-col overflow-hidden">
-          {sidebarBody(() => setDrawerOpen(false))}
+          {sidebarBody(() => setDrawerOpen(false), false)}
         </div>
       </Drawer>
 
