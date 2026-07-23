@@ -20,10 +20,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Drawer } from "@/components/ui/Drawer";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -51,12 +52,23 @@ function pageTitle(pathname: string, nav: NavItem[]): string {
 export function AdminShell({
   children,
   newLeadsCount,
+  userEmail = "",
 }: {
   children: React.ReactNode;
   newLeadsCount: number;
+  userEmail?: string;
 }): React.JSX.Element {
   const pathname = usePathname();
+  const router = useRouter();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const initials = (userEmail.split("@")[0] || "AD").slice(0, 2).toUpperCase();
+
+  async function handleSignOut(): Promise<void> {
+    await createClient().auth.signOut();
+    router.push("/admin");
+    router.refresh();
+  }
 
   const nav: NavItem[] = [
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -79,12 +91,20 @@ export function AdminShell({
     <>
       {showLogo && (
         <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 pt-5 pb-[18px]">
-          <Image src="/assets/logo-mark.png" alt="RE/MAX" width={182} height={207} className="h-[30px] w-auto" />
+          <Image
+            src="/assets/logo-mark.png"
+            alt="RE/MAX"
+            width={182}
+            height={207}
+            className="h-[30px] w-auto"
+          />
           <div>
             <div className="text-[15px] font-extrabold tracking-tight text-ink">
               RE/MAX <span className="text-brand">Admin</span>
             </div>
-            <div className="text-[11px] font-semibold text-gray-400">Merchandise CMS</div>
+            <div className="text-[11px] font-semibold text-gray-400">
+              Merchandise CMS
+            </div>
           </div>
         </div>
       )}
@@ -99,7 +119,9 @@ export function AdminShell({
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
-                active ? "bg-brand-subtle text-brand" : "text-gray-600 hover:bg-gray-50",
+                active
+                  ? "bg-brand-subtle text-brand"
+                  : "text-gray-600 hover:bg-gray-50",
               )}
             >
               <n.icon className="h-[18px] w-[18px]" />
@@ -118,20 +140,25 @@ export function AdminShell({
           onClick={onNavigate}
           className={cn(
             "flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
-            isActive("/admin/profile") ? "bg-brand-subtle text-brand" : "text-gray-600 hover:bg-gray-50",
+            isActive("/admin/profile")
+              ? "bg-brand-subtle text-brand"
+              : "text-gray-600 hover:bg-gray-50",
           )}
         >
           <User className="h-[18px] w-[18px]" />
           Profil
         </Link>
-        <Link
-          href="/admin"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[14.5px] font-semibold text-danger transition-colors hover:bg-brand-subtle"
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate?.();
+            void handleSignOut();
+          }}
+          className="flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-left text-[14.5px] font-semibold text-danger transition-colors hover:bg-brand-subtle"
         >
           <LogOut className="h-[18px] w-[18px]" />
           Keluar
-        </Link>
+        </button>
       </nav>
       <div className="border-t border-gray-100 p-3.5">
         <Link
@@ -140,11 +167,15 @@ export function AdminShell({
           className="flex items-center gap-2.5 rounded-[12px] p-2 transition-colors hover:bg-gray-50"
         >
           <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-sm font-bold text-white">
-            AD
+            {initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13.5px] font-bold text-ink">Admin REMAX</span>
-            <span className="block truncate text-[11.5px] text-gray-400">admin@remax.co.id</span>
+            <span className="block truncate text-[13.5px] font-bold text-ink">
+              Admin REMAX
+            </span>
+            <span className="block truncate text-[11.5px] text-gray-400">
+              {userEmail || "admin@remax.co.id"}
+            </span>
           </span>
           <ChevronRight className="h-4 w-4 text-gray-300" />
         </Link>
@@ -160,10 +191,22 @@ export function AdminShell({
       </aside>
 
       {/* Mobile drawer */}
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} side="left" widthClassName="w-[264px]" ariaLabel="Menu admin">
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        side="left"
+        widthClassName="w-[264px]"
+        ariaLabel="Menu admin"
+      >
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <div className="flex items-center gap-2.5">
-            <Image src="/assets/logo-mark.png" alt="RE/MAX" width={182} height={207} className="h-7 w-auto" />
+            <Image
+              src="/assets/logo-mark.png"
+              alt="RE/MAX"
+              width={182}
+              height={207}
+              className="h-7 w-auto"
+            />
             <span className="text-[15px] font-extrabold">
               RE/MAX <span className="text-brand">Admin</span>
             </span>
@@ -210,14 +253,6 @@ export function AdminShell({
               ⌘K
             </span>
           </Link>
-          <button
-            type="button"
-            aria-label="Notifikasi"
-            className="relative flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[11px] border border-admin-border bg-white transition-colors hover:bg-gray-50"
-          >
-            <Bell className="h-[19px] w-[19px]" />
-            <span className="absolute top-[9px] right-[10px] h-2 w-2 rounded-full border-2 border-white bg-brand" />
-          </button>
           <Link
             href="/admin/products/new"
             className="inline-flex h-[42px] flex-none items-center gap-2 rounded-[11px] bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"

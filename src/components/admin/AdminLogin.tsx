@@ -5,15 +5,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
+
+import { createClient } from "@/lib/supabase/client";
 
 export function AdminLogin(): React.JSX.Element {
   const router = useRouter();
-  const [email, setEmail] = React.useState("admin@remax.co.id");
+  const [email, setEmail] = React.useState("support@remax.co.id");
   const [password, setPassword] = React.useState("");
+  const [pending, setPending] = React.useState(false);
 
-  function handleSubmit(e: React.FormEvent): void {
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
+    if (pending) return;
+    setPending(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (error) {
+      setPending(false);
+      toast.error("Email atau password salah");
+      return;
+    }
     router.push("/admin/dashboard");
+    router.refresh();
   }
 
   return (
@@ -35,7 +52,7 @@ export function AdminLogin(): React.JSX.Element {
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => void handleSubmit(e)}
           className="rounded-[18px] border border-admin-border bg-white p-7 shadow-card"
         >
           <h2 className="text-lg font-extrabold text-ink">Masuk</h2>
@@ -72,14 +89,15 @@ export function AdminLogin(): React.JSX.Element {
 
           <button
             type="submit"
-            className="mt-5 flex h-[48px] w-full items-center justify-center rounded-btn bg-brand text-[15px] font-bold text-white transition-colors hover:bg-brand-hover"
+            disabled={pending}
+            className="mt-5 flex h-[48px] w-full items-center justify-center rounded-btn bg-brand text-[15px] font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
           >
-            Masuk
+            {pending ? "Memproses…" : "Masuk"}
           </button>
 
           <p className="mt-3.5 flex items-center justify-center gap-1.5 text-[12px] text-gray-400">
             <Lock className="h-3 w-3" />
-            Demo — tanpa autentikasi, klik Masuk untuk lanjut
+            Akses terbatas untuk admin RE/MAX
           </p>
         </form>
 
