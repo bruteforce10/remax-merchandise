@@ -2,7 +2,6 @@ import { Clock, Headset, Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { ContactForm } from "@/components/contact/ContactForm";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { COMPANY } from "@/lib/constants";
@@ -89,42 +88,38 @@ export default function ContactPage(): ReactNode {
         </div>
       </section>
 
-      {/* Form + Map/FAQ */}
+      {/* Map + FAQ */}
       <section className="mx-auto max-w-[1280px] px-6 pt-5 pb-13">
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-          <ContactForm />
-
-          <div className="flex flex-col gap-5">
-            <div className="overflow-hidden rounded-[18px] border border-gray-100">
-              <div className="relative flex h-[220px] items-center justify-center bg-gradient-to-br from-[#e9eaee] to-gray-200">
-                <div className="absolute inset-0 bg-[linear-gradient(#d3d5db_1px,transparent_1px),linear-gradient(90deg,#d3d5db_1px,transparent_1px)] bg-[length:36px_36px] opacity-60" />
-                <div className="relative text-center text-gray-500">
-                  <MapPin className="mx-auto h-[34px] w-[34px] text-brand" />
-                  <div className="mt-1.5 text-[13.5px] font-bold">
-                    RE/MAX Indonesia HQ
-                  </div>
-                  <div className="text-[12.5px] text-gray-400">Google Maps</div>
+          <div className="overflow-hidden rounded-[18px] border border-gray-100">
+            <div className="relative flex h-[220px] items-center justify-center bg-gradient-to-br from-[#e9eaee] to-gray-200">
+              <div className="absolute inset-0 bg-[linear-gradient(#d3d5db_1px,transparent_1px),linear-gradient(90deg,#d3d5db_1px,transparent_1px)] bg-[length:36px_36px] opacity-60" />
+              <div className="relative text-center text-gray-500">
+                <MapPin className="mx-auto h-[34px] w-[34px] text-brand" />
+                <div className="mt-1.5 text-[13.5px] font-bold">
+                  RE/MAX Indonesia HQ
                 </div>
-              </div>
-              <div className="flex items-center justify-between px-[18px] py-4">
-                <span className="text-sm text-gray-600">{COMPANY.addressShort}</span>
-                <a
-                  href={COMPANY.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[13.5px] font-semibold"
-                >
-                  Buka Maps →
-                </a>
+                <div className="text-[12.5px] text-gray-400">Google Maps</div>
               </div>
             </div>
+            <div className="flex items-center justify-between px-[18px] py-4">
+              <span className="text-sm text-gray-600">{COMPANY.addressShort}</span>
+              <a
+                href={COMPANY.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[13.5px] font-semibold"
+              >
+                Buka Maps →
+              </a>
+            </div>
+          </div>
 
-            <div className="rounded-[18px] border border-gray-100 p-6">
-              <h3 className="mb-2 text-[17px] font-extrabold text-ink">
-                Pertanyaan Umum (FAQ)
-              </h3>
-              <FaqAccordion />
-            </div>
+          <div className="rounded-[18px] border border-gray-100 p-6">
+            <h3 className="mb-2 text-[17px] font-extrabold text-ink">
+              Pertanyaan Umum (FAQ)
+            </h3>
+            <FaqAccordion />
           </div>
         </div>
       </section>
