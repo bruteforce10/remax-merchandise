@@ -29,10 +29,10 @@ import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Drawer } from "@/components/ui/Drawer";
 import { CategoryIcon } from "@/components/ui/Icon";
-import { CATEGORIES, CATEGORY_MAP } from "@/lib/data/catalog";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { AdminProduct, ProductStatus } from "@/types/admin";
+import type { Category } from "@/types/category";
 
 const PAGE_SIZE = 8;
 const SELECT_CLS =
@@ -43,10 +43,16 @@ type SortKey = "recent" | "views" | "price-desc" | "price-asc";
 
 export function ProductsTable({
   initialProducts,
+  categories,
 }: {
   initialProducts: AdminProduct[];
+  categories: Category[];
 }): React.JSX.Element {
   const [items, setItems] = React.useState<AdminProduct[]>(initialProducts);
+  const categoryMap = React.useMemo(
+    () => Object.fromEntries(categories.map((c) => [c.slug, c])),
+    [categories],
+  );
   const [search, setSearch] = React.useState("");
   const [catFilter, setCatFilter] = React.useState("all");
   const [statusFilter, setStatusFilter] = React.useState<"all" | ProductStatus>("all");
@@ -273,7 +279,7 @@ export function ProductsTable({
             aria-label="Filter kategori"
           >
             <option value="all">Semua Kategori</option>
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.name}
               </option>
@@ -340,7 +346,7 @@ export function ProductsTable({
                 Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
               ) : pageItems.length > 0 ? (
                 pageItems.map((p) => {
-                  const cat = CATEGORY_MAP[p.categorySlug];
+                  const cat = categoryMap[p.categorySlug];
                   const checked = !!selected[p.sku];
                   return (
                     <tr
@@ -508,6 +514,7 @@ export function ProductsTable({
           <QuickEditForm
             key={editTarget.sku}
             product={editTarget}
+            categories={categories}
             onClose={() => setEditSku(null)}
             onSave={saveEdit}
           />
@@ -646,10 +653,12 @@ function SkeletonRow(): React.JSX.Element {
 
 function QuickEditForm({
   product,
+  categories,
   onClose,
   onSave,
 }: {
   product: AdminProduct;
+  categories: Category[];
   onClose: () => void;
   onSave: (
     patch: Pick<
@@ -725,7 +734,7 @@ function QuickEditForm({
             onChange={(e) => setCategorySlug(e.target.value)}
             className={`${field} cursor-pointer`}
           >
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.name}
               </option>
