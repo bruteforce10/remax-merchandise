@@ -10,6 +10,25 @@ export interface AdminProduct extends Product {
   waClicks: number;
 }
 
+export interface ProductCustomVariant {
+  id: string;
+  name: string;
+  values: string[];
+}
+
+/** Full product shape for the editor (edit mode) — all editable fields. */
+export interface AdminProductDetail extends AdminProduct {
+  description: string;
+  sizes: string[];
+  colors: string[];
+  material: string;
+  branding: string;
+  customVariants: ProductCustomVariant[];
+  seoTitle: string;
+  seoDescription: string;
+  keywords: string;
+}
+
 export type MediaType = "image" | "pdf" | "icon" | "video";
 
 export interface MediaItem {

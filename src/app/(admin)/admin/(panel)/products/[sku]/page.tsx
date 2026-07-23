@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { ProductEditor } from "@/components/admin/ProductEditor";
-import { getCategoryBySlug } from "@/services/content/categories";
+import { getCategories } from "@/services/content/categories";
 import {
   getAdminProductBySku,
   getAdminProductSkus,
@@ -24,8 +24,12 @@ export default async function EditProductPage({
   params,
 }: PageProps): Promise<ReactNode> {
   const { sku } = await params;
-  const product = await getAdminProductBySku(sku);
+  const [product, categories] = await Promise.all([
+    getAdminProductBySku(sku),
+    getCategories(),
+  ]);
   if (!product) notFound();
-  const category = (await getCategoryBySlug(product.categorySlug)) ?? undefined;
-  return <ProductEditor mode="edit" product={product} category={category} />;
+  return (
+    <ProductEditor mode="edit" product={product} categories={categories} />
+  );
 }

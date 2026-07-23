@@ -1,4 +1,10 @@
-import type { AdminBanner, ProductStatus } from "@/types/admin";
+import type {
+  AdminBanner,
+  AdminProduct,
+  AdminProductDetail,
+  ProductCustomVariant,
+  ProductStatus,
+} from "@/types/admin";
 import type { Banner } from "@/types/banner";
 import type { Category } from "@/types/category";
 import type { Product, ProductBadge } from "@/types/product";
@@ -93,6 +99,72 @@ export function mapPublicBanner(b: RawBanner): Banner {
     imageUrl: b.image?.url ?? null,
     gradient: gradientForOrder(order),
     order,
+  };
+}
+
+export interface RawAdminProduct {
+  sku: string;
+  slug: string;
+  name: string;
+  shortDescription: string | null;
+  description: string | null;
+  price: number | null;
+  stock: number | null;
+  sizes: string[] | null;
+  colors: string[] | null;
+  material: string | null;
+  branding: string | null;
+  customVariants: unknown;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  keywords: string | null;
+  badge: string | null;
+  publishStatus: string | null;
+  category: { slug: string } | null;
+}
+
+function parseCustomVariants(value: unknown): ProductCustomVariant[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item, i) => {
+    if (item && typeof item === "object" && "name" in item && "values" in item) {
+      const raw = item as { name: unknown; values: unknown };
+      const values = Array.isArray(raw.values)
+        ? raw.values.map((v) => String(v))
+        : [];
+      return [{ id: `v${i}`, name: String(raw.name ?? ""), values }];
+    }
+    return [];
+  });
+}
+
+export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
+  return {
+    sku: p.sku,
+    slug: p.slug,
+    name: p.name,
+    short: p.shortDescription ?? "",
+    categorySlug: p.category?.slug ?? "",
+    price: p.price ?? 0,
+    stock: p.stock ?? null,
+    badge: mapBadge(p.badge),
+    status: p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
+    views: 0,
+    waClicks: 0,
+  };
+}
+
+export function mapAdminProductDetail(p: RawAdminProduct): AdminProductDetail {
+  return {
+    ...mapAdminProduct(p),
+    description: p.description ?? "",
+    sizes: p.sizes ?? [],
+    colors: p.colors ?? [],
+    material: p.material ?? "",
+    branding: p.branding ?? "",
+    customVariants: parseCustomVariants(p.customVariants),
+    seoTitle: p.seoTitle ?? "",
+    seoDescription: p.seoDescription ?? "",
+    keywords: p.keywords ?? "",
   };
 }
 

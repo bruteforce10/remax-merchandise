@@ -15,12 +15,12 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
+import { createProduct, updateProduct } from "@/actions/products";
 import { CategoryIcon } from "@/components/ui/Icon";
-import { categoryName } from "@/lib/catalog";
-import { CATEGORIES, COLOR_HEX, COLOR_PALETTE } from "@/lib/data/catalog";
+import { COLOR_HEX, COLOR_PALETTE } from "@/lib/data/catalog";
 import { formatNumber, slugify } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { AdminProduct, ProductStatus } from "@/types/admin";
+import type { AdminProductDetail, ProductStatus } from "@/types/admin";
 import type { Category } from "@/types/category";
 
 const FIELD =
@@ -30,8 +30,8 @@ const CARD = "rounded-card border border-admin-border bg-white p-5.5";
 
 interface ProductEditorProps {
   mode: "create" | "edit";
-  product?: AdminProduct;
-  category?: Category;
+  product?: AdminProductDetail;
+  categories: Category[];
 }
 
 interface CustomVariant {
@@ -43,33 +43,41 @@ interface CustomVariant {
 export function ProductEditor({
   mode,
   product,
-  category,
+  categories,
 }: ProductEditorProps): React.JSX.Element {
   const router = useRouter();
 
   const [name, setName] = React.useState(product?.name ?? "");
   const [sku, setSku] = React.useState(product?.sku ?? "");
   const [categorySlug, setCategorySlug] = React.useState(
-    product?.categorySlug ?? CATEGORIES[0].slug,
+    product?.categorySlug ?? categories[0]?.slug ?? "",
   );
-  const [shortDesc, setShortDesc] = React.useState("");
-  const [fullDesc, setFullDesc] = React.useState(category?.description ?? "");
+  const [shortDesc, setShortDesc] = React.useState(product?.short ?? "");
+  const [fullDesc, setFullDesc] = React.useState(product?.description ?? "");
   const [price, setPrice] = React.useState(product ? String(product.price) : "");
   const [stock, setStock] = React.useState(
     product && product.stock !== null ? String(product.stock) : "",
   );
-  const [sizes, setSizes] = React.useState<string[]>(category?.sizes ?? []);
+  const [sizes, setSizes] = React.useState<string[]>(product?.sizes ?? []);
   const [colors, setColors] = React.useState<string[]>(
-    category?.colors ?? ["Merah", "Navy"],
+    product?.colors ?? ["Merah", "Navy"],
   );
-  const [material, setMaterial] = React.useState(category?.material ?? "");
-  const [branding, setBranding] = React.useState(category?.branding ?? "");
+  const [material, setMaterial] = React.useState(product?.material ?? "");
+  const [branding, setBranding] = React.useState(product?.branding ?? "");
   const [status, setStatus] = React.useState<ProductStatus>(product?.status ?? "draft");
   const [newSize, setNewSize] = React.useState("");
-  const [customVariants, setCustomVariants] = React.useState<CustomVariant[]>([]);
+  const [customVariants, setCustomVariants] = React.useState<CustomVariant[]>(
+    product?.customVariants ?? [],
+  );
+  const [seoTitle, setSeoTitle] = React.useState(product?.seoTitle ?? "");
+  const [seoDescription, setSeoDescription] = React.useState(
+    product?.seoDescription ?? "",
+  );
+  const [keywords, setKeywords] = React.useState(product?.keywords ?? "");
+  const [pending, setPending] = React.useState(false);
 
-  const slug = name ? slugify(name) : "";
-  const previewCategory = CATEGORIES.find((c) => c.slug === categorySlug);
+  const slug = product?.slug ?? (name ? slugify(name) : "");
+  const previewCategory = categories.find((c) => c.slug === categorySlug);
 
   function addSize(): void {
     const v = newSize.trim().toUpperCase();
@@ -98,13 +106,50 @@ export function ProductEditor({
     setCustomVariants((list) => list.filter((g) => g.id !== id));
   }
 
-  function save(): void {
+  async function save(): Promise<void> {
     if (!name.trim()) {
       toast.error("Nama produk wajib diisi");
       return;
     }
-    toast.success(mode === "edit" ? "Produk diperbarui" : "Produk disimpan");
+    if (!sku.trim()) {
+      toast.error("SKU wajib diisi");
+      return;
+    }
+    setPending(true);
+    const input = {
+      name: name.trim(),
+      slug,
+      sku: sku.trim(),
+      categorySlug,
+      shortDescription: shortDesc,
+      description: fullDesc,
+      price: parseInt(price, 10) || 0,
+      stock: stock === "" ? null : parseInt(stock, 10) || 0,
+      sizes,
+      colors,
+      material,
+      branding,
+      customVariants: customVariants.map((v) => ({
+        name: v.name,
+        values: v.values,
+      })),
+      seoTitle,
+      seoDescription,
+      keywords,
+      status,
+    };
+    const res =
+      mode === "edit" && product
+        ? await updateProduct(product.sku, input)
+        : await createProduct(input);
+    if (!res.success) {
+      toast.error(res.message);
+      setPending(false);
+      return;
+    }
+    toast.success(res.message);
     router.push("/admin/products");
+    router.refresh();
   }
 
   return (
@@ -166,7 +211,7 @@ export function ProductEditor({
                   onChange={(e) => setCategorySlug(e.target.value)}
                   className={`${FIELD} cursor-pointer`}
                 >
-                  {CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <option key={c.slug} value={c.slug}>
                       {c.name}
                     </option>
@@ -377,13 +422,16 @@ export function ProductEditor({
             <div className="flex flex-col gap-3.5">
               <Field label="Meta Title">
                 <input
-                  defaultValue={name ? `${name} | RE/MAX Merchandise` : ""}
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
                   placeholder="Judul untuk hasil pencarian"
                   className={FIELD}
                 />
               </Field>
               <Field label="Meta Description">
                 <textarea
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
                   rows={2}
                   placeholder="Deskripsi untuk hasil pencarian…"
                   className="resize-y rounded-btn border border-admin-border bg-admin-bg px-3.5 py-3 text-[14px] outline-none focus:border-brand focus:bg-white"
@@ -391,7 +439,12 @@ export function ProductEditor({
               </Field>
               <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <Field label="Keywords">
-                  <input placeholder="polo, seragam, corporate" className={FIELD} />
+                  <input
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                    placeholder="polo, seragam, corporate"
+                    className={FIELD}
+                  />
                 </Field>
                 <Field label="Canonical URL">
                   <input
@@ -457,7 +510,7 @@ export function ProductEditor({
               </div>
               <div className="p-3">
                 <div className="text-[11px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
-                  {categoryName(categorySlug)}
+                  {previewCategory?.name ?? ""}
                 </div>
                 <div className="my-0.5 text-sm font-bold text-ink">
                   {name || "Nama Produk"}
@@ -486,10 +539,11 @@ export function ProductEditor({
         <button
           type="button"
           onClick={save}
-          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-bold text-white hover:bg-brand-hover"
+          disabled={pending}
+          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           <Check className="h-[18px] w-[18px]" />
-          Simpan Produk
+          {pending ? "Menyimpan…" : "Simpan Produk"}
         </button>
       </div>
     </div>

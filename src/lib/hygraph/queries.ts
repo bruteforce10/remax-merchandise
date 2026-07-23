@@ -83,6 +83,50 @@ export const PRODUCTS_BY_CATEGORY_QUERY = gql`
   }
 `;
 
+// ── Admin products (DRAFT stage — includes unpublished) ───────────────────────
+export const ADMIN_PRODUCT_FIELDS = gql`
+  fragment AdminProductFields on Product {
+    sku
+    slug
+    name
+    shortDescription
+    description
+    price
+    stock
+    sizes
+    colors
+    material
+    branding
+    customVariants
+    seoTitle
+    seoDescription
+    keywords
+    badge
+    publishStatus
+    category {
+      slug
+    }
+  }
+`;
+
+export const ADMIN_PRODUCTS_QUERY = gql`
+  ${ADMIN_PRODUCT_FIELDS}
+  query AdminProducts {
+    products(first: 500, orderBy: createdAt_DESC, stage: DRAFT) {
+      ...AdminProductFields
+    }
+  }
+`;
+
+export const ADMIN_PRODUCT_BY_SKU_QUERY = gql`
+  ${ADMIN_PRODUCT_FIELDS}
+  query AdminProductBySku($sku: String!) {
+    products(where: { sku: $sku }, stage: DRAFT, first: 1) {
+      ...AdminProductFields
+    }
+  }
+`;
+
 // ── Banners ───────────────────────────────────────────────────────────────────
 export const BANNERS_QUERY = gql`
   query Banners {

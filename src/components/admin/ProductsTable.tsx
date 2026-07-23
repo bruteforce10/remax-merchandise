@@ -20,6 +20,11 @@ import Link from "next/link";
 import * as React from "react";
 import { toast } from "sonner";
 
+import {
+  createProduct,
+  deleteProduct,
+  quickUpdateProduct,
+} from "@/actions/products";
 import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Drawer } from "@/components/ui/Drawer";
@@ -51,6 +56,8 @@ export function ProductsTable({
   const [loading, setLoading] = React.useState(true);
   const [deleteSku, setDeleteSku] = React.useState<string | null>(null);
   const [editSku, setEditSku] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
 
   React.useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 400);
@@ -105,7 +112,7 @@ export function ProductsTable({
     });
   }
 
-  function duplicate(p: AdminProduct): void {
+  async function duplicate(p: AdminProduct): Promise<void> {
     const copy: AdminProduct = {
       ...p,
       sku: `${p.sku}-C${Date.now().toString().slice(-4)}`,
@@ -114,6 +121,22 @@ export function ProductsTable({
       views: 0,
       waClicks: 0,
     };
+    setBusy(true);
+    const res = await createProduct({
+      name: copy.name,
+      slug: `${copy.sku.toLowerCase()}`,
+      sku: copy.sku,
+      categorySlug: copy.categorySlug,
+      shortDescription: copy.short,
+      price: copy.price,
+      stock: copy.stock,
+      status: "draft",
+    });
+    setBusy(false);
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
     setItems((list) => {
       const idx = list.findIndex((x) => x.sku === p.sku);
       const next = [...list];
@@ -123,34 +146,91 @@ export function ProductsTable({
     toast.success(`${p.name} diduplikat`);
   }
 
-  function confirmDelete(): void {
+  async function confirmDelete(): Promise<void> {
     if (!deleteSku) return;
     const target = deleteSku;
+    setDeleting(true);
+    const res = await deleteProduct(target);
+    setDeleting(false);
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
     setItems((list) => list.filter((p) => p.sku !== target));
     setSelected((s) => {
       const next = { ...s };
       delete next[target];
       return next;
     });
-    toast.success("Produk dihapus");
+    toast.success(res.message);
     setDeleteSku(null);
   }
 
-  function bulkDelete(): void {
-    setItems((list) => list.filter((p) => !selected[p.sku]));
-    toast.success(`${selectionCount} produk dihapus`);
-    setSelected({});
-  }
-  function bulkStatus(status: ProductStatus): void {
-    setItems((list) => list.map((p) => (selected[p.sku] ? { ...p, status } : p)));
-    toast.success(status === "published" ? "Produk dipublikaslikan" : "Produk disembunyikan");
-    setSelected({});
+  async function bulkDelete(): Promise<void> {
+    const skus = items.filter((p) => selected[p.sku]).map((p) => p.sku);
+    setBusy(true);
+    const results = await Promise.all(skus.map((sku) => deleteProduct(sku)));
+    setBusy(false);
+    const deleted = skus.filter((_, i) => results[i].success);
+    if (deleted.length > 0) {
+      setItems((list) => list.filter((p) => !deleted.includes(p.sku)));
+      setSelected({});
+      toast.success(`${deleted.length} produk dihapus`);
+    }
+    const failed = results.find((r) => !r.success);
+    if (failed) toast.error(failed.message);
   }
 
-  function saveEdit(patch: Partial<AdminProduct> & { sku: string }): void {
+  async function bulkStatus(status: ProductStatus): Promise<void> {
+    const targets = items.filter((p) => selected[p.sku]);
+    setBusy(true);
+    const results = await Promise.all(
+      targets.map((p) =>
+        quickUpdateProduct(p.sku, {
+          name: p.name,
+          price: p.price,
+          stock: p.stock,
+          categorySlug: p.categorySlug,
+          status,
+        }),
+      ),
+    );
+    setBusy(false);
+    const okSkus = targets.filter((_, i) => results[i].success).map((p) => p.sku);
+    if (okSkus.length > 0) {
+      setItems((list) =>
+        list.map((p) => (okSkus.includes(p.sku) ? { ...p, status } : p)),
+      );
+      setSelected({});
+      toast.success(
+        status === "published" ? "Produk dipublikasikan" : "Produk disembunyikan",
+      );
+    }
+    const failed = results.find((r) => !r.success);
+    if (failed) toast.error(failed.message);
+  }
+
+  async function saveEdit(
+    patch: Pick<
+      AdminProduct,
+      "sku" | "name" | "price" | "stock" | "categorySlug" | "status"
+    >,
+  ): Promise<boolean> {
+    const res = await quickUpdateProduct(patch.sku, {
+      name: patch.name,
+      price: patch.price,
+      stock: patch.stock,
+      categorySlug: patch.categorySlug,
+      status: patch.status,
+    });
+    if (!res.success) {
+      toast.error(res.message);
+      return false;
+    }
     setItems((list) => list.map((p) => (p.sku === patch.sku ? { ...p, ...patch } : p)));
-    toast.success("Perubahan disimpan");
+    toast.success(res.message);
     setEditSku(null);
+    return true;
   }
 
   const deleteTarget = items.find((p) => p.sku === deleteSku) ?? null;
@@ -229,10 +309,10 @@ export function ProductsTable({
               {selectionCount} dipilih
             </span>
             <div className="ml-auto flex flex-wrap gap-2">
-              <BulkBtn icon={CheckCircle2} label="Publish" tone="success" onClick={() => bulkStatus("published")} />
-              <BulkBtn icon={EyeOff} label="Unpublish" onClick={() => bulkStatus("draft")} />
+              <BulkBtn icon={CheckCircle2} label="Publish" tone="success" disabled={busy} onClick={() => bulkStatus("published")} />
+              <BulkBtn icon={EyeOff} label="Unpublish" disabled={busy} onClick={() => bulkStatus("draft")} />
               <BulkBtn icon={Download} label="Export" onClick={() => toast.success("Export dimulai")} />
-              <BulkBtn icon={Trash2} label="Hapus" danger onClick={bulkDelete} />
+              <BulkBtn icon={Trash2} label="Hapus" danger disabled={busy} onClick={bulkDelete} />
             </div>
           </div>
         )}
@@ -408,10 +488,11 @@ export function ProductsTable({
           <button
             type="button"
             onClick={confirmDelete}
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95"
+            disabled={deleting}
+            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95 disabled:opacity-60"
           >
             <Trash2 className="h-[17px] w-[17px]" />
-            Hapus
+            {deleting ? "Menghapus…" : "Hapus"}
           </button>
         </div>
       </Modal>
@@ -495,19 +576,22 @@ function BulkBtn({
   onClick,
   tone,
   danger,
+  disabled,
 }: {
   icon: typeof Pencil;
   label: string;
   onClick: () => void;
   tone?: "success";
   danger?: boolean;
+  disabled?: boolean;
 }): React.JSX.Element {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border bg-white px-3 text-[13px] font-semibold",
+        "inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border bg-white px-3 text-[13px] font-semibold disabled:opacity-50",
         danger ? "border-[#F8D2D7] text-danger" : "border-admin-border text-gray-700 hover:bg-gray-50",
       )}
     >
@@ -567,7 +651,12 @@ function QuickEditForm({
 }: {
   product: AdminProduct;
   onClose: () => void;
-  onSave: (patch: Partial<AdminProduct> & { sku: string }) => void;
+  onSave: (
+    patch: Pick<
+      AdminProduct,
+      "sku" | "name" | "price" | "stock" | "categorySlug" | "status"
+    >,
+  ) => Promise<boolean>;
 }): React.JSX.Element {
   const [name, setName] = React.useState(product.name);
   const [price, setPrice] = React.useState(String(product.price));
@@ -576,6 +665,7 @@ function QuickEditForm({
   );
   const [categorySlug, setCategorySlug] = React.useState(product.categorySlug);
   const [status, setStatus] = React.useState<ProductStatus>(product.status);
+  const [pending, setPending] = React.useState(false);
 
   const field =
     "h-[46px] rounded-btn border border-admin-border bg-admin-bg px-3.5 text-[14.5px] outline-none focus:border-brand focus:bg-white";
@@ -674,19 +764,22 @@ function QuickEditForm({
         </button>
         <button
           type="button"
-          onClick={() =>
-            onSave({
+          disabled={pending}
+          onClick={async () => {
+            setPending(true);
+            const ok = await onSave({
               sku: product.sku,
               name,
               price: parseInt(price, 10) || product.price,
               stock: stock === "" ? null : parseInt(stock, 10) || 0,
               categorySlug,
               status,
-            })
-          }
-          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover"
+            });
+            if (!ok) setPending(false);
+          }}
+          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
-          Simpan
+          {pending ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
     </>
