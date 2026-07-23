@@ -17,6 +17,8 @@ interface ImageUploadProps {
   maxSizeMb?: number;
   /** Helper line under the dropzone. */
   hint?: string;
+  /** Notifies the parent while an upload is in flight so it can lock its form. */
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 export function ImageUpload({
@@ -25,10 +27,16 @@ export function ImageUpload({
   max = 8,
   maxSizeMb = 10,
   hint = `PNG, JPG, WEBP hingga ${maxSizeMb}MB`,
+  onUploadingChange,
 }: ImageUploadProps): React.JSX.Element {
   const [uploading, setUploading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const full = value.length >= max;
+
+  function setUploadingState(next: boolean): void {
+    setUploading(next);
+    onUploadingChange?.(next);
+  }
 
   async function handleFiles(files: FileList | null): Promise<void> {
     if (!files || files.length === 0) return;
@@ -39,25 +47,28 @@ export function ImageUpload({
     }
     const selected = Array.from(files).slice(0, remaining);
     const maxBytes = maxSizeMb * 1024 * 1024;
-    setUploading(true);
+    setUploadingState(true);
     const uploaded: AssetImage[] = [];
-    for (const file of selected) {
-      if (file.size > maxBytes) {
-        toast.error(`"${file.name}" melebihi ${maxSizeMb}MB`);
-        continue;
+    try {
+      for (const file of selected) {
+        if (file.size > maxBytes) {
+          toast.error(`"${file.name}" melebihi ${maxSizeMb}MB`);
+          continue;
+        }
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("maxBytes", String(maxBytes));
+        const res = await uploadAsset(fd);
+        if (res.success && res.data) {
+          uploaded.push(res.data);
+        } else {
+          toast.error(res.message);
+        }
       }
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("maxBytes", String(maxBytes));
-      const res = await uploadAsset(fd);
-      if (res.success && res.data) {
-        uploaded.push(res.data);
-      } else {
-        toast.error(res.message);
-      }
+    } finally {
+      setUploadingState(false);
+      if (inputRef.current) inputRef.current.value = "";
     }
-    setUploading(false);
-    if (inputRef.current) inputRef.current.value = "";
     if (uploaded.length > 0) {
       onChange([...value, ...uploaded]);
       toast.success(`${uploaded.length} gambar terunggah`);

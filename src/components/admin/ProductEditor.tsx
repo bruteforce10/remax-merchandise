@@ -82,6 +82,7 @@ export function ProductEditor({
     product?.images ?? [],
   );
   const [pending, setPending] = React.useState(false);
+  const [uploading, setUploading] = React.useState(false);
 
   const slug = product?.slug ?? (name ? slugify(name) : "");
   const previewCategory = categories.find((c) => c.slug === categorySlug);
@@ -126,6 +127,10 @@ export function ProductEditor({
   }
 
   async function save(): Promise<void> {
+    if (uploading) {
+      toast.error("Tunggu gambar selesai diunggah");
+      return;
+    }
     if (!name.trim()) {
       toast.error("Nama produk wajib diisi");
       return;
@@ -460,6 +465,7 @@ export function ProductEditor({
             <ImageUpload
               value={images}
               onChange={setImages}
+              onUploadingChange={setUploading}
               max={8}
               hint="PNG, JPG, WEBP hingga 10MB · gambar pertama jadi Utama"
             />
@@ -587,11 +593,11 @@ export function ProductEditor({
         <button
           type="button"
           onClick={save}
-          disabled={pending}
+          disabled={pending || uploading}
           className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           <Check className="h-[18px] w-[18px]" />
-          {pending ? "Menyimpan…" : "Simpan Produk"}
+          {uploading ? "Mengunggah gambar…" : pending ? "Menyimpan…" : "Simpan Produk"}
         </button>
       </div>
     </div>

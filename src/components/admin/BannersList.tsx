@@ -129,7 +129,7 @@ export function BannersList({
         <p className="text-[13.5px] leading-relaxed text-gray-600">
           <strong className="font-bold text-ink">Ukuran gambar wajib 1440 × 480 px.</strong>{" "}
           Gunakan resolusi dan rasio ini agar banner tampil tajam serta tidak terpotong di
-          slider halaman utama. Format JPG, PNG, atau WebP — maksimal 2 MB.
+          slider halaman utama. Format JPG, PNG, atau WebP — maksimal 5 MB.
         </p>
       </div>
 
@@ -289,6 +289,7 @@ function BannerForm({
       : [],
   );
   const [pending, setPending] = React.useState(false);
+  const [uploading, setUploading] = React.useState(false);
 
   return (
     <div>
@@ -318,6 +319,7 @@ function BannerForm({
           <ImageUpload
             value={image}
             onChange={setImage}
+            onUploadingChange={setUploading}
             max={1}
             maxSizeMb={5}
             hint="1440 × 480 px · PNG, JPG, atau WEBP hingga 5MB"
@@ -364,8 +366,12 @@ function BannerForm({
         </button>
         <button
           type="button"
-          disabled={pending}
+          disabled={pending || uploading}
           onClick={async () => {
+            if (uploading) {
+              toast.error("Tunggu gambar selesai diunggah");
+              return;
+            }
             if (!alt.trim()) {
               toast.error("Alt gambar wajib diisi");
               return;
@@ -386,7 +392,7 @@ function BannerForm({
           }}
           className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
-          {pending ? "Menyimpan…" : "Simpan"}
+          {uploading ? "Mengunggah gambar…" : pending ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
     </div>
