@@ -16,6 +16,7 @@ import {
 import * as React from "react";
 import { toast } from "sonner";
 
+import { createBanner, deleteBanner, updateBanner } from "@/actions/banners";
 import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,7 @@ export function BannersList({
 }): React.JSX.Element {
   const [items, setItems] = React.useState<AdminBanner[]>(initial);
   const [deleteId, setDeleteId] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
   const [editing, setEditing] = React.useState<AdminBanner | "new" | null>(null);
 
   function move(index: number, dir: -1 | 1): void {
@@ -48,25 +50,52 @@ export function BannersList({
     });
   }
 
-  function remove(): void {
+  async function remove(): Promise<void> {
     if (!deleteId) return;
-    setItems((list) => list.filter((b) => b.id !== deleteId).map((b, i) => ({ ...b, order: i + 1 })));
-    toast.success("Banner dihapus");
+    setDeleting(true);
+    const res = await deleteBanner(deleteId);
+    setDeleting(false);
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
+    setItems((list) =>
+      list
+        .filter((b) => b.id !== deleteId)
+        .map((b, i) => ({ ...b, order: i + 1 })),
+    );
+    toast.success(res.message);
     setDeleteId(null);
   }
 
-  function save(data: AdminBanner): void {
-    setItems((list) => {
-      const idx = list.findIndex((b) => b.id === data.id);
-      if (idx >= 0) {
-        const next = [...list];
-        next[idx] = data;
-        return next;
+  async function save(data: AdminBanner): Promise<boolean> {
+    const input = {
+      alt: data.alt,
+      link: data.link,
+      order: data.order,
+      status: data.status,
+    };
+    if (editing === "new") {
+      const res = await createBanner(input);
+      if (!res.success || !res.data) {
+        toast.error(res.message);
+        return false;
       }
-      return [...list, { ...data, order: list.length + 1 }];
-    });
-    toast.success(editing === "new" ? "Banner ditambahkan" : "Banner diperbarui");
+      const created: AdminBanner = { ...data, id: res.data.id, date: res.data.date };
+      setItems((list) => [...list, created]);
+      toast.success(res.message);
+      setEditing(null);
+      return true;
+    }
+    const res = await updateBanner(data.id, input);
+    if (!res.success) {
+      toast.error(res.message);
+      return false;
+    }
+    setItems((list) => list.map((b) => (b.id === data.id ? data : b)));
+    toast.success(res.message);
     setEditing(null);
+    return true;
   }
 
   const deleteTarget = items.find((b) => b.id === deleteId) ?? null;
@@ -178,9 +207,10 @@ export function BannersList({
           <button
             type="button"
             onClick={remove}
-            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95"
+            disabled={deleting}
+            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95 disabled:opacity-60"
           >
-            Hapus
+            {deleting ? "Menghapus…" : "Hapus"}
           </button>
         </div>
       </Modal>
@@ -235,11 +265,12 @@ function BannerForm({
   initial: AdminBanner | null;
   index: number;
   onClose: () => void;
-  onSave: (b: AdminBanner) => void;
+  onSave: (b: AdminBanner) => Promise<boolean>;
 }): React.JSX.Element {
   const [alt, setAlt] = React.useState(initial?.alt ?? "");
   const [link, setLink] = React.useState(initial?.link ?? "/search");
   const [status, setStatus] = React.useState<ProductStatus>(initial?.status ?? "draft");
+  const [pending, setPending] = React.useState(false);
 
   return (
     <div>
@@ -305,12 +336,14 @@ function BannerForm({
         </button>
         <button
           type="button"
-          onClick={() => {
+          disabled={pending}
+          onClick={async () => {
             if (!alt.trim()) {
               toast.error("Alt gambar wajib diisi");
               return;
             }
-            onSave({
+            setPending(true);
+            const ok = await onSave({
               id: initial?.id ?? `ab${Date.now()}`,
               order: initial?.order ?? index + 1,
               alt: alt.trim(),
@@ -319,10 +352,11 @@ function BannerForm({
               date: initial?.date ?? new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
               gradient: initial?.gradient ?? GRADIENTS[index % GRADIENTS.length],
             });
+            if (!ok) setPending(false);
           }}
-          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover"
+          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
-          Simpan
+          {pending ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
     </div>

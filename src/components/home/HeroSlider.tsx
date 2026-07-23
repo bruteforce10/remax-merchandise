@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -29,7 +31,27 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
         className="relative flex min-h-[400px] items-center overflow-hidden rounded-[24px] text-white sm:min-h-[440px]"
         style={{ background: current.gradient }}
       >
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.05)_0,rgba(255,255,255,0.05)_22px,transparent_22px,transparent_44px)] opacity-50" />
+        {current.imageUrl ? (
+          <Image
+            key={current.id}
+            src={current.imageUrl}
+            alt={current.alt}
+            fill
+            priority
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="animate-[rmx-fade_.45s_ease] object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.05)_0,rgba(255,255,255,0.05)_22px,transparent_22px,transparent_44px)] opacity-50" />
+        )}
+
+        {current.link && (
+          <Link
+            href={current.link}
+            aria-label={current.alt || "Buka banner"}
+            className="absolute inset-0 z-10"
+          />
+        )}
 
         <div key={index} className="relative w-full animate-[rmx-fade_.45s_ease]" />
 
@@ -39,7 +61,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
               type="button"
               aria-label="Banner sebelumnya"
               onClick={() => go(index - 1)}
-              className="absolute top-1/2 left-4 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
+              className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
             >
               <ChevronLeft className="h-[22px] w-[22px]" />
             </button>
@@ -47,11 +69,11 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
               type="button"
               aria-label="Banner berikutnya"
               onClick={() => go(index + 1)}
-              className="absolute top-1/2 right-4 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
+              className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
             >
               <ChevronRight className="h-[22px] w-[22px]" />
             </button>
-            <div className="absolute bottom-7 left-8 flex gap-2 sm:left-12">
+            <div className="absolute bottom-7 left-8 z-20 flex gap-2 sm:left-12">
               {banners.map((b, i) => (
                 <button
                   key={b.id}

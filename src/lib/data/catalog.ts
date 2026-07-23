@@ -1,5 +1,4 @@
 import { slugify } from "@/lib/format";
-import type { Banner } from "@/types/banner";
 import type { Category } from "@/types/category";
 import type { Product, ProductBadge } from "@/types/product";
 
@@ -272,40 +271,6 @@ export const PRODUCT_MAP: Record<string, Product> = Object.fromEntries(
 export const PRODUCT_SLUG_MAP: Record<string, Product> = Object.fromEntries(
   PRODUCTS.map((p) => [p.slug, p]),
 );
-
-// ── Banners (homepage hero slides) ───────────────────────────────────────────
-export const BANNERS: Banner[] = [
-  {
-    id: "b1",
-    kicker: "Corporate Merchandise",
-    title: "Premium Merchandise untuk RE/MAX Indonesia",
-    subtitle:
-      "Corporate merchandise, event kit, office supplies, dan promotional gifts dalam satu katalog.",
-    gradient: "linear-gradient(120deg,#26282e 0%,#3c3f47 55%,#5a5e69 100%)",
-    order: 1,
-    status: "published",
-  },
-  {
-    id: "b2",
-    kicker: "Events & Seragam",
-    title: "Seragam & Event Kit Siap Custom",
-    subtitle:
-      "Dari polo & jaket hingga tumbler, payung, dan goodie bag — lengkap dengan brand Anda.",
-    gradient: "linear-gradient(120deg,#1c1d21 0%,#33353c 60%,#4c4f57 100%)",
-    order: 2,
-    status: "published",
-  },
-  {
-    id: "b3",
-    kicker: "Promotional Gifts",
-    title: "Corporate Gift yang Berkesan",
-    subtitle:
-      "Produksi cepat, kualitas premium, pengiriman ke seluruh Indonesia.",
-    gradient: "linear-gradient(120deg,#2a2528 0%,#454045 55%,#63606a 100%)",
-    order: 3,
-    status: "published",
-  },
-];
 
 // ── UI config ────────────────────────────────────────────────────────────────
 export const POPULAR_CATEGORY_SLUGS: string[] = [

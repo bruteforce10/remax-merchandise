@@ -82,3 +82,39 @@ export const PRODUCTS_BY_CATEGORY_QUERY = gql`
     }
   }
 `;
+
+// ── Banners ───────────────────────────────────────────────────────────────────
+export const BANNERS_QUERY = gql`
+  query Banners {
+    banners(
+      first: 50
+      where: { publishStatus: Published }
+      orderBy: order_ASC
+    ) {
+      id
+      alt
+      link
+      order
+      image {
+        url
+      }
+    }
+  }
+`;
+
+/** Admin list — reads the DRAFT stage so unpublished banners are visible. */
+export const ADMIN_BANNERS_QUERY = gql`
+  query AdminBanners {
+    banners(first: 100, orderBy: order_ASC, stage: DRAFT) {
+      id
+      alt
+      link
+      order
+      publishStatus
+      createdAt
+      image {
+        url
+      }
+    }
+  }
+`;
