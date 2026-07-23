@@ -48,6 +48,14 @@ const PUBLISH_ASSET = gql`
   }
 `;
 
+const DELETE_ASSET = gql`
+  mutation DeleteAsset($id: ID!) {
+    deleteAsset(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 interface RequestPostData {
   url: string;
   date: string;
@@ -159,6 +167,28 @@ export async function uploadAsset(
       success: false,
       data: null,
       message: hygraphErrorMessage(error, "Gagal mengunggah gambar"),
+    };
+  }
+}
+
+/**
+ * Permanently delete a Hygraph asset by id. Called when an admin removes an
+ * uploaded image from a product/banner so orphaned assets don't linger in
+ * Hygraph. Deleting an optional relation's asset simply drops the reference.
+ */
+export async function deleteAsset(id: string): Promise<ActionResult> {
+  if (!id) {
+    return { success: false, data: null, message: "ID gambar tidak valid" };
+  }
+  try {
+    await hygraphWrite().request(DELETE_ASSET, { id });
+    return { success: true, data: null, message: "Gambar dihapus" };
+  } catch (error) {
+    console.error("deleteAsset failed:", error);
+    return {
+      success: false,
+      data: null,
+      message: hygraphErrorMessage(error, "Gagal menghapus gambar"),
     };
   }
 }

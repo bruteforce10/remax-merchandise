@@ -5,7 +5,8 @@ import Image from "next/image";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { uploadAsset } from "@/actions/assets";
+import { deleteAsset, uploadAsset } from "@/actions/assets";
+import { cn } from "@/lib/utils";
 import type { AssetImage } from "@/types/admin";
 
 interface ImageUploadProps {
@@ -30,6 +31,9 @@ export function ImageUpload({
   onUploadingChange,
 }: ImageUploadProps): React.JSX.Element {
   const [uploading, setUploading] = React.useState(false);
+  const [deletingIds, setDeletingIds] = React.useState<Set<string>>(
+    () => new Set(),
+  );
   const inputRef = React.useRef<HTMLInputElement>(null);
   const full = value.length >= max;
 
@@ -75,8 +79,24 @@ export function ImageUpload({
     }
   }
 
-  function removeImage(id: string): void {
-    onChange(value.filter((v) => v.id !== id));
+  async function removeImage(id: string): Promise<void> {
+    // Purge the asset from Hygraph so removed uploads don't linger. Lock the
+    // parent form (same signal as upload) so it can't be saved mid-delete.
+    setDeletingIds((s) => new Set(s).add(id));
+    onUploadingChange?.(true);
+    const res = await deleteAsset(id);
+    onUploadingChange?.(false);
+    setDeletingIds((s) => {
+      const next = new Set(s);
+      next.delete(id);
+      return next;
+    });
+    if (res.success) {
+      onChange(value.filter((v) => v.id !== id));
+      toast.success("Gambar dihapus");
+    } else {
+      toast.error(res.message);
+    }
   }
 
   return (
@@ -113,33 +133,47 @@ export function ImageUpload({
 
       {value.length > 0 && (
         <div className="mt-3.5 grid grid-cols-4 gap-2.5">
-          {value.map((img, i) => (
-            <div
-              key={img.id}
-              className="group relative aspect-square overflow-hidden rounded-[11px] border border-admin-border bg-gray-50"
-            >
-              <Image
-                src={img.url}
-                alt={`Gambar ${i + 1}`}
-                fill
-                sizes="120px"
-                className="object-cover"
-              />
-              {i === 0 && max > 1 && (
-                <span className="absolute top-1.5 left-1.5 rounded-pill bg-brand px-2 py-0.5 text-[10px] font-bold text-white">
-                  Utama
-                </span>
-              )}
-              <button
-                type="button"
-                aria-label="Hapus gambar"
-                onClick={() => removeImage(img.id)}
-                className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition-opacity group-hover:opacity-100"
+          {value.map((img, i) => {
+            const isDeleting = deletingIds.has(img.id);
+            return (
+              <div
+                key={img.id}
+                className="group relative aspect-square overflow-hidden rounded-[11px] border border-admin-border bg-gray-50"
               >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ))}
+                <Image
+                  src={img.url}
+                  alt={`Gambar ${i + 1}`}
+                  fill
+                  sizes="120px"
+                  className="object-cover"
+                />
+                {i === 0 && max > 1 && (
+                  <span className="absolute top-1.5 left-1.5 rounded-pill bg-brand px-2 py-0.5 text-[10px] font-bold text-white">
+                    Utama
+                  </span>
+                )}
+                <button
+                  type="button"
+                  aria-label="Hapus gambar"
+                  onClick={() => removeImage(img.id)}
+                  disabled={isDeleting}
+                  className={cn(
+                    "absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/55 text-white transition-opacity",
+                    isDeleting ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                  )}
+                >
+                  {isDeleting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <X className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                {isDeleting && (
+                  <div className="absolute inset-0 bg-white/60" />
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
