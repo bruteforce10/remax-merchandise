@@ -8,7 +8,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import type { Banner } from "@/types/banner";
 
-export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Element {
+export function HeroSlider({
+  banners,
+}: {
+  banners: Banner[];
+}): React.JSX.Element {
   const [index, setIndex] = React.useState(0);
   const count = banners.length;
 
@@ -27,10 +31,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
 
   return (
     <section className="mx-auto max-w-[1280px] px-6 pt-7 pb-2">
-      <div
-        className="relative flex min-h-[400px] items-center overflow-hidden rounded-[24px] text-white sm:min-h-[440px]"
-        style={{ background: current.gradient }}
-      >
+      <div className="relative flex min-h-[400px] items-center overflow-hidden rounded-[24px] border border-gray-100 bg-white sm:min-h-[440px]">
         {current.imageUrl ? (
           <Image
             key={current.id}
@@ -42,7 +43,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
             className="animate-[rmx-fade_.45s_ease] object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.05)_0,rgba(255,255,255,0.05)_22px,transparent_22px,transparent_44px)] opacity-50" />
+          <div className="absolute inset-0 bg-gray-50 bg-[repeating-linear-gradient(45deg,rgba(0,0,0,0.035)_0,rgba(0,0,0,0.035)_22px,transparent_22px,transparent_44px)]" />
         )}
 
         {current.link && (
@@ -53,7 +54,10 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
           />
         )}
 
-        <div key={index} className="relative w-full animate-[rmx-fade_.45s_ease]" />
+        <div
+          key={index}
+          className="relative w-full animate-[rmx-fade_.45s_ease]"
+        />
 
         {count > 1 && (
           <>
@@ -61,7 +65,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
               type="button"
               aria-label="Banner sebelumnya"
               onClick={() => go(index - 1)}
-              className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
+              className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white transition-colors hover:bg-black/35"
             >
               <ChevronLeft className="h-[22px] w-[22px]" />
             </button>
@@ -69,7 +73,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
               type="button"
               aria-label="Banner berikutnya"
               onClick={() => go(index + 1)}
-              className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
+              className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/20 text-white transition-colors hover:bg-black/35"
             >
               <ChevronRight className="h-[22px] w-[22px]" />
             </button>
@@ -82,7 +86,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }): React.JSX.Elemen
                   onClick={() => go(i)}
                   className={cn(
                     "h-1.5 rounded-pill transition-all",
-                    i === index ? "w-7 bg-brand" : "w-2 bg-white/40",
+                    i === index ? "w-7 bg-brand" : "w-2 bg-black/20",
                   )}
                 />
               ))}
