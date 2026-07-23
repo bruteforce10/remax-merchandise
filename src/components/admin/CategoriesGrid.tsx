@@ -4,6 +4,11 @@ import { Pencil, Plus, Search, Star, Trash2, TriangleAlert, X } from "lucide-rea
 import * as React from "react";
 import { toast } from "sonner";
 
+import {
+  createCategory,
+  deleteCategory,
+  updateCategory,
+} from "@/actions/categories";
 import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { CategoryIcon } from "@/components/ui/Icon";
@@ -45,6 +50,7 @@ export function CategoriesGrid({
   const [items, setItems] = React.useState<AdminCategory[]>(initial);
   const [search, setSearch] = React.useState("");
   const [deleteSlug, setDeleteSlug] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
   const [editing, setEditing] = React.useState<AdminCategory | "new" | null>(null);
 
   const q = search.trim().toLowerCase();
@@ -54,14 +60,39 @@ export function CategoriesGrid({
 
   const deleteTarget = items.find((c) => c.slug === deleteSlug) ?? null;
 
-  function remove(): void {
+  async function remove(): Promise<void> {
     if (!deleteSlug) return;
+    setDeleting(true);
+    const res = await deleteCategory(deleteSlug);
+    setDeleting(false);
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
     setItems((list) => list.filter((c) => c.slug !== deleteSlug));
-    toast.success("Kategori dihapus");
+    toast.success(res.message);
     setDeleteSlug(null);
   }
 
-  function saveCategory(data: AdminCategory): void {
+  async function saveCategory(data: AdminCategory): Promise<boolean> {
+    const input = {
+      name: data.name,
+      slug: data.slug,
+      icon: data.icon,
+      description: data.description,
+      material: data.material,
+      branding: data.branding,
+      colors: data.colors,
+      sizes: data.sizes,
+    };
+    const isNew = editing === "new";
+    const res = isNew
+      ? await createCategory(input)
+      : await updateCategory(data.slug, input);
+    if (!res.success) {
+      toast.error(res.message);
+      return false;
+    }
     setItems((list) => {
       const idx = list.findIndex((c) => c.slug === data.slug);
       if (idx >= 0) {
@@ -71,8 +102,9 @@ export function CategoriesGrid({
       }
       return [...list, data];
     });
-    toast.success(editing === "new" ? "Kategori ditambahkan" : "Kategori diperbarui");
+    toast.success(res.message);
     setEditing(null);
+    return true;
   }
 
   return (
@@ -164,9 +196,10 @@ export function CategoriesGrid({
           <button
             type="button"
             onClick={remove}
-            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95"
+            disabled={deleting}
+            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95 disabled:opacity-60"
           >
-            Hapus
+            {deleting ? "Menghapus…" : "Hapus"}
           </button>
         </div>
       </Modal>
@@ -222,13 +255,14 @@ function CategoryForm({
   initial: AdminCategory | null;
   nextOrder: number;
   onClose: () => void;
-  onSave: (c: AdminCategory) => void;
+  onSave: (c: AdminCategory) => Promise<boolean>;
 }): React.JSX.Element {
   const [name, setName] = React.useState(initial?.name ?? "");
   const [icon, setIcon] = React.useState(initial?.icon ?? "shirt");
   const [description, setDescription] = React.useState(initial?.description ?? "");
   const [featured, setFeatured] = React.useState(initial?.featured ?? false);
   const [status, setStatus] = React.useState<ProductStatus>(initial?.status ?? "published");
+  const [pending, setPending] = React.useState(false);
 
   const slug = initial?.slug ?? (name ? slugify(name) : "");
 
@@ -324,12 +358,14 @@ function CategoryForm({
         </button>
         <button
           type="button"
-          onClick={() => {
+          disabled={pending}
+          onClick={async () => {
             if (!name.trim()) {
               toast.error("Nama kategori wajib diisi");
               return;
             }
-            onSave({
+            setPending(true);
+            const ok = await onSave({
               slug: slug || slugify(name),
               name: name.trim(),
               icon,
@@ -343,10 +379,11 @@ function CategoryForm({
               count: initial?.count ?? 0,
               order: initial?.order ?? nextOrder,
             });
+            if (!ok) setPending(false);
           }}
-          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover"
+          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
-          Simpan
+          {pending ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default async function AdminCategoriesPage(): Promise<ReactNode> {
     count: counts[c.slug] ?? 0,
     order: i + 1,
     featured: FEATURED.includes(c.slug),
-    status: i % 5 === 3 ? "draft" : "published",
+    status: "published",
   }));
 
   return <CategoriesGrid initial={items} />;
