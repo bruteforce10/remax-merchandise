@@ -5,6 +5,7 @@ import {
   ArrowUp,
   Calendar,
   Image as ImageIcon,
+  Info,
   Link as LinkIcon,
   Pencil,
   Plus,
@@ -87,6 +88,17 @@ export function BannersList({
           <Plus className="h-[18px] w-[18px]" />
           Tambah Banner
         </button>
+      </div>
+
+      <div className="mb-5 flex items-start gap-3 rounded-card border border-info/25 bg-info-subtle px-4 py-3.5">
+        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-white text-info">
+          <Info className="h-[18px] w-[18px]" />
+        </span>
+        <p className="text-[13.5px] leading-relaxed text-gray-600">
+          <strong className="font-bold text-ink">Ukuran gambar wajib 1440 × 480 px.</strong>{" "}
+          Gunakan resolusi dan rasio ini agar banner tampil tajam serta tidak terpotong di
+          slider halaman utama. Format JPG, PNG, atau WebP — maksimal 2 MB.
+        </p>
       </div>
 
       <div className="flex flex-col gap-3.5">
@@ -245,6 +257,13 @@ function BannerForm({
         </button>
       </div>
       <div className="flex flex-col gap-3.5">
+        <div className="flex items-start gap-2.5 rounded-btn bg-info-subtle px-3 py-2.5 text-[12.5px] leading-relaxed text-gray-600">
+          <Info className="mt-px h-[15px] w-[15px] flex-none text-info" />
+          <span>
+            Unggah gambar berukuran <strong className="font-bold text-ink">1440 × 480 px</strong> agar sesuai
+            dengan slider halaman utama.
+          </span>
+        </div>
         <label className="flex flex-col gap-1.5">
           <span className="text-[13px] font-semibold text-gray-600">Alt Gambar</span>
           <input
