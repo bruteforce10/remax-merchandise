@@ -1,6 +1,7 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
@@ -20,12 +21,22 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-card border border-gray-200 bg-white shadow-card transition-[box-shadow,transform] duration-200 hover:-translate-y-[3px] hover:shadow-hover">
       <Link href={href} className="relative block">
-        <div className="flex aspect-square items-center justify-center bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee]">
-          <div className="flex h-[56%] w-[56%] items-center justify-center rounded-[14px] bg-[repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9_10px,#eeeef1_10px,#eeeef1_20px)] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.03)]">
-            <span className="px-2 text-center text-xs font-bold tracking-[0.12em] text-gray-300 uppercase">
-              {product.short}
-            </span>
-          </div>
+        <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee]">
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px"
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-[56%] w-[56%] items-center justify-center rounded-[14px] bg-[repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9_10px,#eeeef1_10px,#eeeef1_20px)] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.03)]">
+              <span className="px-2 text-center text-xs font-bold tracking-[0.12em] text-gray-300 uppercase">
+                {product.short}
+              </span>
+            </div>
+          )}
         </div>
         {product.badge && (
           <span className="absolute top-3 left-3">

@@ -13,6 +13,8 @@ export interface Product {
   /** Remaining stock in pcs. null = not tracked. */
   stock: number | null;
   badge: ProductBadge | null;
+  /** Primary image (Hygraph asset URL), or null when none is attached. */
+  imageUrl: string | null;
 }
 
 export type SortOption = "popular" | "new" | "price-asc" | "price-desc";

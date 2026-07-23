@@ -7,20 +7,25 @@ import {
   Package,
   SearchCheck,
   Trash2,
-  UploadCloud,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { createProduct, updateProduct } from "@/actions/products";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { COLOR_HEX, COLOR_PALETTE } from "@/lib/data/catalog";
 import { formatNumber, slugify } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { AdminProductDetail, ProductStatus } from "@/types/admin";
+import type {
+  AdminProductDetail,
+  AssetImage,
+  ProductStatus,
+} from "@/types/admin";
 import type { Category } from "@/types/category";
 
 const FIELD =
@@ -74,6 +79,9 @@ export function ProductEditor({
     product?.seoDescription ?? "",
   );
   const [keywords, setKeywords] = React.useState(product?.keywords ?? "");
+  const [images, setImages] = React.useState<AssetImage[]>(
+    product?.images ?? [],
+  );
   const [pending, setPending] = React.useState(false);
 
   const slug = product?.slug ?? (name ? slugify(name) : "");
@@ -133,6 +141,7 @@ export function ProductEditor({
         name: v.name,
         values: v.values,
       })),
+      imageIds: images.map((im) => im.id),
       seoTitle,
       seoDescription,
       keywords,
@@ -385,32 +394,12 @@ export function ProductEditor({
           {/* Images */}
           <section className={CARD}>
             <h3 className="mb-[18px] text-base font-extrabold text-ink">Gambar Produk</h3>
-            <div className="cursor-pointer rounded-[14px] border-2 border-dashed border-gray-200 bg-[#FAFBFC] px-6 py-8 text-center transition-colors hover:border-brand hover:bg-brand-subtle-2">
-              <div className="mx-auto mb-3 flex h-13 w-13 items-center justify-center rounded-[14px] border border-admin-border bg-white text-brand">
-                <UploadCloud className="h-6 w-6" />
-              </div>
-              <div className="text-[14.5px] font-bold text-ink">
-                Seret &amp; letakkan gambar di sini
-              </div>
-              <div className="mt-1 text-[13px] text-gray-400">
-                PNG, JPG, WEBP hingga 5MB · min. 1000×1000px
-              </div>
-            </div>
-            <div className="mt-3.5 grid grid-cols-4 gap-2.5">
-              {[0, 1, 2, 3].map((n) => (
-                <div
-                  key={n}
-                  className="relative flex aspect-square items-center justify-center rounded-[11px] border border-admin-border bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-300"
-                >
-                  <Package className="h-[22px] w-[22px]" />
-                  {n === 0 && (
-                    <span className="absolute top-1.5 left-1.5 rounded-pill bg-brand px-2 py-0.5 text-[10px] font-bold text-white">
-                      Utama
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+            <ImageUpload
+              value={images}
+              onChange={setImages}
+              max={8}
+              hint="PNG, JPG, WEBP hingga 10MB · gambar pertama jadi Utama"
+            />
           </section>
 
           {/* SEO */}
@@ -501,8 +490,16 @@ export function ProductEditor({
           <section className="rounded-card border border-admin-border bg-white p-5">
             <h3 className="mb-3 text-[15px] font-extrabold text-ink">Pratinjau</h3>
             <div className="overflow-hidden rounded-[13px] border border-admin-border">
-              <div className="flex aspect-square items-center justify-center bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-300">
-                {previewCategory ? (
+              <div className="relative flex aspect-square items-center justify-center bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-300">
+                {images[0] ? (
+                  <Image
+                    src={images[0].url}
+                    alt={name || "Pratinjau produk"}
+                    fill
+                    sizes="320px"
+                    className="object-cover"
+                  />
+                ) : previewCategory ? (
                   <CategoryIcon name={previewCategory.icon} className="h-9 w-9" />
                 ) : (
                   <Package className="h-9 w-9" />

@@ -45,6 +45,9 @@ export const PRODUCT_FIELDS = gql`
     category {
       slug
     }
+    images(first: 1) {
+      url
+    }
   }
 `;
 
@@ -106,6 +109,10 @@ export const ADMIN_PRODUCT_FIELDS = gql`
     category {
       slug
     }
+    images {
+      id
+      url
+    }
   }
 `;
 
@@ -157,6 +164,7 @@ export const ADMIN_BANNERS_QUERY = gql`
       publishStatus
       createdAt
       image {
+        id
         url
       }
     }

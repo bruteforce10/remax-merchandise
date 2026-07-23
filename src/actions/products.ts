@@ -29,6 +29,7 @@ const productSchema = z.object({
   customVariants: z
     .array(z.object({ name: z.string(), values: z.array(z.string()) }))
     .default([]),
+  imageIds: z.array(z.string()).default([]),
   seoTitle: z.string().default(""),
   seoDescription: z.string().default(""),
   keywords: z.string().default(""),
@@ -60,6 +61,7 @@ function toHygraphData(data: ProductData): Record<string, unknown> {
     material: data.material,
     branding: data.branding,
     customVariants: data.customVariants,
+    images: { set: data.imageIds.map((id) => ({ id })) },
     seoTitle: data.seoTitle,
     seoDescription: data.seoDescription,
     keywords: data.keywords,

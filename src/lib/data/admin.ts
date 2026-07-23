@@ -1,5 +1,4 @@
 import type {
-  AdminBanner,
   CountryStat,
   DeviceStat,
   KeywordStat,
@@ -24,13 +23,6 @@ export const LEADS: Lead[] = [
   { id: "l6", date: "19 Jul, 15:21", product: "Tote Bag Kanvas Blacu", qty: 150, session: "#f30a1b", country: "Indonesia", device: "Mobile", status: "completed" },
   { id: "l7", date: "19 Jul, 10:03", product: "Backpack Laptop Corporate", qty: 24, session: "#0a91cd", country: "Malaysia", device: "Desktop", status: "new" },
   { id: "l8", date: "18 Jul, 17:45", product: "Mug Keramik Custom", qty: 100, session: "#1b7fae", country: "Indonesia", device: "Mobile", status: "contacted" },
-];
-
-// ── Banners ──────────────────────────────────────────────────────────────────
-export const ADMIN_BANNERS: AdminBanner[] = [
-  { id: "ab1", order: 1, alt: "Banner premium merchandise RE/MAX", link: "/search", date: "01 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#26282e,#5a5e69)" },
-  { id: "ab2", order: 2, alt: "Banner seragam & event kit custom", link: "/categories/jacket", date: "05 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#1c1d21,#4c4f57)" },
-  { id: "ab3", order: 3, alt: "Banner promo corporate gift", link: "/contact", date: "12 Jul 2026", status: "draft", gradient: "linear-gradient(120deg,#2a2528,#63606a)" },
 ];
 
 // ── Media library ────────────────────────────────────────────────────────────

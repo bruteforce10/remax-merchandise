@@ -13,14 +13,16 @@ import {
   TriangleAlert,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { createBanner, deleteBanner, updateBanner } from "@/actions/banners";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { cn } from "@/lib/utils";
-import type { AdminBanner, ProductStatus } from "@/types/admin";
+import type { AdminBanner, AssetImage, ProductStatus } from "@/types/admin";
 
 const FIELD =
   "h-[46px] rounded-btn border border-admin-border bg-admin-bg px-3.5 text-[14.5px] outline-none focus:border-brand focus:bg-white";
@@ -74,6 +76,7 @@ export function BannersList({
       link: data.link,
       order: data.order,
       status: data.status,
+      imageId: data.imageId,
     };
     if (editing === "new") {
       const res = await createBanner(input);
@@ -158,11 +161,21 @@ export function BannersList({
               </button>
             </div>
             <div
-              className="relative flex h-24 w-[200px] flex-none items-center justify-center rounded-[12px] text-white/50"
+              className="relative flex h-24 w-[200px] flex-none items-center justify-center overflow-hidden rounded-[12px] text-white/50"
               style={{ background: b.gradient }}
             >
-              <ImageIcon className="h-[26px] w-[26px]" />
-              <span className="absolute right-2 bottom-1.5 rounded-md bg-black/40 px-1.5 py-0.5 text-[10px]">
+              {b.imageUrl ? (
+                <Image
+                  src={b.imageUrl}
+                  alt={b.alt}
+                  fill
+                  sizes="200px"
+                  className="object-cover"
+                />
+              ) : (
+                <ImageIcon className="h-[26px] w-[26px]" />
+              )}
+              <span className="absolute right-2 bottom-1.5 rounded-md bg-black/40 px-1.5 py-0.5 text-[10px] text-white">
                 1440×480
               </span>
             </div>
@@ -270,6 +283,11 @@ function BannerForm({
   const [alt, setAlt] = React.useState(initial?.alt ?? "");
   const [link, setLink] = React.useState(initial?.link ?? "/search");
   const [status, setStatus] = React.useState<ProductStatus>(initial?.status ?? "draft");
+  const [image, setImage] = React.useState<AssetImage[]>(
+    initial?.imageId && initial?.imageUrl
+      ? [{ id: initial.imageId, url: initial.imageUrl }]
+      : [],
+  );
   const [pending, setPending] = React.useState(false);
 
   return (
@@ -294,6 +312,15 @@ function BannerForm({
             Unggah gambar berukuran <strong className="font-bold text-ink">1440 × 480 px</strong> agar sesuai
             dengan slider halaman utama.
           </span>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[13px] font-semibold text-gray-600">Gambar Banner</span>
+          <ImageUpload
+            value={image}
+            onChange={setImage}
+            max={1}
+            hint="1440 × 480 px · PNG, JPG, atau WEBP hingga 10MB"
+          />
         </div>
         <label className="flex flex-col gap-1.5">
           <span className="text-[13px] font-semibold text-gray-600">Alt Gambar</span>
@@ -351,6 +378,8 @@ function BannerForm({
               status,
               date: initial?.date ?? new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
               gradient: initial?.gradient ?? GRADIENTS[index % GRADIENTS.length],
+              imageId: image[0]?.id ?? null,
+              imageUrl: image[0]?.url ?? null,
             });
             if (!ok) setPending(false);
           }}

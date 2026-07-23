@@ -16,6 +16,12 @@ export interface ProductCustomVariant {
   values: string[];
 }
 
+/** A published Hygraph asset reference (id + delivery URL). */
+export interface AssetImage {
+  id: string;
+  url: string;
+}
+
 /** Full product shape for the editor (edit mode) — all editable fields. */
 export interface AdminProductDetail extends AdminProduct {
   description: string;
@@ -24,6 +30,7 @@ export interface AdminProductDetail extends AdminProduct {
   material: string;
   branding: string;
   customVariants: ProductCustomVariant[];
+  images: AssetImage[];
   seoTitle: string;
   seoDescription: string;
   keywords: string;
@@ -46,6 +53,8 @@ export interface AdminBanner {
   date: string;
   status: ProductStatus;
   gradient: string;
+  imageId: string | null;
+  imageUrl: string | null;
 }
 
 export interface DashboardStats {

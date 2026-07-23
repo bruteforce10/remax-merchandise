@@ -43,6 +43,7 @@ export interface RawProduct {
   stock: number | null;
   badge: string | null;
   category: { slug: string } | null;
+  images: { url: string }[] | null;
 }
 
 export function mapCategory(c: RawCategory): Category {
@@ -77,6 +78,7 @@ export function mapProduct(p: RawProduct): Product {
     price: p.price ?? 0,
     stock: p.stock ?? null,
     badge: mapBadge(p.badge),
+    imageUrl: p.images?.[0]?.url ?? null,
   };
 }
 
@@ -87,7 +89,7 @@ export interface RawBanner {
   order: number | null;
   publishStatus?: string | null;
   createdAt?: string;
-  image: { url: string } | null;
+  image: { id: string; url: string } | null;
 }
 
 export function mapPublicBanner(b: RawBanner): Banner {
@@ -121,6 +123,7 @@ export interface RawAdminProduct {
   badge: string | null;
   publishStatus: string | null;
   category: { slug: string } | null;
+  images: { id: string; url: string }[] | null;
 }
 
 function parseCustomVariants(value: unknown): ProductCustomVariant[] {
@@ -147,6 +150,7 @@ export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
     price: p.price ?? 0,
     stock: p.stock ?? null,
     badge: mapBadge(p.badge),
+    imageUrl: p.images?.[0]?.url ?? null,
     status: p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
     views: 0,
     waClicks: 0,
@@ -162,6 +166,7 @@ export function mapAdminProductDetail(p: RawAdminProduct): AdminProductDetail {
     material: p.material ?? "",
     branding: p.branding ?? "",
     customVariants: parseCustomVariants(p.customVariants),
+    images: p.images ?? [],
     seoTitle: p.seoTitle ?? "",
     seoDescription: p.seoDescription ?? "",
     keywords: p.keywords ?? "",
@@ -187,5 +192,7 @@ export function mapAdminBanner(b: RawBanner): AdminBanner {
     date,
     status,
     gradient: gradientForOrder(order),
+    imageId: b.image?.id ?? null,
+    imageUrl: b.image?.url ?? null,
   };
 }

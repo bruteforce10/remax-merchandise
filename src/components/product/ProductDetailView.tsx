@@ -1,6 +1,7 @@
 "use client";
 
 import { Info, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -54,27 +55,42 @@ export function ProductDetailView({
         {/* Gallery */}
         <div>
           <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[20px] border border-gray-100 bg-gradient-to-br from-[#f4f4f6] to-[#e6e7ec]">
-            <div className="h-[52%] w-[52%] rounded-[18px] bg-[repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9_12px,#eeeef1_12px,#eeeef1_24px)]" />
-            <span className="absolute bottom-[18px] left-[18px] text-xs font-bold tracking-[0.1em] text-gray-300 uppercase">
-              Foto {galleryIndex + 1}/4
-            </span>
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 600px"
+                className="object-cover"
+              />
+            ) : (
+              <>
+                <div className="h-[52%] w-[52%] rounded-[18px] bg-[repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9_12px,#eeeef1_12px,#eeeef1_24px)]" />
+                <span className="absolute bottom-[18px] left-[18px] text-xs font-bold tracking-[0.1em] text-gray-300 uppercase">
+                  Foto {galleryIndex + 1}/4
+                </span>
+              </>
+            )}
           </div>
-          <div className="mt-3.5 grid grid-cols-4 gap-3">
-            {[0, 1, 2, 3].map((n) => (
-              <button
-                key={n}
-                type="button"
-                aria-label={`Foto ${n + 1}`}
-                onClick={() => setGalleryIndex(n)}
-                className={cn(
-                  "flex aspect-square items-center justify-center rounded-[12px] border-2 bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] text-[11px] font-bold text-gray-300",
-                  n === galleryIndex ? "border-brand" : "border-gray-100",
-                )}
-              >
-                {n + 1}
-              </button>
-            ))}
-          </div>
+          {!product.imageUrl && (
+            <div className="mt-3.5 grid grid-cols-4 gap-3">
+              {[0, 1, 2, 3].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  aria-label={`Foto ${n + 1}`}
+                  onClick={() => setGalleryIndex(n)}
+                  className={cn(
+                    "flex aspect-square items-center justify-center rounded-[12px] border-2 bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] text-[11px] font-bold text-gray-300",
+                    n === galleryIndex ? "border-brand" : "border-gray-100",
+                  )}
+                >
+                  {n + 1}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Info */}

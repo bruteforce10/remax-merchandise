@@ -18,6 +18,7 @@ const bannerSchema = z.object({
   link: z.string().trim().default(""),
   order: z.number().int().min(1).default(1),
   status: z.enum(["published", "draft"]).default("draft"),
+  imageId: z.string().nullable().default(null),
 });
 
 export type BannerInput = z.input<typeof bannerSchema>;
@@ -48,7 +49,7 @@ export async function createBanner(
     };
   }
 
-  const { alt, link, order, status } = parsed.data;
+  const { alt, link, order, status, imageId } = parsed.data;
   try {
     const client = hygraphWrite();
     const created = await client.request<{ createBanner: { id: string } }>(
@@ -59,6 +60,7 @@ export async function createBanner(
           link,
           order,
           publishStatus: status === "published" ? "Published" : "Draft",
+          ...(imageId ? { image: { connect: { id: imageId } } } : {}),
         },
       },
     );
@@ -95,7 +97,7 @@ export async function updateBanner(
     };
   }
 
-  const { alt, link, order, status } = parsed.data;
+  const { alt, link, order, status, imageId } = parsed.data;
   try {
     const client = hygraphWrite();
     await client.request(UPDATE_BANNER, {
@@ -105,6 +107,9 @@ export async function updateBanner(
         link,
         order,
         publishStatus: status === "published" ? "Published" : "Draft",
+        image: imageId
+          ? { connect: { id: imageId } }
+          : { disconnect: true },
       },
     });
     // Always publish so the published stage carries the latest field values;
