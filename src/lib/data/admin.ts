@@ -1,37 +1,18 @@
-import { PRODUCTS } from "@/lib/data/catalog";
 import type {
   AdminBanner,
-  AdminProduct,
   CountryStat,
   DeviceStat,
   KeywordStat,
   MediaItem,
   MetricCard,
-  ProductStatus,
 } from "@/types/admin";
 import type { Lead } from "@/types/lead";
 
 /**
- * Static operational seed (Phase 1). Enriches the public catalog with
- * demo stats/status and adds leads, banners, media, and analytics.
+ * Static operational seed (Phase 1). Leads, banners, media, and analytics
+ * demo data. Products are now sourced from Hygraph via `services/operational`.
  * Replaced by Supabase (Prisma) queries in Phase 2.
  */
-
-// ── Products enriched with stats ─────────────────────────────────────────────
-export const ADMIN_PRODUCTS: AdminProduct[] = PRODUCTS.map((p, i) => {
-  const base =
-    p.badge === "featured"
-      ? 1750
-      : p.badge === "popular"
-        ? 1250
-        : p.badge === "new"
-          ? 680
-          : 420;
-  const views = base + ((i * 137) % 640);
-  const waClicks = Math.round(views * (0.07 + (i % 5) * 0.008));
-  const status: ProductStatus = i % 7 === 3 ? "draft" : "published";
-  return { ...p, views, waClicks, status };
-});
 
 // ── Leads ────────────────────────────────────────────────────────────────────
 export const LEADS: Lead[] = [

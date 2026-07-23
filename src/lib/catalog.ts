@@ -1,9 +1,4 @@
-import {
-  BADGE_RANK,
-  CATEGORIES,
-  CATEGORY_MAP,
-  PRODUCTS,
-} from "@/lib/data/catalog";
+import { BADGE_RANK, CATEGORIES, CATEGORY_MAP } from "@/lib/data/catalog";
 import type { Product, SortOption } from "@/types/product";
 
 /**
@@ -101,7 +96,11 @@ export interface Suggestion {
   icon: string;
 }
 
-export function searchSuggestions(query: string, limit = 6): Suggestion[] {
+export function searchSuggestions(
+  products: Product[],
+  query: string,
+  limit = 6,
+): Suggestion[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const categoryHits: Suggestion[] = CATEGORIES.filter((c) =>
@@ -115,7 +114,7 @@ export function searchSuggestions(query: string, limit = 6): Suggestion[] {
       href: `/categories/${c.slug}`,
       icon: c.icon,
     }));
-  const productHits: Suggestion[] = PRODUCTS.filter((p) =>
+  const productHits: Suggestion[] = products.filter((p) =>
     p.name.toLowerCase().includes(q),
   )
     .slice(0, 5)

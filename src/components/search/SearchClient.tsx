@@ -23,10 +23,9 @@ import {
   PAGE_SIZE,
   POPULAR_SEARCHES,
   PRICE_MAX,
-  PRODUCTS,
 } from "@/lib/data/catalog";
 import { generalMessage, waLink } from "@/lib/whatsapp";
-import type { SortOption } from "@/types/product";
+import type { Product, SortOption } from "@/types/product";
 
 const DEFAULT_FILTERS: FilterValue = {
   categories: [],
@@ -36,14 +35,22 @@ const DEFAULT_FILTERS: FilterValue = {
 
 const RECENT_KEY = "remax_recent";
 
-const CATEGORY_COUNTS = CATEGORIES.map((c) => ({
-  slug: c.slug,
-  name: c.name,
-  count: PRODUCTS.filter((p) => p.categorySlug === c.slug).length,
-}));
-
-export function SearchClient(): React.JSX.Element {
+export function SearchClient({
+  products,
+}: {
+  products: Product[];
+}): React.JSX.Element {
   const router = useRouter();
+
+  const categoryCounts = React.useMemo(
+    () =>
+      CATEGORIES.map((c) => ({
+        slug: c.slug,
+        name: c.name,
+        count: products.filter((p) => p.categorySlug === c.slug).length,
+      })),
+    [products],
+  );
   const searchParams = useSearchParams();
   const committedQuery = searchParams.get("q") ?? "";
 
@@ -112,14 +119,14 @@ export function SearchClient(): React.JSX.Element {
   const showDiscovery = !hasActiveSearch && query.trim() === "";
 
   const results = React.useMemo(() => {
-    const filtered = filterProducts(PRODUCTS, {
+    const filtered = filterProducts(products, {
       query: committedQuery,
       categories: filters.categories,
       priceMax: filters.priceMax,
       colors: filters.colors,
     });
     return sortProducts(filtered, sort);
-  }, [committedQuery, filters, sort]);
+  }, [products, committedQuery, filters, sort]);
 
   const { items: pageCards, page: currentPage, pageCount } = paginate(
     results,
@@ -127,7 +134,10 @@ export function SearchClient(): React.JSX.Element {
     PAGE_SIZE,
   );
 
-  const suggestions = React.useMemo(() => searchSuggestions(query), [query]);
+  const suggestions = React.useMemo(
+    () => searchSuggestions(products, query),
+    [products, query],
+  );
   const showSuggest = focused && query.trim().length > 0 && suggestions.length > 0;
 
   return (
@@ -243,7 +253,7 @@ export function SearchClient(): React.JSX.Element {
                 value={filters}
                 onChange={updateFilters}
                 onReset={resetFilters}
-                categories={CATEGORY_COUNTS}
+                categories={categoryCounts}
                 activeCount={activeCount}
               />
             </aside>
@@ -288,7 +298,7 @@ export function SearchClient(): React.JSX.Element {
             value={filters}
             onChange={updateFilters}
             onReset={resetFilters}
-            categories={CATEGORY_COUNTS}
+            categories={categoryCounts}
             activeCount={activeCount}
           />
           <button

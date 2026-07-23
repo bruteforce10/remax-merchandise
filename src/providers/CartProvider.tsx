@@ -3,12 +3,13 @@
 import * as React from "react";
 import { toast } from "sonner";
 
-import { PRODUCT_MAP } from "@/lib/data/catalog";
 import type { Product } from "@/types/product";
 
 /**
  * Quotation cart state. Persists to localStorage by a generated sessionId
- * (no login, by MVP design). Mirrors the future Supabase `Cart` model.
+ * (no login, by MVP design). Each line stores a product snapshot so the cart
+ * is self-contained and does not depend on an in-memory product map.
+ * Mirrors the future Supabase `Cart` model.
  */
 
 const STORAGE_KEY = "remax_cart";
@@ -35,15 +36,28 @@ interface CartContextValue {
 
 const CartContext = React.createContext<CartContextValue | null>(null);
 
-function readStoredItems(): Record<string, number> {
+function isCartLine(value: unknown): value is CartLine {
+  if (!value || typeof value !== "object") return false;
+  const line = value as { product?: unknown; qty?: unknown };
+  return (
+    typeof line.qty === "number" &&
+    !!line.product &&
+    typeof line.product === "object" &&
+    typeof (line.product as { sku?: unknown }).sku === "string"
+  );
+}
+
+function readStoredEntries(): Record<string, CartLine> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed: unknown = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") {
-      return parsed as Record<string, number>;
+    if (!parsed || typeof parsed !== "object") return {};
+    const result: Record<string, CartLine> = {};
+    for (const [sku, line] of Object.entries(parsed as Record<string, unknown>)) {
+      if (isCartLine(line)) result[sku] = line;
     }
-    return {};
+    return result;
   } catch {
     return {};
   }
@@ -54,13 +68,13 @@ export function CartProvider({
 }: {
   children: React.ReactNode;
 }): React.JSX.Element {
-  const [items, setItems] = React.useState<Record<string, number>>({});
+  const [entries, setEntries] = React.useState<Record<string, CartLine>>({});
   const [hydrated, setHydrated] = React.useState(false);
   const [sessionId, setSessionId] = React.useState("");
 
   // Hydrate from localStorage after mount (avoids SSR mismatch).
   React.useEffect(() => {
-    setItems(readStoredItems());
+    setEntries(readStoredEntries());
     let sid = localStorage.getItem(SESSION_KEY);
     if (!sid) {
       sid = crypto.randomUUID();
@@ -74,28 +88,35 @@ export function CartProvider({
   React.useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     } catch {
       // ignore quota / privacy-mode errors
     }
-  }, [items, hydrated]);
+  }, [entries, hydrated]);
 
   const add = React.useCallback((product: Product, qty?: number): void => {
     const amount = qty ?? 1;
-    setItems((prev) => ({
+    setEntries((prev) => ({
       ...prev,
-      [product.sku]: (prev[product.sku] ?? 0) + amount,
+      [product.sku]: {
+        product,
+        qty: (prev[product.sku]?.qty ?? 0) + amount,
+      },
     }));
     toast.success(`${product.name} ditambahkan`);
   }, []);
 
   const setQty = React.useCallback((sku: string, qty: number): void => {
     const value = Number.isNaN(qty) || qty < 1 ? 1 : qty;
-    setItems((prev) => ({ ...prev, [sku]: value }));
+    setEntries((prev) => {
+      const existing = prev[sku];
+      if (!existing) return prev;
+      return { ...prev, [sku]: { ...existing, qty: value } };
+    });
   }, []);
 
   const remove = React.useCallback((sku: string): void => {
-    setItems((prev) => {
+    setEntries((prev) => {
       const next = { ...prev };
       delete next[sku];
       return next;
@@ -103,17 +124,11 @@ export function CartProvider({
     toast.success("Produk dihapus");
   }, []);
 
-  const clear = React.useCallback((): void => setItems({}), []);
+  const clear = React.useCallback((): void => setEntries({}), []);
 
   const lines = React.useMemo<CartLine[]>(
-    () =>
-      Object.entries(items)
-        .map(([sku, qty]) => {
-          const product = PRODUCT_MAP[sku];
-          return product ? { product, qty } : null;
-        })
-        .filter((line): line is CartLine => line !== null),
-    [items],
+    () => Object.values(entries),
+    [entries],
   );
 
   const value = React.useMemo<CartContextValue>(() => {
@@ -122,6 +137,10 @@ export function CartProvider({
       (sum, l) => sum + l.product.price * l.qty,
       0,
     );
+    const items: Record<string, number> = {};
+    for (const [sku, line] of Object.entries(entries)) {
+      items[sku] = line.qty;
+    }
     return {
       items,
       lines,
@@ -135,7 +154,7 @@ export function CartProvider({
       remove,
       clear,
     };
-  }, [items, lines, hydrated, sessionId, add, setQty, remove, clear]);
+  }, [entries, lines, hydrated, sessionId, add, setQty, remove, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

@@ -1,15 +1,17 @@
-import { ADMIN_PRODUCTS, DASHBOARD_VIEWS_CHART, LEADS } from "@/lib/data/admin";
+import { DASHBOARD_VIEWS_CHART, LEADS } from "@/lib/data/admin";
 import { CATEGORIES } from "@/lib/data/catalog";
+import { getAdminProducts } from "@/services/operational/products";
 import type { AdminProduct, DashboardStats } from "@/types/admin";
 import type { Lead } from "@/types/lead";
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const published = ADMIN_PRODUCTS.filter((p) => p.status === "published").length;
+  const products = await getAdminProducts();
+  const published = products.filter((p) => p.status === "published").length;
   return {
-    totalProducts: ADMIN_PRODUCTS.length,
+    totalProducts: products.length,
     totalCategories: CATEGORIES.length,
     published,
-    draft: ADMIN_PRODUCTS.length - published,
+    draft: products.length - published,
     totalLeads: 248,
     waClicksToday: 42,
     searches: 1284,
@@ -18,11 +20,13 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 }
 
 export async function getRecentProducts(limit = 4): Promise<AdminProduct[]> {
-  return ADMIN_PRODUCTS.slice(0, limit);
+  const products = await getAdminProducts();
+  return products.slice(0, limit);
 }
 
 export async function getPopularProducts(limit = 5): Promise<AdminProduct[]> {
-  return [...ADMIN_PRODUCTS].sort((a, b) => b.views - a.views).slice(0, limit);
+  const products = await getAdminProducts();
+  return [...products].sort((a, b) => b.views - a.views).slice(0, limit);
 }
 
 export async function getRecentLeads(limit = 4): Promise<Lead[]> {

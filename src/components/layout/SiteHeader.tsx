@@ -22,12 +22,17 @@ import { useCart } from "@/providers/CartProvider";
 import { COMPANY } from "@/lib/constants";
 import { searchSuggestions } from "@/lib/catalog";
 import type { Category } from "@/types/category";
+import type { Product } from "@/types/product";
 
 interface SiteHeaderProps {
   categories: Category[];
+  products: Product[];
 }
 
-export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
+export function SiteHeader({
+  categories,
+  products,
+}: SiteHeaderProps): React.JSX.Element {
   const router = useRouter();
   const { count, hydrated } = useCart();
 
@@ -37,7 +42,10 @@ export function SiteHeader({ categories }: SiteHeaderProps): React.JSX.Element {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const catMenuRef = React.useRef<HTMLDivElement>(null);
 
-  const suggestions = React.useMemo(() => searchSuggestions(query), [query]);
+  const suggestions = React.useMemo(
+    () => searchSuggestions(products, query),
+    [products, query],
+  );
   const showSuggest =
     focused && query.trim().length > 0 && suggestions.length > 0;
 

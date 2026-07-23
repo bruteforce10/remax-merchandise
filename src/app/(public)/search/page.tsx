@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense, type ReactNode } from "react";
 
 import { SearchClient } from "@/components/search/SearchClient";
+import { getProducts } from "@/services/content/products";
 
 export const metadata: Metadata = {
   title: "Cari Produk",
@@ -10,12 +11,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/search" },
 };
 
-export default function SearchPage(): ReactNode {
+export default async function SearchPage(): Promise<ReactNode> {
+  const products = await getProducts();
   return (
     <Suspense
       fallback={<div className="mx-auto min-h-[60vh] max-w-[1280px] px-6 py-10" />}
     >
-      <SearchClient />
+      <SearchClient products={products} />
     </Suspense>
   );
 }
