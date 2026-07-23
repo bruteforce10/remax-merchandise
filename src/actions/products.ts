@@ -47,7 +47,11 @@ function revalidateProducts(): void {
   revalidatePath("/admin/products");
 }
 
-function toHygraphData(data: ProductData): Record<string, unknown> {
+function toHygraphData(
+  data: ProductData,
+  imageOp: "connect" | "set",
+): Record<string, unknown> {
+  const imageRefs = data.imageIds.map((id) => ({ id }));
   return {
     name: data.name,
     slug: data.slug,
@@ -61,7 +65,8 @@ function toHygraphData(data: ProductData): Record<string, unknown> {
     material: data.material,
     branding: data.branding,
     customVariants: data.customVariants,
-    images: { set: data.imageIds.map((id) => ({ id })) },
+    // ProductCreateInput only accepts `connect`; `set` (replace) is update-only.
+    images: { [imageOp]: imageRefs },
     seoTitle: data.seoTitle,
     seoDescription: data.seoDescription,
     keywords: data.keywords,
@@ -84,7 +89,9 @@ export async function createProduct(
 
   try {
     const client = hygraphWrite();
-    await client.request(CREATE_PRODUCT, { data: toHygraphData(parsed.data) });
+    await client.request(CREATE_PRODUCT, {
+      data: toHygraphData(parsed.data, "connect"),
+    });
     // Always publish so the published stage carries the latest field values;
     // the publishStatus field (filtered in public queries) gates visibility.
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
@@ -117,7 +124,7 @@ export async function updateProduct(
     const client = hygraphWrite();
     await client.request(UPDATE_PRODUCT, {
       sku,
-      data: toHygraphData(parsed.data),
+      data: toHygraphData(parsed.data, "set"),
     });
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
     revalidateProducts();
