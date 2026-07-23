@@ -6,6 +6,7 @@ import {
   Info,
   Package,
   SearchCheck,
+  Trash2,
   UploadCloud,
   X,
 } from "lucide-react";
@@ -31,6 +32,12 @@ interface ProductEditorProps {
   mode: "create" | "edit";
   product?: AdminProduct;
   category?: Category;
+}
+
+interface CustomVariant {
+  id: string;
+  name: string;
+  values: string[];
 }
 
 export function ProductEditor({
@@ -59,6 +66,7 @@ export function ProductEditor({
   const [branding, setBranding] = React.useState(category?.branding ?? "");
   const [status, setStatus] = React.useState<ProductStatus>(product?.status ?? "draft");
   const [newSize, setNewSize] = React.useState("");
+  const [customVariants, setCustomVariants] = React.useState<CustomVariant[]>([]);
 
   const slug = name ? slugify(name) : "";
   const previewCategory = CATEGORIES.find((c) => c.slug === categorySlug);
@@ -73,6 +81,21 @@ export function ProductEditor({
     setColors((c) =>
       c.includes(nameC) ? c.filter((x) => x !== nameC) : [...c, nameC],
     );
+  }
+
+  function addVariantGroup(): void {
+    setCustomVariants((list) => [
+      ...list,
+      { id: `v${Date.now()}`, name: "", values: [] },
+    ]);
+  }
+  function updateGroup(updated: CustomVariant): void {
+    setCustomVariants((list) =>
+      list.map((g) => (g.id === updated.id ? updated : g)),
+    );
+  }
+  function removeGroup(id: string): void {
+    setCustomVariants((list) => list.filter((g) => g.id !== id));
   }
 
   function save(): void {
@@ -280,6 +303,37 @@ export function ProductEditor({
                   />
                 </Field>
               </div>
+
+              {/* Custom variants */}
+              <div className="border-t border-gray-100 pt-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className={LABEL}>Varian Kustom</span>
+                  <button
+                    type="button"
+                    onClick={addVariantGroup}
+                    className="text-[13px] font-semibold text-brand"
+                  >
+                    + Tambah Varian
+                  </button>
+                </div>
+                {customVariants.length === 0 ? (
+                  <p className="text-[13px] text-gray-400">
+                    Belum ada. Tambahkan tipe varian sendiri — mis. Bahan, Model,
+                    atau Metode Cetak.
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {customVariants.map((v) => (
+                      <CustomVariantGroup
+                        key={v.id}
+                        group={v}
+                        onChange={updateGroup}
+                        onRemove={removeGroup}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </section>
 
@@ -454,5 +508,80 @@ function Field({
       <span className={LABEL}>{label}</span>
       {children}
     </label>
+  );
+}
+
+function CustomVariantGroup({
+  group,
+  onChange,
+  onRemove,
+}: {
+  group: CustomVariant;
+  onChange: (g: CustomVariant) => void;
+  onRemove: (id: string) => void;
+}): React.JSX.Element {
+  const [draft, setDraft] = React.useState("");
+
+  function addValue(): void {
+    const v = draft.trim();
+    if (v && !group.values.includes(v)) {
+      onChange({ ...group, values: [...group.values, v] });
+    }
+    setDraft("");
+  }
+
+  return (
+    <div className="rounded-btn border border-admin-border bg-admin-bg p-3">
+      <div className="mb-2 flex items-center gap-2">
+        <input
+          value={group.name}
+          onChange={(e) => onChange({ ...group, name: e.target.value })}
+          placeholder="Nama varian (mis. Bahan)"
+          className="h-9 flex-1 rounded-lg border border-admin-border bg-white px-3 text-[13.5px] font-semibold outline-none focus:border-brand"
+        />
+        <button
+          type="button"
+          aria-label="Hapus varian"
+          onClick={() => onRemove(group.id)}
+          className="flex h-9 w-9 flex-none items-center justify-center rounded-lg border border-admin-border bg-white text-gray-500 hover:bg-brand-subtle hover:text-danger"
+        >
+          <Trash2 className="h-[15px] w-[15px]" />
+        </button>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {group.values.map((val) => (
+          <span
+            key={val}
+            className="inline-flex h-8 items-center gap-1.5 rounded-pill border border-admin-border bg-white px-3 text-[12.5px] font-semibold"
+          >
+            {val}
+            <button
+              type="button"
+              aria-label={`Hapus ${val}`}
+              onClick={() =>
+                onChange({
+                  ...group,
+                  values: group.values.filter((x) => x !== val),
+                })
+              }
+            >
+              <X className="h-3 w-3 text-gray-400 hover:text-danger" />
+            </button>
+          </span>
+        ))}
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addValue();
+            }
+          }}
+          placeholder="+ Nilai"
+          className="h-8 w-[90px] rounded-pill border border-dashed border-gray-300 bg-white px-3 text-[12.5px] outline-none focus:border-brand"
+        />
+      </div>
+    </div>
   );
 }

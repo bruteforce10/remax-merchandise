@@ -10,8 +10,6 @@ import {
   Package,
   Plus,
   Search,
-  TriangleAlert,
-  Upload,
   type LucideIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -39,7 +37,7 @@ const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/products/new", label: "Tambah Produk", icon: Plus },
   { href: "/admin/categories", label: "Tambah Kategori", icon: Layers },
   { href: "/admin/banners", label: "Upload Banner", icon: ImageIcon },
-  { href: "/admin/media", label: "Upload Media", icon: Upload },
+  { href: "/admin/leads", label: "Lihat Leads", icon: Inbox },
 ];
 
 export default async function DashboardPage(): Promise<ReactNode> {
@@ -223,28 +221,6 @@ export default async function DashboardPage(): Promise<ReactNode> {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Image quality alert */}
-          <div className="rounded-card border border-[#F8D2D7] bg-brand-subtle-2 p-5">
-            <div className="mb-2.5 flex items-center gap-2.5">
-              <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-brand-subtle text-brand">
-                <TriangleAlert className="h-[18px] w-[18px]" />
-              </span>
-              <h3 className="text-[15px] font-extrabold text-ink">
-                Peringatan Kualitas Gambar
-              </h3>
-            </div>
-            <p className="mb-3 text-[13px] leading-relaxed text-[#8A5560]">
-              <strong>4 produk</strong> memiliki gambar beresolusi rendah. Perbarui
-              untuk tampilan katalog yang lebih premium.
-            </p>
-            <Link
-              href="/admin/media"
-              className="inline-flex h-[38px] items-center rounded-[10px] bg-brand px-3.5 text-[13px] font-semibold text-white hover:bg-brand-hover"
-            >
-              Perbaiki Sekarang
-            </Link>
           </div>
         </div>
       </div>
