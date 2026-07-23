@@ -71,12 +71,11 @@ export function ProductEditor({
   const [branding, setBranding] = React.useState(product?.branding ?? "");
   const [status, setStatus] = React.useState<ProductStatus>(product?.status ?? "draft");
   const [newSize, setNewSize] = React.useState("");
+  const [newColor, setNewColor] = React.useState("");
+  const [newColorHex, setNewColorHex] = React.useState("#E11D2E");
+  const [customHex, setCustomHex] = React.useState<Record<string, string>>({});
   const [customVariants, setCustomVariants] = React.useState<CustomVariant[]>(
     product?.customVariants ?? [],
-  );
-  const [seoTitle, setSeoTitle] = React.useState(product?.seoTitle ?? "");
-  const [seoDescription, setSeoDescription] = React.useState(
-    product?.seoDescription ?? "",
   );
   const [keywords, setKeywords] = React.useState(product?.keywords ?? "");
   const [images, setImages] = React.useState<AssetImage[]>(
@@ -97,6 +96,18 @@ export function ProductEditor({
     setColors((c) =>
       c.includes(nameC) ? c.filter((x) => x !== nameC) : [...c, nameC],
     );
+  }
+
+  function swatchColor(nameC: string): string {
+    return customHex[nameC] ?? COLOR_HEX[nameC] ?? "#CBD5E1";
+  }
+
+  function addColor(): void {
+    const v = newColor.trim();
+    if (!v) return;
+    if (!colors.includes(v)) setColors((c) => [...c, v]);
+    setCustomHex((m) => ({ ...m, [v]: newColorHex }));
+    setNewColor("");
   }
 
   function addVariantGroup(): void {
@@ -142,8 +153,9 @@ export function ProductEditor({
         values: v.values,
       })),
       imageIds: images.map((im) => im.id),
-      seoTitle,
-      seoDescription,
+      // Meta title/description mirror the product name & full description.
+      seoTitle: name.trim(),
+      seoDescription: fullDesc,
       keywords,
       status,
     };
@@ -337,6 +349,57 @@ export function ProductEditor({
                       </button>
                     );
                   })}
+                  {colors
+                    .filter((c) => !COLOR_PALETTE.includes(c))
+                    .map((c) => (
+                      <span
+                        key={c}
+                        className="inline-flex h-9 items-center gap-2 rounded-pill border border-brand bg-brand-subtle px-3 pl-2 text-[13px] font-semibold text-brand-dark"
+                      >
+                        <span
+                          className="h-4 w-4 rounded-full border border-black/10"
+                          style={{ backgroundColor: swatchColor(c) }}
+                        />
+                        {c}
+                        <button
+                          type="button"
+                          aria-label={`Hapus ${c}`}
+                          onClick={() =>
+                            setColors((list) => list.filter((x) => x !== c))
+                          }
+                        >
+                          <X className="h-[13px] w-[13px] text-brand/60 hover:text-danger" />
+                        </button>
+                      </span>
+                    ))}
+                </div>
+                <div className="mt-2.5 flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={newColorHex}
+                    onChange={(e) => setNewColorHex(e.target.value)}
+                    aria-label="Pilih warna kustom"
+                    className="h-9 w-9 flex-none cursor-pointer rounded-lg border border-admin-border bg-white p-1"
+                  />
+                  <input
+                    value={newColor}
+                    onChange={(e) => setNewColor(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addColor();
+                      }
+                    }}
+                    placeholder="Nama warna kustom (mis. Maroon)"
+                    className="h-9 flex-1 rounded-pill border border-dashed border-gray-300 bg-white px-3.5 text-[13px] outline-none focus:border-brand"
+                  />
+                  <button
+                    type="button"
+                    onClick={addColor}
+                    className="h-9 flex-none rounded-pill bg-brand px-3.5 text-[13px] font-semibold text-white hover:bg-brand-hover"
+                  >
+                    Tambah
+                  </button>
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
@@ -409,23 +472,11 @@ export function ProductEditor({
               <h3 className="text-base font-extrabold text-ink">SEO</h3>
             </div>
             <div className="flex flex-col gap-3.5">
-              <Field label="Meta Title">
-                <input
-                  value={seoTitle}
-                  onChange={(e) => setSeoTitle(e.target.value)}
-                  placeholder="Judul untuk hasil pencarian"
-                  className={FIELD}
-                />
-              </Field>
-              <Field label="Meta Description">
-                <textarea
-                  value={seoDescription}
-                  onChange={(e) => setSeoDescription(e.target.value)}
-                  rows={2}
-                  placeholder="Deskripsi untuk hasil pencarian…"
-                  className="resize-y rounded-btn border border-admin-border bg-admin-bg px-3.5 py-3 text-[14px] outline-none focus:border-brand focus:bg-white"
-                />
-              </Field>
+              <p className="rounded-btn bg-admin-bg px-3.5 py-2.5 text-[12.5px] leading-relaxed text-gray-500">
+                Meta title &amp; description otomatis mengikuti{" "}
+                <b className="font-semibold text-gray-600">Nama Produk</b> dan{" "}
+                <b className="font-semibold text-gray-600">Deskripsi Lengkap</b>.
+              </p>
               <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <Field label="Keywords">
                   <input
