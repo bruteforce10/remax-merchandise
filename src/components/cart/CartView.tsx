@@ -3,17 +3,43 @@
 import { CreditCard, Info, Lock, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
+import { createClient } from "@/lib/supabase/client";
 import { cartMessage, waLink } from "@/lib/whatsapp";
 import { useCart } from "@/providers/CartProvider";
 
-export function CartView(): React.JSX.Element {
+interface CartViewProps {
+  isAuthenticated: boolean;
+  userEmail: string | null;
+}
+
+export function CartView({
+  isAuthenticated,
+  userEmail,
+}: CartViewProps): React.JSX.Element {
   const { lines, count, totalQty, estimatedTotal, hydrated, setQty, remove } =
     useCart();
+  const router = useRouter();
+
+  async function handleGoogleLogin(): Promise<void> {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/cart`,
+      },
+    });
+  }
+
+  async function handleSignOut(): Promise<void> {
+    await createClient().auth.signOut();
+    router.refresh();
+  }
 
   return (
     <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-6 pb-15">
@@ -161,27 +187,55 @@ export function CartView(): React.JSX.Element {
             </div>
 
             <div className="flex flex-col justify-center gap-3 rounded-[18px] border border-gray-100 p-6">
-              <a
-                href={waLink(
-                  cartMessage(lines.map((l) => ({ product: l.product, qty: l.qty }))),
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover"
-              >
-                <CreditCard className="h-[21px] w-[21px]" />
-                Checkout Pembayaran
-              </a>
+              {isAuthenticated ? (
+                <a
+                  href={waLink(
+                    cartMessage(lines.map((l) => ({ product: l.product, qty: l.qty }))),
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover"
+                >
+                  <CreditCard className="h-[21px] w-[21px]" />
+                  Checkout Pembayaran
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void handleGoogleLogin()}
+                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover"
+                >
+                  <GoogleIcon className="h-[19px] w-[19px]" />
+                  Login dengan Google untuk Checkout
+                </button>
+              )}
               <Link
                 href="/search"
                 className="inline-flex h-[52px] items-center justify-center rounded-[14px] border-[1.5px] border-gray-200 bg-white text-[15px] font-semibold text-ink hover:bg-gray-50"
               >
                 Lanjut Belanja
               </Link>
-              <div className="mt-0.5 flex items-center justify-center gap-2 text-[12.5px] text-gray-400">
-                <Lock className="h-[13px] w-[13px]" />
-                Permintaan penawaran — tanpa komitmen pembelian
-              </div>
+              {isAuthenticated ? (
+                <div className="mt-0.5 flex flex-wrap items-center justify-center gap-1.5 text-[12.5px] text-gray-400">
+                  <span className="truncate">
+                    Masuk sebagai{" "}
+                    <span className="font-semibold text-gray-500">{userEmail}</span>
+                  </span>
+                  <span aria-hidden>·</span>
+                  <button
+                    type="button"
+                    onClick={() => void handleSignOut()}
+                    className="font-semibold text-gray-500 underline underline-offset-2 hover:text-brand"
+                  >
+                    Keluar
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-0.5 flex items-center justify-center gap-2 text-[12.5px] text-gray-400">
+                  <Lock className="h-[13px] w-[13px]" />
+                  Login diperlukan untuk checkout
+                </div>
+              )}
             </div>
           </div>
         </>
@@ -202,5 +256,30 @@ function SummaryRow({
       <span className="text-[14.5px] text-gray-500">{label}</span>
       <span className="font-mono text-[15px] font-bold text-ink">{value}</span>
     </div>
+  );
+}
+
+function GoogleIcon({ className }: { className?: string }): React.JSX.Element {
+  return (
+    <span className={`flex items-center justify-center rounded-full bg-white p-1 ${className ?? ""}`}>
+      <svg viewBox="0 0 48 48" aria-hidden className="h-full w-full">
+        <path
+          fill="#EA4335"
+          d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+        />
+        <path
+          fill="#4285F4"
+          d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+        />
+        <path
+          fill="#34A853"
+          d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+        />
+      </svg>
+    </span>
   );
 }

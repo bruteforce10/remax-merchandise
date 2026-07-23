@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { CartView } from "@/components/cart/CartView";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Keranjang Penawaran",
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function CartPage(): ReactNode {
-  return <CartView />;
+export default async function CartPage(): Promise<ReactNode> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return <CartView isAuthenticated={!!user} userEmail={user?.email ?? null} />;
 }
