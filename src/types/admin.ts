@@ -22,9 +22,7 @@ export interface MediaItem {
 export interface AdminBanner {
   id: string;
   order: number;
-  title: string;
-  subtitle: string;
-  buttonText: string;
+  alt: string;
   link: string;
   date: string;
   status: ProductStatus;

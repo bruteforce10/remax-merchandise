@@ -6,7 +6,6 @@ import {
   Calendar,
   Image as ImageIcon,
   Link as LinkIcon,
-  MousePointerClick,
   Pencil,
   Plus,
   Trash2,
@@ -127,13 +126,8 @@ export function BannersList({
               </span>
             </div>
             <div className="min-w-[180px] flex-1">
-              <div className="text-base font-bold text-ink">{b.title}</div>
-              <div className="my-0.5 text-[13.5px] text-gray-500">{b.subtitle}</div>
+              <div className="text-base font-bold text-ink">{b.alt}</div>
               <div className="mt-1 flex flex-wrap gap-3.5 text-[12.5px] text-gray-400">
-                <span className="inline-flex items-center gap-1.5">
-                  <MousePointerClick className="h-[13px] w-[13px]" />
-                  {b.buttonText}
-                </span>
                 <span className="inline-flex items-center gap-1.5">
                   <LinkIcon className="h-[13px] w-[13px]" />
                   {b.link}
@@ -159,7 +153,7 @@ export function BannersList({
         </div>
         <h3 className="mb-2 text-xl font-extrabold text-ink">Hapus Banner?</h3>
         <p className="mb-6 text-[14.5px] leading-relaxed text-gray-500">
-          Anda akan menghapus banner <strong className="text-ink">{deleteTarget?.title}</strong>.
+          Anda akan menghapus banner <strong className="text-ink">{deleteTarget?.alt}</strong>.
         </p>
         <div className="flex gap-3">
           <button
@@ -231,9 +225,7 @@ function BannerForm({
   onClose: () => void;
   onSave: (b: AdminBanner) => void;
 }): React.JSX.Element {
-  const [title, setTitle] = React.useState(initial?.title ?? "");
-  const [subtitle, setSubtitle] = React.useState(initial?.subtitle ?? "");
-  const [buttonText, setButtonText] = React.useState(initial?.buttonText ?? "Lihat Produk");
+  const [alt, setAlt] = React.useState(initial?.alt ?? "");
   const [link, setLink] = React.useState(initial?.link ?? "/search");
   const [status, setStatus] = React.useState<ProductStatus>(initial?.status ?? "draft");
 
@@ -254,23 +246,18 @@ function BannerForm({
       </div>
       <div className="flex flex-col gap-3.5">
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-semibold text-gray-600">Judul</span>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className={FIELD} />
+          <span className="text-[13px] font-semibold text-gray-600">Alt Gambar</span>
+          <input
+            value={alt}
+            onChange={(e) => setAlt(e.target.value)}
+            placeholder="Deskripsi gambar untuk SEO & aksesibilitas"
+            className={FIELD}
+          />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-semibold text-gray-600">Subjudul</span>
-          <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={FIELD} />
+          <span className="text-[13px] font-semibold text-gray-600">Link</span>
+          <input value={link} onChange={(e) => setLink(e.target.value)} className={`${FIELD} font-mono`} />
         </label>
-        <div className="grid grid-cols-2 gap-3.5">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold text-gray-600">Teks Tombol</span>
-            <input value={buttonText} onChange={(e) => setButtonText(e.target.value)} className={FIELD} />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold text-gray-600">Link</span>
-            <input value={link} onChange={(e) => setLink(e.target.value)} className={`${FIELD} font-mono`} />
-          </label>
-        </div>
         <div className="flex gap-2">
           {(["published", "draft"] as ProductStatus[]).map((s) => (
             <button
@@ -300,16 +287,14 @@ function BannerForm({
         <button
           type="button"
           onClick={() => {
-            if (!title.trim()) {
-              toast.error("Judul banner wajib diisi");
+            if (!alt.trim()) {
+              toast.error("Alt gambar wajib diisi");
               return;
             }
             onSave({
               id: initial?.id ?? `ab${Date.now()}`,
               order: initial?.order ?? index + 1,
-              title: title.trim(),
-              subtitle,
-              buttonText,
+              alt: alt.trim(),
               link,
               status,
               date: initial?.date ?? new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),

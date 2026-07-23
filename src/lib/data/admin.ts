@@ -47,9 +47,9 @@ export const LEADS: Lead[] = [
 
 // ── Banners ──────────────────────────────────────────────────────────────────
 export const ADMIN_BANNERS: AdminBanner[] = [
-  { id: "ab1", order: 1, title: "Premium Merchandise RE/MAX", subtitle: "Corporate merchandise & promotional gifts", buttonText: "Lihat Produk", link: "/search", date: "01 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#26282e,#5a5e69)" },
-  { id: "ab2", order: 2, title: "Seragam & Event Kit", subtitle: "Custom sesuai brand Anda", buttonText: "Pesan Sekarang", link: "/categories/jacket", date: "05 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#1c1d21,#4c4f57)" },
-  { id: "ab3", order: 3, title: "Promo Corporate Gift", subtitle: "Tumbler, payung & goodie bag", buttonText: "Chat WhatsApp", link: "/contact", date: "12 Jul 2026", status: "draft", gradient: "linear-gradient(120deg,#2a2528,#63606a)" },
+  { id: "ab1", order: 1, alt: "Banner premium merchandise RE/MAX", link: "/search", date: "01 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#26282e,#5a5e69)" },
+  { id: "ab2", order: 2, alt: "Banner seragam & event kit custom", link: "/categories/jacket", date: "05 Jul 2026", status: "published", gradient: "linear-gradient(120deg,#1c1d21,#4c4f57)" },
+  { id: "ab3", order: 3, alt: "Banner promo corporate gift", link: "/contact", date: "12 Jul 2026", status: "draft", gradient: "linear-gradient(120deg,#2a2528,#63606a)" },
 ];
 
 // ── Media library ────────────────────────────────────────────────────────────
