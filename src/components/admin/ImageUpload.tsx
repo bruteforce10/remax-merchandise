@@ -13,6 +13,8 @@ interface ImageUploadProps {
   onChange: (images: AssetImage[]) => void;
   /** Maximum number of images. 1 = single-image mode. */
   max?: number;
+  /** Maximum file size in MB. Default 10. */
+  maxSizeMb?: number;
   /** Helper line under the dropzone. */
   hint?: string;
 }
@@ -21,7 +23,8 @@ export function ImageUpload({
   value,
   onChange,
   max = 8,
-  hint = "PNG, JPG, WEBP hingga 10MB",
+  maxSizeMb = 10,
+  hint = `PNG, JPG, WEBP hingga ${maxSizeMb}MB`,
 }: ImageUploadProps): React.JSX.Element {
   const [uploading, setUploading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -35,11 +38,17 @@ export function ImageUpload({
       return;
     }
     const selected = Array.from(files).slice(0, remaining);
+    const maxBytes = maxSizeMb * 1024 * 1024;
     setUploading(true);
     const uploaded: AssetImage[] = [];
     for (const file of selected) {
+      if (file.size > maxBytes) {
+        toast.error(`"${file.name}" melebihi ${maxSizeMb}MB`);
+        continue;
+      }
       const fd = new FormData();
       fd.append("file", file);
+      fd.append("maxBytes", String(maxBytes));
       const res = await uploadAsset(fd);
       if (res.success && res.data) {
         uploaded.push(res.data);

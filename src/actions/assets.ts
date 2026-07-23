@@ -6,7 +6,7 @@ import { hygraphWrite } from "@/lib/hygraph/client";
 import { hygraphErrorMessage } from "@/lib/hygraph/errors";
 import type { ActionResult } from "@/types/action";
 
-const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+const DEFAULT_MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
 const CREATE_ASSET = gql`
   mutation CreateAsset($fileName: String!) {
@@ -73,8 +73,18 @@ export async function uploadAsset(
   if (!(file instanceof File) || file.size === 0) {
     return { success: false, data: null, message: "Tidak ada file gambar" };
   }
-  if (file.size > MAX_BYTES) {
-    return { success: false, data: null, message: "Ukuran gambar maksimal 10 MB" };
+  const maxRaw = formData.get("maxBytes");
+  const maxBytes =
+    typeof maxRaw === "string" && Number(maxRaw) > 0
+      ? Number(maxRaw)
+      : DEFAULT_MAX_BYTES;
+  if (file.size > maxBytes) {
+    const mb = Math.round(maxBytes / (1024 * 1024));
+    return {
+      success: false,
+      data: null,
+      message: `Ukuran gambar maksimal ${mb} MB`,
+    };
   }
   if (!file.type.startsWith("image/")) {
     return { success: false, data: null, message: "File harus berupa gambar" };

@@ -319,7 +319,8 @@ function BannerForm({
             value={image}
             onChange={setImage}
             max={1}
-            hint="1440 × 480 px · PNG, JPG, atau WEBP hingga 10MB"
+            maxSizeMb={5}
+            hint="1440 × 480 px · PNG, JPG, atau WEBP hingga 5MB"
           />
         </div>
         <label className="flex flex-col gap-1.5">
