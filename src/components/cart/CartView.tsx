@@ -1,6 +1,7 @@
 "use client";
 
-import { CreditCard, Lock, ShoppingCart, Trash2 } from "lucide-react";
+import { CreditCard, Info, Lock, ShoppingCart, Trash2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -62,9 +63,19 @@ export function CartView(): React.JSX.Element {
                 >
                   <Link
                     href={`/products/${line.product.slug}`}
-                    className="flex h-[84px] w-[84px] flex-none items-center justify-center rounded-[12px] bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] p-1.5 text-center text-[10px] font-bold text-gray-400"
+                    className="relative flex h-[84px] w-[84px] flex-none items-center justify-center overflow-hidden rounded-[12px] bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] p-1.5 text-center text-[10px] font-bold text-gray-400"
                   >
-                    {line.product.short}
+                    {line.product.imageUrl ? (
+                      <Image
+                        src={line.product.imageUrl}
+                        alt={line.product.name}
+                        fill
+                        sizes="84px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      line.product.short
+                    )}
                   </Link>
                   <div className="min-w-[160px] flex-1">
                     <div className="text-[11px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
@@ -77,7 +88,7 @@ export function CartView(): React.JSX.Element {
                       {line.product.name}
                     </Link>
                     <div className="text-[13px] text-gray-500">
-                      SKU {line.product.sku} · Mulai{" "}
+                      SKU {line.product.sku} ·{" "}
                       <span className="font-mono font-bold text-brand">
                         {formatPrice(line.product.price)}
                       </span>
@@ -138,6 +149,10 @@ export function CartView(): React.JSX.Element {
                 <span className="font-mono text-xl font-extrabold text-brand">
                   {formatPrice(estimatedTotal)}
                 </span>
+              </div>
+              <div className="mt-3 flex items-center gap-2 rounded-[10px] bg-amber-50 px-3 py-2.5 text-[13px] font-semibold text-amber-700">
+                <Info className="h-[16px] w-[16px] flex-none text-amber-500" />
+                Harga belum termasuk ongkos kirim
               </div>
               <p className="mt-2 text-xs leading-relaxed text-gray-400">
                 *Estimasi berdasarkan harga mulai. Harga final menyesuaikan
