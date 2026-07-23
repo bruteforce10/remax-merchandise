@@ -1,11 +1,10 @@
 "use client";
 
-import { Lock, ShoppingCart, Trash2 } from "lucide-react";
+import { CreditCard, Lock, ShoppingCart, Trash2 } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
-import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { cartMessage, waLink } from "@/lib/whatsapp";
@@ -26,8 +25,8 @@ export function CartView(): React.JSX.Element {
         Keranjang Penawaran
       </h1>
       <p className="mt-1 mb-6.5 text-[15px] text-gray-500">
-        Kirim daftar produk ini ke tim kami via WhatsApp untuk mendapatkan
-        penawaran harga (quotation).
+        Kirim daftar produk ini ke tim kami untuk mendapatkan penawaran harga
+        (quotation).
       </p>
 
       {!hydrated ? (
@@ -142,7 +141,7 @@ export function CartView(): React.JSX.Element {
               </div>
               <p className="mt-2 text-xs leading-relaxed text-gray-400">
                 *Estimasi berdasarkan harga mulai. Harga final menyesuaikan
-                spesifikasi &amp; jumlah, dikonfirmasi tim via WhatsApp.
+                spesifikasi &amp; jumlah, dikonfirmasi oleh tim kami.
               </p>
             </div>
 
@@ -155,8 +154,8 @@ export function CartView(): React.JSX.Element {
                 rel="noopener noreferrer"
                 className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover"
               >
-                <WhatsAppIcon className="h-[21px] w-[21px]" />
-                Kirim ke WhatsApp
+                <CreditCard className="h-[21px] w-[21px]" />
+                Checkout Pembayaran
               </a>
               <Link
                 href="/search"
@@ -166,7 +165,7 @@ export function CartView(): React.JSX.Element {
               </Link>
               <div className="mt-0.5 flex items-center justify-center gap-2 text-[12.5px] text-gray-400">
                 <Lock className="h-[13px] w-[13px]" />
-                Tanpa pembayaran online — hanya permintaan penawaran
+                Permintaan penawaran — tanpa komitmen pembelian
               </div>
             </div>
           </div>

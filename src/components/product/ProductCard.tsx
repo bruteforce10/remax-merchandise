@@ -1,12 +1,11 @@
 "use client";
 
-import { ShoppingCart } from "lucide-react";
+import { CreditCard, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { Badge } from "@/components/ui/Badge";
-import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { categoryName } from "@/lib/catalog";
 import { BADGE_LABELS } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
@@ -56,7 +55,6 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
           {product.name}
         </Link>
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="text-xs text-gray-500">Mulai</span>
           <span className="font-mono text-[17px] font-bold text-brand">
             {formatPrice(product.price)}
           </span>
@@ -68,8 +66,8 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
             rel="noopener noreferrer"
             className="inline-flex h-[42px] flex-1 items-center justify-center gap-[7px] rounded-btn bg-brand text-[13.5px] font-semibold text-white transition-colors hover:bg-brand-hover"
           >
-            <WhatsAppIcon className="h-4 w-4" />
-            WhatsApp
+            <CreditCard className="h-4 w-4" />
+            Checkout
           </a>
           <button
             type="button"
