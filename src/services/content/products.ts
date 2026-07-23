@@ -1,41 +1,67 @@
+import { unstable_cache } from "next/cache";
+
 import { sortProducts } from "@/lib/catalog";
-import { PRODUCTS, PRODUCT_SLUG_MAP } from "@/lib/data/catalog";
+import { hygraphRead } from "@/lib/hygraph/client";
+import { mapProduct, type RawProduct } from "@/lib/hygraph/map";
+import { PRODUCTS_QUERY } from "@/lib/hygraph/queries";
 import type { Product } from "@/types/product";
 
 /**
- * Product content fetchers. Static in Phase 1; swap the bodies for Hygraph
- * GraphQL queries in Phase 2 without changing call sites.
+ * Product content fetchers — sourced from Hygraph (published entries only).
+ * The full list is fetched once and cached (Data Cache); every single-item
+ * and derived fetcher reads from that list to stay within the CMS read limit.
  */
 
-export async function getProducts(): Promise<Product[]> {
-  return PRODUCTS;
+async function fetchProducts(): Promise<Product[]> {
+  try {
+    const { products } = await hygraphRead().request<{ products: RawProduct[] }>(
+      PRODUCTS_QUERY,
+    );
+    return products.map(mapProduct);
+  } catch (error) {
+    console.error("getProducts failed:", error);
+    return [];
+  }
 }
 
+export const getProducts: () => Promise<Product[]> = unstable_cache(
+  fetchProducts,
+  ["products"],
+  { revalidate: 300, tags: ["products"] },
+);
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  return PRODUCT_SLUG_MAP[slug] ?? null;
+  const products = await getProducts();
+  return products.find((p) => p.slug === slug) ?? null;
 }
 
 export async function getProductSlugs(): Promise<string[]> {
-  return PRODUCTS.map((p) => p.slug);
+  const products = await getProducts();
+  return products.map((p) => p.slug);
 }
 
 export async function getProductsByCategory(
   categorySlug: string,
 ): Promise<Product[]> {
-  return PRODUCTS.filter((p) => p.categorySlug === categorySlug);
+  const products = await getProducts();
+  return products.filter((p) => p.categorySlug === categorySlug);
 }
 
 export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
-  return sortProducts(PRODUCTS, "popular").slice(0, limit);
+  const products = await getProducts();
+  return sortProducts(products, "popular").slice(0, limit);
 }
 
 export async function getRelatedProducts(
   product: Product,
   limit = 4,
 ): Promise<Product[]> {
-  const sameCategory = PRODUCTS.filter(
+  const products = await getProducts();
+  const sameCategory = products.filter(
     (p) => p.categorySlug === product.categorySlug && p.sku !== product.sku,
   );
-  const others = PRODUCTS.filter((p) => p.categorySlug !== product.categorySlug);
+  const others = products.filter(
+    (p) => p.categorySlug !== product.categorySlug && p.sku !== product.sku,
+  );
   return [...sameCategory, ...others].slice(0, limit);
 }

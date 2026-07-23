@@ -45,7 +45,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
   const client = new Client({
     endpoint: managementEndpoint,
     authToken: token,
-    name: "remax-catalog-schema-v1",
+    name: `remax-catalog-schema-${Date.now()}`,
   });
 
   const str = (
@@ -70,6 +70,10 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
     reverseApiId: string,
     isList = false,
   ): void => {
+    const reverseDisplayName = reverseApiId
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (c) => c.toUpperCase())
+      .trim();
     client.createRelationalField({
       modelApiId,
       apiId,
@@ -80,7 +84,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
       reverseField: {
         modelApiId: "Asset",
         apiId: reverseApiId,
-        displayName,
+        displayName: reverseDisplayName,
         isList: true,
       },
     });
@@ -137,7 +141,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
   str("Product", "seoDescription", "SEO Description");
   str("Product", "keywords", "Keywords");
   client.createEnumerableField({ modelApiId: "Product", apiId: "badge", displayName: "Badge", enumerationApiId: "ProductBadge" });
-  client.createEnumerableField({ modelApiId: "Product", apiId: "status", displayName: "Status", enumerationApiId: "PublishStatus", isRequired: true });
+  client.createEnumerableField({ modelApiId: "Product", apiId: "publishStatus", displayName: "Status", enumerationApiId: "PublishStatus", isRequired: true });
   asset("Product", "images", "Images", "productImages", true);
   client.createRelationalField({
     modelApiId: "Product",
@@ -158,7 +162,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
   str("Banner", "alt", "Image Alt", { isRequired: true, isTitle: true });
   str("Banner", "link", "Link");
   client.createSimpleField({ modelApiId: "Banner", apiId: "order", displayName: "Order", type: SimpleFieldType.Int });
-  client.createEnumerableField({ modelApiId: "Banner", apiId: "status", displayName: "Status", enumerationApiId: "PublishStatus", isRequired: true });
+  client.createEnumerableField({ modelApiId: "Banner", apiId: "publishStatus", displayName: "Status", enumerationApiId: "PublishStatus", isRequired: true });
   asset("Banner", "image", "Image", "bannerImage");
 
   console.log("Submitting migration 'remax-catalog-schema-v1'…");
