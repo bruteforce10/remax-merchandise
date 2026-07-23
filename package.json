@@ -8,12 +8,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "hygraph:migrate": "pnpm dlx tsx src/lib/hygraph/migrate.ts",
+    "hygraph:seed:categories": "pnpm dlx tsx src/lib/hygraph/seed-categories.ts"
   },
   "dependencies": {
+    "@hygraph/management-sdk": "1.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
+    "graphql": "^17.0.2",
+    "graphql-request": "^7.4.0",
     "lucide-react": "^1.25.0",
     "next": "^15.5.20",
     "react": "^19.2.7",
