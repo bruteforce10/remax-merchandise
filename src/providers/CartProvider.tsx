@@ -15,9 +15,28 @@ import type { Product } from "@/types/product";
 const STORAGE_KEY = "remax_cart";
 const SESSION_KEY = "remax_session";
 
+/** A selected variant snapshot stored alongside the product on a cart line. */
+export interface CartVariant {
+  sku: string;
+  title: string;
+  price: number;
+  options: Record<string, string>;
+}
+
 export interface CartLine {
   product: Product;
+  variant?: CartVariant;
   qty: number;
+}
+
+/** Cart map key — the variant SKU when set, else the product SKU. */
+export function lineKey(line: Pick<CartLine, "product" | "variant">): string {
+  return line.variant?.sku ?? line.product.sku;
+}
+
+/** Unit price for a line — the variant price when set, else the base price. */
+export function lineUnitPrice(line: CartLine): number {
+  return line.variant?.price ?? line.product.price;
 }
 
 interface CartContextValue {
@@ -28,9 +47,9 @@ interface CartContextValue {
   estimatedTotal: number;
   hydrated: boolean;
   sessionId: string;
-  add: (product: Product, qty?: number) => void;
-  setQty: (sku: string, qty: number) => void;
-  remove: (sku: string) => void;
+  add: (product: Product, qty?: number, variant?: CartVariant) => void;
+  setQty: (key: string, qty: number) => void;
+  remove: (key: string) => void;
   clear: () => void;
 }
 
@@ -94,31 +113,36 @@ export function CartProvider({
     }
   }, [entries, hydrated]);
 
-  const add = React.useCallback((product: Product, qty?: number): void => {
-    const amount = qty ?? 1;
-    setEntries((prev) => ({
-      ...prev,
-      [product.sku]: {
-        product,
-        qty: (prev[product.sku]?.qty ?? 0) + amount,
-      },
-    }));
-    toast.success(`${product.name} ditambahkan`);
-  }, []);
+  const add = React.useCallback(
+    (product: Product, qty?: number, variant?: CartVariant): void => {
+      const amount = qty ?? 1;
+      const key = variant?.sku ?? product.sku;
+      setEntries((prev) => ({
+        ...prev,
+        [key]: {
+          product,
+          variant,
+          qty: (prev[key]?.qty ?? 0) + amount,
+        },
+      }));
+      toast.success(`${product.name} ditambahkan`);
+    },
+    [],
+  );
 
-  const setQty = React.useCallback((sku: string, qty: number): void => {
+  const setQty = React.useCallback((key: string, qty: number): void => {
     const value = Number.isNaN(qty) || qty < 1 ? 1 : qty;
     setEntries((prev) => {
-      const existing = prev[sku];
+      const existing = prev[key];
       if (!existing) return prev;
-      return { ...prev, [sku]: { ...existing, qty: value } };
+      return { ...prev, [key]: { ...existing, qty: value } };
     });
   }, []);
 
-  const remove = React.useCallback((sku: string): void => {
+  const remove = React.useCallback((key: string): void => {
     setEntries((prev) => {
       const next = { ...prev };
-      delete next[sku];
+      delete next[key];
       return next;
     });
     toast.success("Produk dihapus");
@@ -134,12 +158,12 @@ export function CartProvider({
   const value = React.useMemo<CartContextValue>(() => {
     const totalQty = lines.reduce((sum, l) => sum + l.qty, 0);
     const estimatedTotal = lines.reduce(
-      (sum, l) => sum + l.product.price * l.qty,
+      (sum, l) => sum + (l.variant?.price ?? l.product.price) * l.qty,
       0,
     );
     const items: Record<string, number> = {};
-    for (const [sku, line] of Object.entries(entries)) {
-      items[sku] = line.qty;
+    for (const [key, line] of Object.entries(entries)) {
+      items[key] = line.qty;
     }
     return {
       items,

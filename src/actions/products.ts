@@ -1,5 +1,6 @@
 "use server";
 
+import { gql } from "graphql-request";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 
@@ -8,8 +9,11 @@ import { hygraphErrorMessage } from "@/lib/hygraph/errors";
 import {
   CREATE_PRODUCT,
   DELETE_PRODUCT,
+  DELETE_PRODUCT_VARIANT,
   PUBLISH_PRODUCT,
+  PUBLISH_PRODUCT_VARIANT,
   UPDATE_PRODUCT,
+  UPSERT_PRODUCT_VARIANT,
 } from "@/lib/hygraph/mutations";
 import type { ActionResult } from "@/types/action";
 
@@ -28,6 +32,17 @@ const productSchema = z.object({
   branding: z.string().default(""),
   customVariants: z
     .array(z.object({ name: z.string(), values: z.array(z.string()) }))
+    .default([]),
+  variants: z
+    .array(
+      z.object({
+        sku: z.string().trim().min(1),
+        title: z.string().default(""),
+        price: z.number().int().min(0).nullable().default(null),
+        stock: z.number().int().min(0).nullable().default(null),
+        options: z.record(z.string(), z.string()).default({}),
+      }),
+    )
     .default([]),
   imageIds: z.array(z.string()).default([]),
   seoTitle: z.string().default(""),
@@ -75,6 +90,64 @@ function toHygraphData(
   };
 }
 
+const VARIANT_SKUS_QUERY = gql`
+  query VariantSkus($sku: String!) {
+    productVariants(
+      where: { product: { sku: $sku } }
+      stage: DRAFT
+      first: 500
+    ) {
+      sku
+    }
+  }
+`;
+
+/**
+ * Sync a product's variants in Hygraph: upsert + publish each submitted variant,
+ * then (on update) delete variants no longer present. Runs sequentially to stay
+ * within Hygraph's write rate limits.
+ */
+async function syncVariants(
+  productSku: string,
+  variants: ProductData["variants"],
+  prune: boolean,
+): Promise<void> {
+  const client = hygraphWrite();
+  for (const v of variants) {
+    await client.request(UPSERT_PRODUCT_VARIANT, {
+      sku: v.sku,
+      upsert: {
+        create: {
+          sku: v.sku,
+          title: v.title,
+          price: v.price,
+          stock: v.stock,
+          options: v.options,
+          product: { connect: { sku: productSku } },
+        },
+        update: {
+          title: v.title,
+          price: v.price,
+          stock: v.stock,
+          options: v.options,
+        },
+      },
+    });
+    await client.request(PUBLISH_PRODUCT_VARIANT, { sku: v.sku });
+  }
+  if (prune) {
+    const { productVariants } = await client.request<{
+      productVariants: { sku: string }[];
+    }>(VARIANT_SKUS_QUERY, { sku: productSku });
+    const keep = new Set(variants.map((v) => v.sku));
+    for (const existing of productVariants) {
+      if (!keep.has(existing.sku)) {
+        await client.request(DELETE_PRODUCT_VARIANT, { sku: existing.sku });
+      }
+    }
+  }
+}
+
 export async function createProduct(
   input: ProductInput,
 ): Promise<ActionResult> {
@@ -95,6 +168,7 @@ export async function createProduct(
     // Always publish so the published stage carries the latest field values;
     // the publishStatus field (filtered in public queries) gates visibility.
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
+    await syncVariants(parsed.data.sku, parsed.data.variants, false);
     revalidateProducts();
     return { success: true, data: null, message: "Produk disimpan" };
   } catch (error) {
@@ -127,6 +201,7 @@ export async function updateProduct(
       data: toHygraphData(parsed.data, "set"),
     });
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
+    await syncVariants(parsed.data.sku, parsed.data.variants, true);
     revalidateProducts();
     return { success: true, data: null, message: "Produk diperbarui" };
   } catch (error) {

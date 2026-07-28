@@ -51,6 +51,36 @@ export const PRODUCT_FIELDS = gql`
   }
 `;
 
+export const PRODUCT_DETAIL_FIELDS = gql`
+  fragment ProductDetailFields on Product {
+    sku
+    slug
+    name
+    shortDescription
+    description
+    price
+    stock
+    badge
+    colors
+    sizes
+    customVariants
+    category {
+      slug
+    }
+    images(first: 1) {
+      url
+    }
+    variants {
+      id
+      sku
+      title
+      price
+      stock
+      options
+    }
+  }
+`;
+
 export const PRODUCTS_QUERY = gql`
   ${PRODUCT_FIELDS}
   query Products {
@@ -65,10 +95,10 @@ export const PRODUCTS_QUERY = gql`
 `;
 
 export const PRODUCT_BY_SLUG_QUERY = gql`
-  ${PRODUCT_FIELDS}
+  ${PRODUCT_DETAIL_FIELDS}
   query ProductBySlug($slug: String!) {
     products(where: { slug: $slug, publishStatus: Published }, first: 1) {
-      ...ProductFields
+      ...ProductDetailFields
     }
   }
 `;
@@ -112,6 +142,14 @@ export const ADMIN_PRODUCT_FIELDS = gql`
     images {
       id
       url
+    }
+    variants {
+      id
+      sku
+      title
+      price
+      stock
+      options
     }
   }
 `;

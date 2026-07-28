@@ -17,4 +17,34 @@ export interface Product {
   imageUrl: string | null;
 }
 
+/** A user-defined option dimension, e.g. "Bahan" → ["Cotton", "Poly"]. */
+export interface ProductCustomVariant {
+  id: string;
+  name: string;
+  values: string[];
+}
+
+/** A sellable stock-keeping combination of a product's options. */
+export interface ProductVariant {
+  id: string;
+  sku: string;
+  /** Human label, e.g. "Hitam / M / Cotton". */
+  title: string;
+  /** Per-variant price in IDR; null falls back to the product base price. */
+  price: number | null;
+  /** Per-variant stock in pcs; null = not tracked. */
+  stock: number | null;
+  /** One value per option dimension, keyed by dimension name. */
+  options: Record<string, string>;
+}
+
+/** Full product shape for the detail page — adds option definitions + variants. */
+export interface ProductDetail extends Product {
+  description: string;
+  colors: string[];
+  sizes: string[];
+  customVariants: ProductCustomVariant[];
+  variants: ProductVariant[];
+}
+
 export type SortOption = "popular" | "new" | "price-asc" | "price-desc";

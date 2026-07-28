@@ -10,6 +10,7 @@
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "hygraph:migrate": "pnpm dlx tsx src/lib/hygraph/migrate.ts",
+    "hygraph:migrate:variants": "pnpm dlx tsx src/lib/hygraph/migrate-variants.ts",
     "hygraph:seed:categories": "pnpm dlx tsx src/lib/hygraph/seed-categories.ts",
     "hygraph:seed:banners": "pnpm dlx tsx src/lib/hygraph/seed-banners.ts"
   },

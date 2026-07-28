@@ -17,17 +17,18 @@ export function generalMessage(): string {
 }
 
 export interface ProductMessageOptions {
-  color?: string;
-  size?: string;
+  /** Selected option values, keyed by dimension name (e.g. Warna, Ukuran). */
+  options?: Record<string, string>;
+  /** Unit price of the selected variant; defaults to the product base price. */
+  unitPrice?: number;
 }
 
 /** Single-product inquiry (product card + product detail). */
 export function productMessage(
   product: Product,
   qty: number,
-  options: ProductMessageOptions = {},
+  { options = {}, unitPrice }: ProductMessageOptions = {},
 ): string {
-  const { color, size } = options;
   const lines = [
     "Halo Admin,",
     "Saya tertarik produk:",
@@ -36,10 +37,11 @@ export function productMessage(
     `SKU: ${product.sku}`,
     `Qty: ${qty} pcs`,
   ];
-  if (color) lines.push(`Warna: ${color}`);
-  if (size) lines.push(`Ukuran: ${size}`);
+  for (const [key, value] of Object.entries(options)) {
+    lines.push(`${key}: ${value}`);
+  }
   lines.push(
-    `Harga mulai: ${formatPrice(product.price)}`,
+    `Harga mulai: ${formatPrice(unitPrice ?? product.price)}`,
     "",
     "Mohon info harga & ketersediaannya. Terima kasih.",
   );
@@ -49,6 +51,8 @@ export function productMessage(
 export interface CartMessageLine {
   product: Product;
   qty: number;
+  options?: Record<string, string>;
+  unitPrice?: number;
 }
 
 /** Quotation request for the whole cart. */
@@ -56,10 +60,16 @@ export function cartMessage(lines: CartMessageLine[]): string {
   const productCount = lines.length;
   const totalQty = lines.reduce((sum, l) => sum + l.qty, 0);
   const body = lines
-    .map(
-      (l, i) =>
-        `${i + 1}. ${l.product.name}\n   SKU: ${l.product.sku} | Qty: ${l.qty} pcs | Mulai ${formatPrice(l.product.price)}/pcs`,
-    )
+    .map((l, i) => {
+      const price = l.unitPrice ?? l.product.price;
+      const opts =
+        l.options && Object.keys(l.options).length > 0
+          ? `\n   ${Object.entries(l.options)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(" · ")}`
+          : "";
+      return `${i + 1}. ${l.product.name}${opts}\n   SKU: ${l.product.sku} | Qty: ${l.qty} pcs | Mulai ${formatPrice(price)}/pcs`;
+    })
     .join("\n");
   return (
     "Halo Admin,\n" +

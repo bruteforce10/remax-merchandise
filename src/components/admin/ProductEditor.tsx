@@ -21,6 +21,13 @@ import { CategoryIcon } from "@/components/ui/Icon";
 import { COLOR_HEX, COLOR_PALETTE } from "@/lib/data/catalog";
 import { formatNumber, slugify } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import {
+  buildMatrix,
+  makeVariantSku,
+  optionsKey,
+  productOptions,
+  variantTitle,
+} from "@/lib/variants";
 import type {
   AdminProductDetail,
   AssetImage,
@@ -43,6 +50,15 @@ interface CustomVariant {
   id: string;
   name: string;
   values: string[];
+}
+
+interface VariantRow {
+  sku: string;
+  title: string;
+  options: Record<string, string>;
+  /** Kept as input strings; "" price = inherit base, "" stock = not tracked. */
+  price: string;
+  stock: string;
 }
 
 export function ProductEditor({
@@ -81,11 +97,21 @@ export function ProductEditor({
   const [images, setImages] = React.useState<AssetImage[]>(
     product?.images ?? [],
   );
+  const [variants, setVariants] = React.useState<VariantRow[]>(
+    product?.variants.map((v) => ({
+      sku: v.sku,
+      title: v.title,
+      options: v.options,
+      price: v.price !== null ? String(v.price) : "",
+      stock: v.stock !== null ? String(v.stock) : "",
+    })) ?? [],
+  );
   const [pending, setPending] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
 
   const slug = product?.slug ?? (name ? slugify(name) : "");
   const previewCategory = categories.find((c) => c.slug === categorySlug);
+  const variantDimNames = variants[0] ? Object.keys(variants[0].options) : [];
 
   function addSize(): void {
     const v = newSize.trim().toUpperCase();
@@ -126,6 +152,35 @@ export function ProductEditor({
     setCustomVariants((list) => list.filter((g) => g.id !== id));
   }
 
+  /** Rebuild the variant matrix from the current options, keeping any price/
+   * stock already entered for combinations that still exist. */
+  function generateVariants(): void {
+    const combos = buildMatrix(productOptions(colors, sizes, customVariants));
+    setVariants((prev) => {
+      const byKey = new Map(prev.map((r) => [optionsKey(r.options), r]));
+      return combos.map((options) => {
+        const existing = byKey.get(optionsKey(options));
+        return {
+          sku: existing?.sku ?? makeVariantSku(sku.trim() || "SKU", options),
+          title: variantTitle(options),
+          options,
+          price: existing?.price ?? "",
+          stock: existing?.stock ?? "",
+        };
+      });
+    });
+  }
+
+  function updateVariant(index: number, patch: Partial<VariantRow>): void {
+    setVariants((rows) =>
+      rows.map((r, i) => (i === index ? { ...r, ...patch } : r)),
+    );
+  }
+
+  function removeVariant(index: number): void {
+    setVariants((rows) => rows.filter((_, i) => i !== index));
+  }
+
   async function save(): Promise<void> {
     if (uploading) {
       toast.error("Tunggu gambar selesai diunggah");
@@ -156,6 +211,13 @@ export function ProductEditor({
       customVariants: customVariants.map((v) => ({
         name: v.name,
         values: v.values,
+      })),
+      variants: variants.map((r) => ({
+        sku: r.sku,
+        title: r.title,
+        price: r.price === "" ? null : parseInt(r.price, 10) || 0,
+        stock: r.stock === "" ? null : parseInt(r.stock, 10) || 0,
+        options: r.options,
       })),
       imageIds: images.map((im) => im.id),
       // Meta title/description mirror the product name & full description.
@@ -457,6 +519,109 @@ export function ProductEditor({
                 )}
               </div>
             </div>
+          </section>
+
+          {/* Stock per variant */}
+          <section className={CARD}>
+            <div className="mb-[18px] flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-ink">
+                  Stok per Varian
+                </h3>
+                <p className="mt-0.5 max-w-[420px] text-[13px] text-gray-400">
+                  Kombinasi dari Warna, Ukuran &amp; Varian Kustom. Isi harga
+                  &amp; stok tiap kombinasi. Produk tanpa varian memakai harga
+                  &amp; stok tunggal di atas.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={generateVariants}
+                className="h-9 flex-none rounded-pill bg-brand px-4 text-[13px] font-semibold text-white hover:bg-brand-hover"
+              >
+                Generate Varian
+              </button>
+            </div>
+            {variants.length === 0 ? (
+              <p className="rounded-btn bg-admin-bg px-3.5 py-3 text-[13px] text-gray-500">
+                Belum ada varian. Tambahkan opsi di atas lalu klik{" "}
+                <b className="font-semibold text-gray-600">Generate Varian</b>.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[560px] border-collapse text-[13px]">
+                  <thead>
+                    <tr className="border-b border-admin-border text-left text-gray-500">
+                      <th className="py-2 pr-3 font-semibold">SKU</th>
+                      {variantDimNames.map((n) => (
+                        <th key={n} className="py-2 pr-3 font-semibold">
+                          {n}
+                        </th>
+                      ))}
+                      <th className="py-2 pr-3 font-semibold">Harga</th>
+                      <th className="py-2 pr-3 font-semibold">Stok</th>
+                      <th className="py-2 font-semibold" aria-label="Aksi" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {variants.map((row, i) => (
+                      <tr
+                        key={row.sku}
+                        className="border-b border-gray-100 last:border-b-0"
+                      >
+                        <td className="py-2 pr-3 font-mono text-[12px] text-gray-500">
+                          {row.sku}
+                        </td>
+                        {variantDimNames.map((n) => (
+                          <td
+                            key={n}
+                            className="py-2 pr-3 font-semibold text-ink"
+                          >
+                            {row.options[n] ?? "—"}
+                          </td>
+                        ))}
+                        <td className="py-2 pr-3">
+                          <input
+                            value={row.price}
+                            onChange={(e) =>
+                              updateVariant(i, {
+                                price: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
+                            inputMode="numeric"
+                            placeholder="Base"
+                            className="h-9 w-[96px] rounded-lg border border-admin-border bg-admin-bg px-2.5 font-mono text-[13px] outline-none focus:border-brand focus:bg-white"
+                          />
+                        </td>
+                        <td className="py-2 pr-3">
+                          <input
+                            value={row.stock}
+                            onChange={(e) =>
+                              updateVariant(i, {
+                                stock: e.target.value.replace(/\D/g, ""),
+                              })
+                            }
+                            inputMode="numeric"
+                            placeholder="0"
+                            className="h-9 w-[76px] rounded-lg border border-admin-border bg-admin-bg px-2.5 font-mono text-[13px] outline-none focus:border-brand focus:bg-white"
+                          />
+                        </td>
+                        <td className="py-2">
+                          <button
+                            type="button"
+                            aria-label={`Hapus ${row.sku}`}
+                            onClick={() => removeVariant(i)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-admin-border bg-white text-gray-500 hover:bg-brand-subtle hover:text-danger"
+                          >
+                            <X className="h-[14px] w-[14px]" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
 
           {/* Images */}

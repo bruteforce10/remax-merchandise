@@ -6,9 +6,11 @@ import { ProductDetailView } from "@/components/product/ProductDetailView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
+import { priceFrom, totalStock } from "@/lib/variants";
 import { getCategoryBySlug } from "@/services/content/categories";
 import {
   getProductBySlug,
+  getProductDetailBySlug,
   getProductSlugs,
   getRelatedProducts,
 } from "@/services/content/products";
@@ -44,11 +46,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps): Promise<ReactNode> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getProductDetailBySlug(slug);
   if (!product) notFound();
   const category = await getCategoryBySlug(product.categorySlug);
   if (!category) notFound();
   const related = await getRelatedProducts(product, 4);
+
+  const hasVariants = product.variants.length > 0;
+  const displayPrice = priceFrom(product.variants, product.price);
+  const inStock = hasVariants
+    ? totalStock(product.variants) > 0
+    : product.stock === null || product.stock > 0;
 
   const productLd = {
     "@context": "https://schema.org",
@@ -61,8 +69,8 @@ export default async function ProductPage({ params }: PageProps): Promise<ReactN
     offers: {
       "@type": "Offer",
       priceCurrency: "IDR",
-      price: product.price,
-      availability: product.stock === null || product.stock > 0
+      price: displayPrice,
+      availability: inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       url: `${SITE_URL}/products/${slug}`,

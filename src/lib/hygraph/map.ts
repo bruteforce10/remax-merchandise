@@ -7,7 +7,12 @@ import type {
 } from "@/types/admin";
 import type { Banner } from "@/types/banner";
 import type { Category } from "@/types/category";
-import type { Product, ProductBadge } from "@/types/product";
+import type {
+  Product,
+  ProductBadge,
+  ProductDetail,
+  ProductVariant,
+} from "@/types/product";
 
 /** Raw Hygraph response shapes + mappers to the app's content types. */
 
@@ -82,6 +87,54 @@ export function mapProduct(p: RawProduct): Product {
   };
 }
 
+export interface RawProductVariant {
+  id: string;
+  sku: string;
+  title: string | null;
+  price: number | null;
+  stock: number | null;
+  options: unknown;
+}
+
+function parseOptions(value: unknown): Record<string, string> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const result: Record<string, string> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    result[k] = String(v);
+  }
+  return result;
+}
+
+export function mapVariant(v: RawProductVariant): ProductVariant {
+  return {
+    id: v.id,
+    sku: v.sku,
+    title: v.title ?? "",
+    price: v.price ?? null,
+    stock: v.stock ?? null,
+    options: parseOptions(v.options),
+  };
+}
+
+export interface RawProductDetail extends RawProduct {
+  description: string | null;
+  colors: string[] | null;
+  sizes: string[] | null;
+  customVariants: unknown;
+  variants: RawProductVariant[] | null;
+}
+
+export function mapProductDetail(p: RawProductDetail): ProductDetail {
+  return {
+    ...mapProduct(p),
+    description: p.description ?? "",
+    colors: p.colors ?? [],
+    sizes: p.sizes ?? [],
+    customVariants: parseCustomVariants(p.customVariants),
+    variants: (p.variants ?? []).map(mapVariant),
+  };
+}
+
 export interface RawBanner {
   id: string;
   alt: string;
@@ -124,6 +177,7 @@ export interface RawAdminProduct {
   publishStatus: string | null;
   category: { slug: string } | null;
   images: { id: string; url: string }[] | null;
+  variants: RawProductVariant[] | null;
 }
 
 function parseCustomVariants(value: unknown): ProductCustomVariant[] {
@@ -166,6 +220,7 @@ export function mapAdminProductDetail(p: RawAdminProduct): AdminProductDetail {
     material: p.material ?? "",
     branding: p.branding ?? "",
     customVariants: parseCustomVariants(p.customVariants),
+    variants: (p.variants ?? []).map(mapVariant),
     images: p.images ?? [],
     seoTitle: p.seoTitle ?? "",
     seoDescription: p.seoDescription ?? "",

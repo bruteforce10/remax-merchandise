@@ -2,9 +2,14 @@ import { unstable_cache } from "next/cache";
 
 import { sortProducts } from "@/lib/catalog";
 import { hygraphRead } from "@/lib/hygraph/client";
-import { mapProduct, type RawProduct } from "@/lib/hygraph/map";
-import { PRODUCTS_QUERY } from "@/lib/hygraph/queries";
-import type { Product } from "@/types/product";
+import {
+  mapProduct,
+  mapProductDetail,
+  type RawProduct,
+  type RawProductDetail,
+} from "@/lib/hygraph/map";
+import { PRODUCT_BY_SLUG_QUERY, PRODUCTS_QUERY } from "@/lib/hygraph/queries";
+import type { Product, ProductDetail } from "@/types/product";
 
 /**
  * Product content fetchers — sourced from Hygraph (published entries only).
@@ -33,6 +38,34 @@ export const getProducts: () => Promise<Product[]> = unstable_cache(
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const products = await getProducts();
   return products.find((p) => p.slug === slug) ?? null;
+}
+
+async function fetchProductDetail(slug: string): Promise<ProductDetail | null> {
+  try {
+    const { products } = await hygraphRead().request<{
+      products: RawProductDetail[];
+    }>(PRODUCT_BY_SLUG_QUERY, { slug });
+    const raw = products[0];
+    return raw ? mapProductDetail(raw) : null;
+  } catch (error) {
+    console.error("getProductDetailBySlug failed:", error);
+    return null;
+  }
+}
+
+/**
+ * Full product detail (option definitions + variants) for the product page.
+ * Fetched per-slug and cached separately from the lean catalog list.
+ */
+export async function getProductDetailBySlug(
+  slug: string,
+): Promise<ProductDetail | null> {
+  const cached = unstable_cache(
+    () => fetchProductDetail(slug),
+    ["product-detail", slug],
+    { revalidate: 300, tags: ["products"] },
+  );
+  return cached();
 }
 
 export async function getProductSlugs(): Promise<string[]> {

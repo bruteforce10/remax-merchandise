@@ -80,6 +80,34 @@ export const UNPUBLISH_PRODUCT = gql`
   }
 `;
 
+// ── Product Variant ─────────────────────────────────────────────────────────
+export const UPSERT_PRODUCT_VARIANT = gql`
+  mutation UpsertProductVariant(
+    $sku: String!
+    $upsert: ProductVariantUpsertInput!
+  ) {
+    upsertProductVariant(where: { sku: $sku }, upsert: $upsert) {
+      id
+    }
+  }
+`;
+
+export const PUBLISH_PRODUCT_VARIANT = gql`
+  mutation PublishProductVariant($sku: String!) {
+    publishProductVariant(where: { sku: $sku }, to: PUBLISHED) {
+      id
+    }
+  }
+`;
+
+export const DELETE_PRODUCT_VARIANT = gql`
+  mutation DeleteProductVariant($sku: String!) {
+    deleteProductVariant(where: { sku: $sku }) {
+      id
+    }
+  }
+`;
+
 // ── Banner ────────────────────────────────────────────────────────────────────
 export const CREATE_BANNER = gql`
   mutation CreateBanner($data: BannerCreateInput!) {

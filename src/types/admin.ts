@@ -1,6 +1,13 @@
-import type { Product } from "@/types/product";
+import type {
+  Product,
+  ProductCustomVariant,
+  ProductVariant,
+} from "@/types/product";
 
 /** Operational/admin models (map to Supabase `ProductStats`, `Setting`, etc.). */
+
+// Re-exported so existing admin-side importers keep a single source.
+export type { ProductCustomVariant, ProductVariant };
 
 export type ProductStatus = "published" | "draft";
 
@@ -8,12 +15,6 @@ export interface AdminProduct extends Product {
   status: ProductStatus;
   views: number;
   waClicks: number;
-}
-
-export interface ProductCustomVariant {
-  id: string;
-  name: string;
-  values: string[];
 }
 
 /** A published Hygraph asset reference (id + delivery URL). */
@@ -30,6 +31,7 @@ export interface AdminProductDetail extends AdminProduct {
   material: string;
   branding: string;
   customVariants: ProductCustomVariant[];
+  variants: ProductVariant[];
   images: AssetImage[];
   seoTitle: string;
   seoDescription: string;

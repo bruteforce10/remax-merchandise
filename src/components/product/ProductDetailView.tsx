@@ -11,13 +11,21 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { BADGE_LABELS, COLOR_HEX } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import {
+  COLOR_DIMENSION,
+  findVariant,
+  priceFrom,
+  productOptions,
+  variantPrice,
+  variantTitle,
+} from "@/lib/variants";
 import { productMessage, waLink } from "@/lib/whatsapp";
 import { useCart } from "@/providers/CartProvider";
 import type { Category } from "@/types/category";
-import type { Product } from "@/types/product";
+import type { Product, ProductDetail } from "@/types/product";
 
 interface ProductDetailViewProps {
-  product: Product;
+  product: ProductDetail;
   category: Category;
   related: Product[];
 }
@@ -30,14 +38,41 @@ export function ProductDetailView({
   const { add } = useCart();
   const step = 1;
 
+  // Option dimensions come from the product; fall back to the category for
+  // legacy products that don't define their own options/variants.
+  const productDims = productOptions(
+    product.colors,
+    product.sizes,
+    product.customVariants,
+  );
+  const dims =
+    productDims.length > 0
+      ? productDims
+      : productOptions(category.colors, category.sizes, []);
+
   const [galleryIndex, setGalleryIndex] = React.useState(0);
-  const [colorIndex, setColorIndex] = React.useState(0);
-  const [sizeIndex, setSizeIndex] = React.useState(0);
   const [qty, setQty] = React.useState(1);
+  const [selected, setSelected] = React.useState<Record<string, string>>(() =>
+    Object.fromEntries(dims.map((d) => [d.name, d.values[0]])),
+  );
 
   const finalQty = qty;
-  const color = category.colors[colorIndex];
-  const size = category.sizes.length ? category.sizes[sizeIndex] : undefined;
+  const hasVariants = product.variants.length > 0;
+  const variant = hasVariants
+    ? findVariant(product.variants, selected)
+    : undefined;
+
+  const unitPrice = variant
+    ? variantPrice(variant, product.price)
+    : priceFrom(product.variants, product.price);
+
+  // Stock for the current selection: variant stock, else product-level stock.
+  const selectionStock = hasVariants ? (variant?.stock ?? null) : product.stock;
+  // Sold out when the matched variant (or simple product) is at 0, or when a
+  // variable product has no variant for the chosen combination.
+  const soldOut = hasVariants
+    ? !variant || (variant.stock !== null && variant.stock <= 0)
+    : product.stock !== null && product.stock <= 0;
 
   const specs: { k: string; v: string }[] = [
     { k: "Bahan", v: category.material },
@@ -45,8 +80,35 @@ export function ProductDetailView({
     { k: "Kategori", v: category.name },
   ];
 
+  function addToCart(): void {
+    if (soldOut) return;
+    const base: Product = {
+      sku: product.sku,
+      slug: product.slug,
+      name: product.name,
+      short: product.short,
+      categorySlug: product.categorySlug,
+      price: product.price,
+      stock: product.stock,
+      badge: product.badge,
+      imageUrl: product.imageUrl,
+    };
+    const cartVariant =
+      hasVariants && variant
+        ? {
+            sku: variant.sku,
+            title: variant.title || variantTitle(variant.options),
+            price: unitPrice,
+            options: variant.options,
+          }
+        : undefined;
+    add(base, finalQty, cartVariant);
+  }
+
   function waHref(): string {
-    return waLink(productMessage(product, finalQty, { color, size }));
+    return waLink(
+      productMessage(product, finalQty, { options: selected, unitPrice }),
+    );
   }
 
   return (
@@ -116,70 +178,70 @@ export function ProductDetailView({
           <div className="mt-4 flex items-baseline gap-2.5 border-b border-gray-100 pb-4">
             <span className="text-[13px] text-gray-500">Mulai dari</span>
             <span className="font-mono text-[32px] font-extrabold text-brand">
-              {formatPrice(product.price)}
+              {formatPrice(unitPrice)}
             </span>
             <span className="text-[13px] text-gray-400">/pcs</span>
           </div>
 
-          {product.stock !== null && (
+          {hasVariants && !variant ? (
+            <div className="mt-3 mb-[14px] text-[13px] font-semibold text-red-500">
+              Kombinasi tidak tersedia
+            </div>
+          ) : selectionStock !== null ? (
             <div
               className={cn(
                 "mt-3 mb-[14px] text-[13px] font-semibold",
-                product.stock > 0 ? "text-green-600" : "text-red-500",
+                selectionStock > 0 ? "text-green-600" : "text-red-500",
               )}
             >
-              {product.stock > 0
-                ? `Stok tersedia: ${product.stock} pcs`
+              {selectionStock > 0
+                ? `Stok tersedia: ${selectionStock} pcs`
                 : "Stok habis"}
             </div>
+          ) : (
+            <div className="mb-[18px]" />
           )}
-          {product.stock === null && <div className="mb-[18px]" />}
 
-          {/* Colors */}
-          <div className="mb-[18px]">
-            <div className="mb-2.5 text-[13px] font-bold text-ink">
-              Pilihan Warna
-            </div>
-            <div className="flex flex-wrap gap-2.5">
-              {category.colors.map((name, i) => {
-                const active = i === colorIndex;
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    title={name}
-                    aria-label={name}
-                    aria-pressed={active}
-                    onClick={() => setColorIndex(i)}
-                    style={{ backgroundColor: COLOR_HEX[name] }}
-                    className={cn(
-                      "h-[38px] w-[38px] rounded-[11px] border-2",
-                      active
-                        ? "border-brand shadow-[0_0_0_3px_rgba(225,29,46,0.18)]"
-                        : name === "Putih"
-                          ? "border-gray-200"
-                          : "border-transparent",
-                    )}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Sizes */}
-          {category.sizes.length > 0 && (
-            <div className="mb-5">
+          {/* Options */}
+          {dims.map((dim) => (
+            <div key={dim.name} className="mb-[18px]">
               <div className="mb-2.5 text-[13px] font-bold text-ink">
-                Ukuran
+                {dim.name === COLOR_DIMENSION ? "Pilihan Warna" : dim.name}
               </div>
               <div className="flex flex-wrap gap-2.5">
-                {category.sizes.map((label, i) => {
-                  const active = i === sizeIndex;
+                {dim.values.map((value) => {
+                  const active = selected[dim.name] === value;
+                  if (dim.kind === "color") {
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        title={value}
+                        aria-label={value}
+                        aria-pressed={active}
+                        onClick={() =>
+                          setSelected((s) => ({ ...s, [dim.name]: value }))
+                        }
+                        style={{ backgroundColor: COLOR_HEX[value] ?? "#CBD5E1" }}
+                        className={cn(
+                          "h-[38px] w-[38px] rounded-[11px] border-2",
+                          active
+                            ? "border-brand shadow-[0_0_0_3px_rgba(225,29,46,0.18)]"
+                            : value === "Putih"
+                              ? "border-gray-200"
+                              : "border-transparent",
+                        )}
+                      />
+                    );
+                  }
                   return (
                     <button
-                      key={label}
+                      key={value}
                       type="button"
-                      onClick={() => setSizeIndex(i)}
+                      aria-pressed={active}
+                      onClick={() =>
+                        setSelected((s) => ({ ...s, [dim.name]: value }))
+                      }
                       className={cn(
                         "h-11 min-w-[48px] rounded-[11px] border-[1.5px] px-3 text-sm font-bold",
                         active
@@ -187,13 +249,13 @@ export function ProductDetailView({
                           : "border-gray-200 bg-white text-ink",
                       )}
                     >
-                      {label}
+                      {value}
                     </button>
                   );
                 })}
               </div>
             </div>
-          )}
+          ))}
 
           {/* Quantity */}
           <div className="mb-[22px] flex items-center gap-3.5">
@@ -242,11 +304,17 @@ export function ProductDetailView({
             </a>
             <button
               type="button"
-              onClick={() => add(product, finalQty)}
-              className="inline-flex h-[54px] flex-none items-center justify-center gap-2.5 rounded-[14px] border-[1.5px] border-gray-200 bg-white px-6 text-[15.5px] font-bold text-ink hover:border-gray-300 hover:bg-gray-50"
+              disabled={soldOut}
+              onClick={addToCart}
+              className={cn(
+                "inline-flex h-[54px] flex-none items-center justify-center gap-2.5 rounded-[14px] border-[1.5px] px-6 text-[15.5px] font-bold",
+                soldOut
+                  ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+                  : "border-gray-200 bg-white text-ink hover:border-gray-300 hover:bg-gray-50",
+              )}
             >
               <ShoppingCart className="h-[19px] w-[19px]" />
-              Tambah ke Keranjang
+              {soldOut ? "Stok Habis" : "Tambah ke Keranjang"}
             </button>
           </div>
 
@@ -273,7 +341,7 @@ export function ProductDetailView({
         <div className="rounded-[18px] border border-gray-100 p-6.5">
           <h3 className="mb-3 text-lg font-extrabold text-ink">Deskripsi</h3>
           <p className="text-[15px] leading-relaxed text-gray-600">
-            {category.description}
+            {product.description || category.description}
           </p>
         </div>
         <div className="rounded-[18px] border border-gray-100 p-6.5">
@@ -309,14 +377,20 @@ export function ProductDetailView({
         <div className="flex-none">
           <div className="text-[11px] text-gray-400">Mulai</div>
           <div className="font-mono text-[19px] font-extrabold text-brand">
-            {formatPrice(product.price)}
+            {formatPrice(unitPrice)}
           </div>
         </div>
         <button
           type="button"
           aria-label="Tambah ke keranjang"
-          onClick={() => add(product, finalQty)}
-          className="flex h-[50px] w-[52px] flex-none items-center justify-center rounded-[13px] border-[1.5px] border-gray-200 bg-white text-ink"
+          disabled={soldOut}
+          onClick={addToCart}
+          className={cn(
+            "flex h-[50px] w-[52px] flex-none items-center justify-center rounded-[13px] border-[1.5px]",
+            soldOut
+              ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+              : "border-gray-200 bg-white text-ink",
+          )}
         >
           <ShoppingCart className="h-5 w-5" />
         </button>

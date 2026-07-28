@@ -11,7 +11,7 @@ import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
 import { cartMessage, waLink } from "@/lib/whatsapp";
-import { useCart } from "@/providers/CartProvider";
+import { lineKey, lineUnitPrice, useCart } from "@/providers/CartProvider";
 
 interface CartViewProps {
   isAuthenticated: boolean;
@@ -82,9 +82,11 @@ export function CartView({
           <div className="flex flex-col gap-3.5">
             {lines.map((line) => {
               const step = 1;
+              const key = lineKey(line);
+              const unitPrice = lineUnitPrice(line);
               return (
                 <div
-                  key={line.product.sku}
+                  key={key}
                   className="flex flex-wrap items-center gap-4 rounded-card border border-gray-100 bg-white p-4"
                 >
                   <Link
@@ -113,10 +115,23 @@ export function CartView({
                     >
                       {line.product.name}
                     </Link>
+                    {line.variant &&
+                      Object.keys(line.variant.options).length > 0 && (
+                        <div className="mt-1 mb-0.5 flex flex-wrap gap-1.5">
+                          {Object.entries(line.variant.options).map(([k, v]) => (
+                            <span
+                              key={k}
+                              className="inline-flex items-center rounded-pill bg-gray-100 px-2.5 py-0.5 text-[11.5px] font-semibold text-gray-600"
+                            >
+                              {k}: {v}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     <div className="text-[13px] text-gray-500">
-                      SKU {line.product.sku} ·{" "}
+                      SKU {line.variant?.sku ?? line.product.sku} ·{" "}
                       <span className="font-mono font-bold text-brand">
-                        {formatPrice(line.product.price)}
+                        {formatPrice(unitPrice)}
                       </span>
                       /pcs
                     </div>
@@ -126,7 +141,7 @@ export function CartView({
                       <button
                         type="button"
                         aria-label="Kurangi"
-                        onClick={() => setQty(line.product.sku, line.qty - step)}
+                        onClick={() => setQty(key, line.qty - step)}
                         className="h-[42px] w-[38px] bg-white text-lg text-gray-600 hover:bg-gray-50"
                       >
                         −
@@ -134,7 +149,7 @@ export function CartView({
                       <input
                         value={line.qty}
                         onChange={(e) =>
-                          setQty(line.product.sku, parseInt(e.target.value, 10))
+                          setQty(key, parseInt(e.target.value, 10))
                         }
                         inputMode="numeric"
                         aria-label={`Jumlah ${line.product.name}`}
@@ -143,7 +158,7 @@ export function CartView({
                       <button
                         type="button"
                         aria-label="Tambah"
-                        onClick={() => setQty(line.product.sku, line.qty + step)}
+                        onClick={() => setQty(key, line.qty + step)}
                         className="h-[42px] w-[38px] bg-white text-lg text-gray-600 hover:bg-gray-50"
                       >
                         +
@@ -151,7 +166,7 @@ export function CartView({
                     </div>
                     <button
                       type="button"
-                      onClick={() => remove(line.product.sku)}
+                      onClick={() => remove(key)}
                       className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-gray-400 hover:text-brand"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -190,7 +205,14 @@ export function CartView({
               {isAuthenticated ? (
                 <a
                   href={waLink(
-                    cartMessage(lines.map((l) => ({ product: l.product, qty: l.qty }))),
+                    cartMessage(
+                      lines.map((l) => ({
+                        product: l.product,
+                        qty: l.qty,
+                        options: l.variant?.options,
+                        unitPrice: lineUnitPrice(l),
+                      })),
+                    ),
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
