@@ -56,7 +56,7 @@ export function Filters({
   return (
     <div className="flex flex-col gap-[22px]">
       <div className="flex items-center justify-between">
-        <span className="text-base font-extrabold text-ink">Filter</span>
+        <span className="text-base font-semibold text-ink">Filter</span>
         {activeCount > 0 && (
           <button
             type="button"
@@ -99,7 +99,7 @@ export function Filters({
       </div>
 
       {/* Price */}
-      <div className="border-t border-gray-100 pt-5">
+      <div className="border-t border-gray-200 pt-5">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-[12.5px] font-bold tracking-[0.04em] text-gray-400 uppercase">
             Harga Maks.
@@ -125,7 +125,7 @@ export function Filters({
       </div>
 
       {/* Colors */}
-      <div className="border-t border-gray-100 pt-5">
+      <div className="border-t border-gray-200 pt-5">
         <div className={SECTION_LABEL}>Warna</div>
         <div className="flex flex-wrap gap-2.5">
           {COLOR_PALETTE.map((name) => {

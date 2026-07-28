@@ -21,7 +21,7 @@ export function FloatingWhatsApp(): ReactElement {
       rel="noopener noreferrer"
       aria-label="Chat via WhatsApp"
       className={cn(
-        "fixed right-5 z-[70] inline-flex h-14 items-center gap-2.5 rounded-pill bg-whatsapp pr-5 pl-[18px] font-bold text-white shadow-fab transition-transform hover:-translate-y-0.5",
+        "fixed right-5 z-[70] inline-flex h-14 items-center gap-2.5 rounded-pill bg-whatsapp pr-5 pl-[18px] font-semibold text-white shadow-fab transition-transform hover:-translate-y-0.5",
         raised ? "bottom-[86px]" : "bottom-5",
       )}
     >

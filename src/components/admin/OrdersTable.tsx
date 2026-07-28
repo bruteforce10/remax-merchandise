@@ -77,7 +77,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
   return (
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5">
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">
           Pesanan
         </h1>
         <p className="mt-0.5 text-[14.5px] text-gray-500">
@@ -94,7 +94,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
               type="button"
               onClick={() => setStatusFilter(f.value)}
               className={cn(
-                "inline-flex h-[38px] items-center gap-2 rounded-[10px] border px-3.5 text-[13px] font-semibold",
+                "inline-flex h-[38px] items-center gap-2 rounded-pill border px-3.5 text-[13px] font-semibold",
                 active
                   ? "border-brand bg-brand-subtle text-brand"
                   : "border-admin-border bg-white text-gray-600 hover:bg-gray-50",
@@ -111,7 +111,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
         <div className="rmx-scrollbar overflow-x-auto">
           <table className="w-full min-w-[900px] border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 bg-[#FAFBFC]">
+              <tr className="border-b border-gray-200 bg-[#FAFBFC]">
                 <th className={TH}>Order</th>
                 <th className={TH}>Tanggal</th>
                 <th className={TH}>Customer</th>
@@ -178,7 +178,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                             type="button"
                             disabled={busyId === o.id}
                             onClick={() => void onConfirm(o.id)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-[9px] bg-brand px-3 text-[12.5px] font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-btn bg-brand px-3 text-[12.5px] font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
                           >
                             <Check className="h-[14px] w-[14px]" />
                             Konfirmasi
@@ -187,7 +187,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                             type="button"
                             disabled={busyId === o.id}
                             onClick={() => void onReject(o.id)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-[9px] border border-admin-border bg-white px-3 text-[12.5px] font-semibold text-gray-600 hover:text-danger disabled:opacity-60"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-btn border border-admin-border bg-white px-3 text-[12.5px] font-semibold text-gray-600 hover:text-danger disabled:opacity-60"
                           >
                             <X className="h-[14px] w-[14px]" />
                             Tolak

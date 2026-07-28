@@ -23,7 +23,7 @@ export function CategoryProducts({
   return (
     <>
       <div className="mb-[18px] flex flex-wrap items-center justify-between gap-3">
-        <div className="text-[15px] text-gray-500">
+        <div className="text-[15px] text-muted">
           <strong className="text-ink">{products.length}</strong> produk
         </div>
         <SortSelect

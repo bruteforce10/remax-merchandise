@@ -2,7 +2,13 @@
 
 /* ============================================================================
    RE/MAX Merchandise — Design Tokens (Tailwind CSS v4, CSS-first @theme)
-   Red-forward brand system as used across the approved prototypes.
+
+   Structure follows the Airbnb design language documented in DESIGN.md
+   (generous whitespace, soft rounding, hairline borders, a single shadow
+   tier, modest type weights) — but the primary brand voltage stays RE/MAX
+   red (#e11d2e), not Airbnb Rausch. Font family stays Geist; only the
+   DESIGN.md type scale (sizes / weights / line-heights / tracking) is adopted.
+
    Never hardcode hex in components — reference these token utilities instead.
    ========================================================================== */
 @theme {
@@ -11,25 +17,41 @@
     "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  /* Brand */
+  /* Brand — RE/MAX red kept as the single accent voltage (Airbnb structure,
+     REMAX color). Used scarcely: primary CTAs, brand links, active states. */
   --color-brand: #e11d2e;
   --color-brand-hover: #c41626;
   --color-brand-dark: #b01523;
+  --color-brand-disabled: #f4c4c9;
   --color-brand-subtle: #fdecee;
   --color-brand-subtle-2: #fef7f8;
 
-  /* Ink + neutral scale */
-  --color-ink: #232323;
-  --color-gray-50: #f7f7f8;
-  --color-gray-100: #eeeef0;
-  --color-gray-200: #dfe1e6;
-  --color-gray-300: #c3c7d1;
-  --color-gray-400: #9aa0ad;
-  --color-gray-500: #6e7484;
-  --color-gray-600: #4f5563;
-  --color-gray-700: #383d48;
-  --color-gray-800: #232323;
-  --color-gray-900: #14161b;
+  /* Ink + neutral scale — retuned to Airbnb's warm-neutral ramp
+     (#222 ink → #f7f7f7 surface) so grays read soft and human. */
+  --color-ink: #222222;
+  --color-gray-50: #f7f7f7;
+  --color-gray-100: #f2f2f2;
+  --color-gray-200: #dddddd;
+  --color-gray-300: #c1c1c1;
+  --color-gray-400: #929292;
+  --color-gray-500: #6a6a6a;
+  --color-gray-600: #4b4b4b;
+  --color-gray-700: #3f3f3f;
+  --color-gray-800: #222222;
+  --color-gray-900: #111111;
+
+  /* Named surface / hairline / text tokens (DESIGN.md structure) */
+  --color-canvas: #ffffff;
+  --color-surface-soft: #f7f7f7;
+  --color-surface-strong: #f2f2f2;
+  --color-hairline: #dddddd;
+  --color-hairline-soft: #ebebeb;
+  --color-border-strong: #c1c1c1;
+  --color-body: #3f3f3f;
+  --color-muted: #6a6a6a;
+  --color-muted-soft: #929292;
+  --color-star: #222222;
+  --color-legal-link: #428bff;
 
   /* Semantic */
   --color-success: #1a9a5b;
@@ -38,29 +60,35 @@
   --color-warning: #d98a0e;
   --color-warning-fg: #8a5c09;
   --color-warning-subtle: #fdf3e2;
-  --color-danger: #d6362c;
+  --color-danger: #c13515;
   --color-danger-subtle: #fdecee;
-  --color-info: #0043ff;
+  --color-info: #428bff;
   --color-info-subtle: #e7edff;
   --color-whatsapp: #25d366;
   --color-whatsapp-dark: #1da851;
 
   /* Admin surfaces */
-  --color-admin-bg: #f8f9fa;
-  --color-admin-border: #eef0f2;
+  --color-admin-bg: #f7f7f7;
+  --color-admin-border: #ebebeb;
 
-  /* Radius */
-  --radius-card: 16px;
-  --radius-btn: 12px;
-  --radius-modal: 20px;
-  --radius-pill: 999px;
+  /* Radius — Airbnb shape language: 8px buttons/inputs, 14px cards,
+     16px modals, full pills. */
+  --radius-card: 14px;
+  --radius-btn: 8px;
+  --radius-input: 8px;
+  --radius-modal: 16px;
+  --radius-pill: 9999px;
 
-  /* Shadows (soft, shallow — RE/MAX brand ink at low alpha) */
-  --shadow-card: 0 2px 8px rgba(0, 14, 53, 0.06);
-  --shadow-hover: 0 10px 28px rgba(0, 14, 53, 0.12);
-  --shadow-menu: 0 16px 40px rgba(0, 14, 53, 0.12);
-  --shadow-cta: 0 8px 22px rgba(225, 29, 46, 0.3);
-  --shadow-fab: 0 10px 28px rgba(37, 211, 102, 0.45);
+  /* Shadows — a single soft tier (DESIGN.md: depth comes from photography +
+     hairlines, not layered elevation). Hover is a subtle lift of the same. */
+  --shadow-card: rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.1) 0 4px 8px 0;
+  --shadow-hover: rgba(0, 0, 0, 0.03) 0 0 0 1px, rgba(0, 0, 0, 0.06) 0 6px 16px 0,
+    rgba(0, 0, 0, 0.12) 0 12px 24px 0;
+  --shadow-menu: rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.1) 0 4px 8px 0;
+  --shadow-cta: 0 6px 18px rgba(225, 29, 46, 0.18);
+  --shadow-fab: 0 10px 28px rgba(37, 211, 102, 0.4);
 
   /* Layout */
   --spacing-content: 1280px;
@@ -76,25 +104,25 @@
    so `npx shadcn add <component>` works out of the box.
    ------------------------------------------------------------------------- */
 :root {
-  --radius: 0.75rem;
+  --radius: 0.875rem; /* 14px — matches --radius-card */
   --background: #ffffff;
-  --foreground: #232323;
+  --foreground: #222222;
   --card: #ffffff;
-  --card-foreground: #232323;
+  --card-foreground: #222222;
   --popover: #ffffff;
-  --popover-foreground: #232323;
+  --popover-foreground: #222222;
   --primary: #e11d2e;
   --primary-foreground: #ffffff;
-  --secondary: #f7f7f8;
-  --secondary-foreground: #232323;
-  --muted: #f7f7f8;
-  --muted-foreground: #6e7484;
+  --secondary: #f7f7f7;
+  --secondary-foreground: #222222;
+  --muted: #f7f7f7;
+  --muted-foreground: #6a6a6a;
   --accent: #fdecee;
   --accent-foreground: #b01523;
-  --destructive: #d6362c;
+  --destructive: #c13515;
   --destructive-foreground: #ffffff;
-  --border: #dfe1e6;
-  --input: #dfe1e6;
+  --border: #dddddd;
+  --input: #dddddd;
   --ring: #e11d2e;
 }
 
@@ -109,7 +137,9 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
+  /* `--color-muted` is intentionally NOT re-aliased here: the design system
+     owns `muted` as a text tone (#6a6a6a, defined in the main @theme). shadcn's
+     muted *surface* is available as `--color-surface-soft` (#f7f7f7). */
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
@@ -118,10 +148,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: calc(var(--radius) - 6px); /* 8px */
+  --radius-md: calc(var(--radius) - 2px); /* 12px */
+  --radius-lg: var(--radius); /* 14px */
+  --radius-xl: calc(var(--radius) + 6px); /* 20px */
 }
 
 /* ---------------------------------------------------------------------------
@@ -135,12 +165,17 @@
     scroll-behavior: smooth;
   }
   body {
-    background: #ffffff;
+    background: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+  /* Inline links carry the brand voltage by default (DESIGN.md: inline brand
+     links are the accent). Structural links that must read as ink — nav,
+     footer, breadcrumbs — set `text-ink`/`text-body` explicitly. */
   a {
     color: var(--color-brand);
     text-decoration: none;
@@ -155,6 +190,106 @@
   :focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Typography scale (DESIGN.md tokens, carried by Geist)
+   Sizes / weights / tracking follow DESIGN.md; display line-heights are set
+   tight for headline quality. Apply via `type-*` classes in components.
+   ------------------------------------------------------------------------- */
+@layer components {
+  .type-display-xl {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+  }
+  .type-display-lg {
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.44px;
+  }
+  .type-display-md {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+  }
+  .type-display-sm {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.18px;
+  }
+  .type-title-md {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .type-title-sm {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .type-body-md {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .type-body-sm {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.43;
+  }
+  .type-caption {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.29;
+  }
+  .type-caption-sm {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.23;
+  }
+  .type-badge {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.18;
+  }
+  .type-micro-label {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.33;
+  }
+  .type-uppercase-tag {
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.32px;
+    text-transform: uppercase;
+  }
+  .type-rating {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  .type-nav-link {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .type-button-md {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .type-button-sm {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.29;
   }
 }
 
@@ -252,7 +387,7 @@
     scrollbar-width: none;
   }
   .shimmer {
-    background: linear-gradient(90deg, #f2f2f4 25%, #e9e9ec 37%, #f2f2f4 63%);
+    background: linear-gradient(90deg, #f2f2f2 25%, #ebebeb 37%, #f2f2f2 63%);
     background-size: 800px 100%;
     animation: var(--animate-shimmer);
   }

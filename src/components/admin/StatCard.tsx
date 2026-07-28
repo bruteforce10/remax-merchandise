@@ -31,11 +31,11 @@ export function StatCard({
   trend,
 }: StatCardProps): ReactElement {
   return (
-    <div className="rounded-card border border-admin-border bg-white p-5 transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="rounded-card border border-admin-border bg-white p-5 transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-hover">
       <div className="mb-3.5 flex items-center justify-between">
         <span
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-[11px]",
+            "flex h-10 w-10 items-center justify-center rounded-btn",
             TONES[tone],
           )}
         >
@@ -55,7 +55,7 @@ export function StatCard({
           {delta}
         </span>
       </div>
-      <div className="font-mono text-[28px] font-extrabold tracking-tight text-ink">
+      <div className="font-mono text-[28px] font-bold tracking-tight text-ink">
         {value}
       </div>
       <div className="mt-0.5 text-[13.5px] text-gray-500">{label}</div>

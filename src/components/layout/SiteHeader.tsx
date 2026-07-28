@@ -16,8 +16,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+import { UserMenu } from "@/components/layout/UserMenu";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { Drawer } from "@/components/ui/Drawer";
+import { useAuth } from "@/providers/AuthProvider";
 import { useCart } from "@/providers/CartProvider";
 import { COMPANY } from "@/lib/constants";
 import { searchSuggestions } from "@/lib/catalog";
@@ -35,6 +37,7 @@ export function SiteHeader({
 }: SiteHeaderProps): React.JSX.Element {
   const router = useRouter();
   const { count, hydrated } = useCart();
+  const { user, signOut } = useAuth();
 
   const [query, setQuery] = React.useState("");
   const [focused, setFocused] = React.useState(false);
@@ -102,7 +105,7 @@ export function SiteHeader({
       </div>
 
       {/* Main header */}
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-[10px] backdrop-saturate-150">
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-[10px] backdrop-saturate-150">
         <div className="mx-auto flex max-w-[1280px] items-center gap-5 px-6 py-3.5">
           <Link href="/" className="flex flex-none items-center gap-2.5">
             <Image
@@ -124,14 +127,14 @@ export function SiteHeader({
               <button
                 type="button"
                 onClick={() => setCatMenuOpen((v) => !v)}
-                className="inline-flex h-11 items-center gap-1.5 rounded-btn border border-gray-200 bg-white px-3.5 text-[14.5px] font-semibold text-ink hover:bg-gray-50"
+                className="inline-flex h-11 items-center gap-1.5 rounded-pill border border-gray-200 bg-white px-4 text-[15px] font-semibold text-ink hover:border-border-strong"
               >
                 <LayoutGrid className="h-[17px] w-[17px]" />
                 Kategori
                 <ChevronDown className="h-[15px] w-[15px] text-gray-400" />
               </button>
               {catMenuOpen && (
-                <div className="absolute top-13 left-0 z-[60] grid w-[520px] grid-cols-2 gap-0.5 rounded-card border border-gray-100 bg-white p-3 shadow-menu">
+                <div className="absolute top-13 left-0 z-[60] grid w-[520px] grid-cols-2 gap-0.5 rounded-card border border-gray-200 bg-white p-3 shadow-menu">
                   {categories.map((c) => (
                     <Link
                       key={c.slug}
@@ -155,8 +158,7 @@ export function SiteHeader({
             </div>
 
             <div className="relative flex-1">
-              <div className="flex h-11 items-center gap-2.5 rounded-btn border border-gray-200 bg-gray-50 px-3.5 transition-colors focus-within:border-brand focus-within:bg-white">
-                <Search className="h-[18px] w-[18px] text-gray-400" />
+              <div className="flex h-12 items-center gap-2.5 rounded-pill border border-gray-200 bg-white pr-2 pl-5 shadow-card transition-colors focus-within:border-border-strong">
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -166,9 +168,17 @@ export function SiteHeader({
                     if (e.key === "Enter") submitSearch(query);
                   }}
                   placeholder="Cari produk merchandise…"
-                  className="flex-1 border-none bg-transparent text-[14.5px] text-ink outline-none placeholder:text-gray-400"
+                  className="flex-1 border-none bg-transparent text-[14px] text-ink outline-none placeholder:text-muted"
                   aria-label="Cari produk"
                 />
+                <button
+                  type="button"
+                  onClick={() => submitSearch(query)}
+                  aria-label="Cari"
+                  className="flex h-9 w-9 flex-none items-center justify-center rounded-pill bg-brand text-white transition-colors hover:bg-brand-hover"
+                >
+                  <Search className="h-[17px] w-[17px]" />
+                </button>
               </div>
               {showSuggest && (
                 <SuggestionList
@@ -181,7 +191,7 @@ export function SiteHeader({
 
           <Link
             href="/contact"
-            className="hidden flex-none text-[14.5px] font-semibold text-ink hover:text-brand lg:inline"
+            className="hidden flex-none text-[15px] font-semibold text-ink hover:text-brand lg:inline"
           >
             Kontak
           </Link>
@@ -191,7 +201,7 @@ export function SiteHeader({
           <Link
             href="/cart"
             aria-label="Keranjang penawaran"
-            className="relative inline-flex h-11 w-11 flex-none items-center justify-center rounded-btn border border-gray-200 bg-white text-ink hover:bg-gray-50"
+            className="relative inline-flex h-11 w-11 flex-none items-center justify-center rounded-pill border border-gray-200 bg-white text-ink hover:border-border-strong"
           >
             <ShoppingCart className="h-[19px] w-[19px]" />
             {cartBadge && (
@@ -201,11 +211,13 @@ export function SiteHeader({
             )}
           </Link>
 
+          <UserMenu />
+
           <button
             type="button"
             aria-label="Buka menu"
             onClick={() => setMobileOpen(true)}
-            className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-btn border border-gray-200 bg-white text-ink hover:bg-gray-50 lg:hidden"
+            className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-pill border border-gray-200 bg-white text-ink hover:border-border-strong lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -237,7 +249,7 @@ export function SiteHeader({
             </button>
           </div>
 
-          <div className="mb-[18px] flex h-[46px] items-center gap-2.5 rounded-btn border border-gray-200 bg-gray-50 px-3.5">
+          <div className="mb-[18px] flex h-[48px] items-center gap-2.5 rounded-pill border border-gray-200 bg-white px-5 shadow-card">
             <Search className="h-[18px] w-[18px] text-gray-400" />
             <input
               value={query}
@@ -268,6 +280,42 @@ export function SiteHeader({
               {l.label}
             </Link>
           ))}
+          {user ? (
+            <>
+              <Link
+                href="/account/orders"
+                onClick={() => setMobileOpen(false)}
+                className="border-b border-gray-100 py-3 text-base font-semibold text-ink"
+              >
+                Riwayat Pesanan
+              </Link>
+              <Link
+                href="/account/profile"
+                onClick={() => setMobileOpen(false)}
+                className="border-b border-gray-100 py-3 text-base font-semibold text-ink"
+              >
+                Profil Saya
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  void signOut();
+                }}
+                className="border-b border-gray-100 py-3 text-left text-base font-semibold text-danger"
+              >
+                Keluar
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/account/login"
+              onClick={() => setMobileOpen(false)}
+              className="border-b border-gray-100 py-3 text-base font-semibold text-ink"
+            >
+              Masuk
+            </Link>
+          )}
 
           <div className="mt-[18px] mb-2 text-xs font-bold tracking-[0.06em] text-gray-400 uppercase">
             Kategori
@@ -301,7 +349,7 @@ function SuggestionList({
   onSelect,
 }: SuggestionListProps): React.JSX.Element {
   return (
-    <div className="absolute top-[52px] right-0 left-0 z-40 rounded-[14px] border border-gray-100 bg-white p-2 shadow-menu">
+    <div className="absolute top-[56px] right-0 left-0 z-40 rounded-card border border-gray-200 bg-white p-2 shadow-menu">
       {suggestions.map((s) => (
         <button
           key={`${s.kind}-${s.href}`}

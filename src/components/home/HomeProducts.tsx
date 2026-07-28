@@ -18,10 +18,10 @@ export function HomeProducts({ products }: { products: Product[] }): React.JSX.E
 
   return (
     <section className="mx-auto max-w-[1280px] px-6 pt-8 pb-2">
-      <h2 className="text-2xl font-extrabold tracking-tight text-ink">
+      <h2 className="text-[22px] font-semibold tracking-tight text-ink">
         Produk Merchandise
       </h2>
-      <p className="mt-1.5 mb-[18px] text-[15px] text-gray-500">
+      <p className="mt-1.5 mb-[18px] text-[15px] text-muted">
         Pilihan lengkap untuk seragam, event, dan corporate gift.
       </p>
 
@@ -37,7 +37,7 @@ export function HomeProducts({ products }: { products: Product[] }): React.JSX.E
                 "h-10 flex-none rounded-pill border px-[18px] text-sm font-semibold transition-colors",
                 active
                   ? "border-brand bg-brand text-white"
-                  : "border-gray-200 bg-white text-gray-600 hover:border-gray-300",
+                  : "border-gray-200 bg-white text-gray-600 hover:border-border-strong",
               )}
             >
               {t.label}

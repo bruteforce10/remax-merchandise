@@ -23,7 +23,7 @@ export function Pagination({
         type="button"
         aria-label="Halaman sebelumnya"
         onClick={() => onPage(Math.max(1, page - 1))}
-        className="flex h-[42px] w-[42px] items-center justify-center rounded-[11px] border border-gray-200 bg-white text-ink hover:bg-gray-50"
+        className="flex h-[42px] w-[42px] items-center justify-center rounded-pill border border-gray-200 bg-white text-ink hover:border-border-strong"
       >
         <ChevronLeft className="h-[18px] w-[18px]" />
       </button>
@@ -35,10 +35,10 @@ export function Pagination({
           aria-current={n === page ? "page" : undefined}
           onClick={() => onPage(n)}
           className={cn(
-            "h-[42px] min-w-[42px] rounded-[11px] border px-2 font-mono text-[15px] font-bold",
+            "h-[42px] min-w-[42px] rounded-pill border px-2 font-mono text-[15px] font-bold",
             n === page
               ? "border-brand bg-brand text-white"
-              : "border-gray-200 bg-white text-ink hover:bg-gray-50",
+              : "border-gray-200 bg-white text-ink hover:border-border-strong",
           )}
         >
           {n}
@@ -48,7 +48,7 @@ export function Pagination({
         type="button"
         aria-label="Halaman berikutnya"
         onClick={() => onPage(Math.min(pageCount, page + 1))}
-        className="flex h-[42px] w-[42px] items-center justify-center rounded-[11px] border border-gray-200 bg-white text-ink hover:bg-gray-50"
+        className="flex h-[42px] w-[42px] items-center justify-center rounded-pill border border-gray-200 bg-white text-ink hover:border-border-strong"
       >
         <ChevronRight className="h-[18px] w-[18px]" />
       </button>

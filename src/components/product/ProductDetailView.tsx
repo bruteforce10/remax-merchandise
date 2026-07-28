@@ -1,13 +1,13 @@
 "use client";
 
-import { Info, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import { CreditCard, Info, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Badge } from "@/components/ui/Badge";
-import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
+import { useCheckout } from "@/hooks/useCheckout";
 import { BADGE_LABELS, COLOR_HEX } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ import {
   variantPrice,
   variantTitle,
 } from "@/lib/variants";
-import { productMessage, waLink } from "@/lib/whatsapp";
+import { productMessage } from "@/lib/whatsapp";
 import { useCart } from "@/providers/CartProvider";
 import type { Category } from "@/types/category";
 import type { Product, ProductDetail } from "@/types/product";
@@ -36,6 +36,7 @@ export function ProductDetailView({
   related,
 }: ProductDetailViewProps): React.JSX.Element {
   const { add } = useCart();
+  const { checkout, pending } = useCheckout();
   const step = 1;
 
   // Option dimensions come from the product; fall back to the category for
@@ -105,10 +106,26 @@ export function ProductDetailView({
     add(base, finalQty, cartVariant);
   }
 
-  function waHref(): string {
-    return waLink(
-      productMessage(product, finalQty, { options: selected, unitPrice }),
-    );
+  function handleCheckout(): void {
+    if (soldOut) return;
+    void checkout({
+      item: {
+        sku: variant?.sku ?? product.sku,
+        productSku: product.sku,
+        productSlug: product.slug,
+        name: product.name,
+        options: selected,
+        qty: finalQty,
+        unitPrice,
+      },
+      buildMessage: (ref) =>
+        productMessage(product, finalQty, {
+          options: selected,
+          unitPrice,
+          ref,
+        }),
+      nextPath: `/products/${product.slug}`,
+    });
   }
 
   return (
@@ -116,7 +133,7 @@ export function ProductDetailView({
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
         {/* Gallery */}
         <div>
-          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[20px] border border-gray-100 bg-gradient-to-br from-[#f4f4f6] to-[#e6e7ec]">
+          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-card border border-gray-200 bg-gradient-to-br from-[#f4f4f6] to-[#e6e7ec]">
             {product.imageUrl ? (
               <Image
                 src={product.imageUrl}
@@ -145,7 +162,7 @@ export function ProductDetailView({
                   onClick={() => setGalleryIndex(n)}
                   className={cn(
                     "flex aspect-square items-center justify-center rounded-[12px] border-2 bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] text-[11px] font-bold text-gray-300",
-                    n === galleryIndex ? "border-brand" : "border-gray-100",
+                    n === galleryIndex ? "border-brand" : "border-gray-200",
                   )}
                 >
                   {n + 1}
@@ -171,16 +188,16 @@ export function ProductDetailView({
             </Link>
           </div>
 
-          <h1 className="text-[26px] leading-tight font-extrabold tracking-tight text-ink sm:text-[34px]">
+          <h1 className="text-[26px] leading-tight font-semibold tracking-tight text-ink sm:text-[30px]">
             {product.name}
           </h1>
 
-          <div className="mt-4 flex items-baseline gap-2.5 border-b border-gray-100 pb-4">
-            <span className="text-[13px] text-gray-500">Mulai dari</span>
-            <span className="font-mono text-[32px] font-extrabold text-brand">
+          <div className="mt-4 flex items-baseline gap-2.5 border-b border-gray-200 pb-4">
+            <span className="text-[13px] text-muted">Mulai dari</span>
+            <span className="font-mono text-[32px] font-bold text-brand">
               {formatPrice(unitPrice)}
             </span>
-            <span className="text-[13px] text-gray-400">/pcs</span>
+            <span className="text-[13px] text-muted">/pcs</span>
           </div>
 
           {hasVariants && !variant ? (
@@ -243,10 +260,10 @@ export function ProductDetailView({
                         setSelected((s) => ({ ...s, [dim.name]: value }))
                       }
                       className={cn(
-                        "h-11 min-w-[48px] rounded-[11px] border-[1.5px] px-3 text-sm font-bold",
+                        "h-11 min-w-[48px] rounded-btn border px-3.5 text-sm font-medium",
                         active
                           ? "border-brand bg-brand-subtle text-brand"
-                          : "border-gray-200 bg-white text-ink",
+                          : "border-gray-200 bg-white text-ink hover:border-border-strong",
                       )}
                     >
                       {value}
@@ -277,7 +294,7 @@ export function ProductDetailView({
                 }}
                 inputMode="numeric"
                 aria-label="Jumlah"
-                className="h-[46px] w-16 border-x border-gray-100 text-center font-mono text-base font-bold outline-none"
+                className="h-[46px] w-16 border-x border-gray-200 text-center font-mono text-base font-bold outline-none"
               />
               <button
                 type="button"
@@ -293,24 +310,29 @@ export function ProductDetailView({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
-            <a
-              href={waHref()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-[54px] min-w-[200px] flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-base font-bold text-white shadow-cta transition-colors hover:bg-brand-hover"
+            <button
+              type="button"
+              disabled={soldOut || pending}
+              onClick={handleCheckout}
+              className={cn(
+                "inline-flex h-[54px] min-w-[200px] flex-1 items-center justify-center gap-2.5 rounded-btn text-base font-medium shadow-cta transition-colors",
+                soldOut
+                  ? "cursor-not-allowed bg-gray-200 text-gray-400 shadow-none"
+                  : "bg-brand text-white hover:bg-brand-hover disabled:opacity-60",
+              )}
             >
-              <WhatsAppIcon className="h-5 w-5" />
-              Chat via WhatsApp
-            </a>
+              <CreditCard className="h-5 w-5" />
+              {soldOut ? "Stok Habis" : pending ? "Memproses…" : "Checkout"}
+            </button>
             <button
               type="button"
               disabled={soldOut}
               onClick={addToCart}
               className={cn(
-                "inline-flex h-[54px] flex-none items-center justify-center gap-2.5 rounded-[14px] border-[1.5px] px-6 text-[15.5px] font-bold",
+                "inline-flex h-[54px] flex-none items-center justify-center gap-2.5 rounded-btn border px-6 text-[15.5px] font-medium",
                 soldOut
                   ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                  : "border-gray-200 bg-white text-ink hover:border-gray-300 hover:bg-gray-50",
+                  : "border-gray-200 bg-white text-ink hover:border-border-strong",
               )}
             >
               <ShoppingCart className="h-[19px] w-[19px]" />
@@ -338,23 +360,23 @@ export function ProductDetailView({
 
       {/* Description + Specs */}
       <div className="mt-11 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-[18px] border border-gray-100 p-6.5">
-          <h3 className="mb-3 text-lg font-extrabold text-ink">Deskripsi</h3>
+        <div className="rounded-card border border-gray-200 p-6.5">
+          <h3 className="mb-3 text-lg font-semibold text-ink">Deskripsi</h3>
           <p className="text-[15px] leading-relaxed text-gray-600">
             {product.description || category.description}
           </p>
         </div>
-        <div className="rounded-[18px] border border-gray-100 p-6.5">
-          <h3 className="mb-3.5 text-lg font-extrabold text-ink">
+        <div className="rounded-card border border-gray-200 p-6.5">
+          <h3 className="mb-3.5 text-lg font-semibold text-ink">
             Spesifikasi
           </h3>
           <div className="flex flex-col">
             {specs.map((s) => (
               <div
                 key={s.k}
-                className="flex justify-between gap-4 border-b border-gray-100 py-[11px] last:border-b-0"
+                className="flex justify-between gap-4 border-b border-gray-200 py-[11px] last:border-b-0"
               >
-                <span className="text-sm text-gray-400">{s.k}</span>
+                <span className="text-sm text-muted">{s.k}</span>
                 <span className="text-right text-sm font-semibold text-ink">
                   {s.v}
                 </span>
@@ -366,16 +388,16 @@ export function ProductDetailView({
 
       {/* Recommendations */}
       <div className="mt-13">
-        <h2 className="mb-[18px] text-[22px] font-extrabold text-ink">
+        <h2 className="mb-[18px] text-[22px] font-semibold tracking-tight text-ink">
           Rekomendasi Produk
         </h2>
         <ProductGrid products={related} />
       </div>
 
       {/* Mobile sticky buy bar */}
-      <div className="fixed right-0 bottom-0 left-0 z-[60] flex items-center gap-3 border-t border-gray-100 bg-white p-3 shadow-[0_-6px_24px_rgba(0,14,53,0.08)] lg:hidden">
+      <div className="fixed right-0 bottom-0 left-0 z-[60] flex items-center gap-3 border-t border-gray-200 bg-white p-3 shadow-[0_-6px_24px_rgba(0,14,53,0.08)] lg:hidden">
         <div className="flex-none">
-          <div className="text-[11px] text-gray-400">Mulai</div>
+          <div className="text-[11px] text-muted">Mulai</div>
           <div className="font-mono text-[19px] font-extrabold text-brand">
             {formatPrice(unitPrice)}
           </div>
@@ -386,7 +408,7 @@ export function ProductDetailView({
           disabled={soldOut}
           onClick={addToCart}
           className={cn(
-            "flex h-[50px] w-[52px] flex-none items-center justify-center rounded-[13px] border-[1.5px]",
+            "flex h-[50px] w-[52px] flex-none items-center justify-center rounded-btn border",
             soldOut
               ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
               : "border-gray-200 bg-white text-ink",
@@ -394,15 +416,20 @@ export function ProductDetailView({
         >
           <ShoppingCart className="h-5 w-5" />
         </button>
-        <a
-          href={waHref()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-[50px] flex-1 items-center justify-center gap-2.5 rounded-[13px] bg-brand text-[15.5px] font-bold text-white"
+        <button
+          type="button"
+          disabled={soldOut || pending}
+          onClick={handleCheckout}
+          className={cn(
+            "inline-flex h-[50px] flex-1 items-center justify-center gap-2.5 rounded-btn text-[15.5px] font-medium",
+            soldOut
+              ? "cursor-not-allowed bg-gray-200 text-gray-400"
+              : "bg-brand text-white disabled:opacity-60",
+          )}
         >
-          <WhatsAppIcon className="h-[19px] w-[19px]" />
-          WhatsApp
-        </a>
+          <CreditCard className="h-[19px] w-[19px]" />
+          {soldOut ? "Stok Habis" : pending ? "Memproses…" : "Checkout"}
+        </button>
       </div>
     </div>
   );

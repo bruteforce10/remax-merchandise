@@ -35,7 +35,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
   return (
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5">
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">Analitik</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">Analitik</h1>
         <p className="mt-0.5 text-[14.5px] text-gray-500">
           Performa katalog 30 hari terakhir
         </p>
@@ -51,7 +51,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
                 <Icon className="h-[17px] w-[17px]" />
                 <span className="text-[13px] font-semibold">{m.label}</span>
               </div>
-              <div className="font-mono text-[26px] font-extrabold text-ink">{m.value}</div>
+              <div className="font-mono text-[26px] font-semibold text-ink">{m.value}</div>
               <div
                 className={`mt-1 text-[12.5px] font-bold ${m.trend === "up" ? "text-success-fg" : "text-gray-400"}`}
               >
@@ -66,7 +66,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
         {/* Daily chart */}
         <div className={`${PANEL} lg:col-span-2`}>
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-base font-extrabold text-ink">Tampilan Harian</h3>
+            <h3 className="text-base font-semibold text-ink">Tampilan Harian</h3>
             <div className="flex gap-3.5 text-[12.5px]">
               <span className="inline-flex items-center gap-1.5 text-gray-500">
                 <span className="h-2.5 w-2.5 rounded-sm bg-brand" />
@@ -99,14 +99,14 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
 
         {/* Device donut */}
         <div className={PANEL}>
-          <h3 className="mb-[18px] text-base font-extrabold text-ink">Perangkat</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">Perangkat</h3>
           <div className="mb-[18px] flex items-center justify-center">
             <div
               className="flex h-[150px] w-[150px] items-center justify-center rounded-full"
               style={{ background: donut }}
             >
               <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-white">
-                <span className="font-mono text-[22px] font-extrabold text-ink">100%</span>
+                <span className="font-mono text-[22px] font-semibold text-ink">100%</span>
                 <span className="text-[11px] text-gray-400">Sesi</span>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Top products */}
         <div className={PANEL}>
-          <h3 className="mb-4 text-[15px] font-extrabold text-ink">Produk Terpopuler</h3>
+          <h3 className="mb-4 text-[15px] font-semibold text-ink">Produk Terpopuler</h3>
           {topProducts.map((p) => (
             <div key={p.name} className="mb-3.5 last:mb-0">
               <div className="mb-1.5 flex justify-between text-[13px]">
@@ -146,7 +146,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
 
         {/* Keywords + countries */}
         <div className={PANEL}>
-          <h3 className="mb-4 text-[15px] font-extrabold text-ink">Kata Kunci Populer</h3>
+          <h3 className="mb-4 text-[15px] font-semibold text-ink">Kata Kunci Populer</h3>
           <div className="flex flex-wrap gap-2.5">
             {keywords.map((k) => (
               <span
@@ -158,7 +158,7 @@ export default async function AdminAnalyticsPage(): Promise<ReactNode> {
               </span>
             ))}
           </div>
-          <h3 className="mt-5.5 mb-3.5 text-[15px] font-extrabold text-ink">Negara Teratas</h3>
+          <h3 className="mt-5.5 mb-3.5 text-[15px] font-semibold text-ink">Negara Teratas</h3>
           {countries.map((c) => (
             <div
               key={c.name}

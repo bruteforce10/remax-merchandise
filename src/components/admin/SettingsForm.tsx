@@ -26,7 +26,7 @@ export function SettingsForm(): React.JSX.Element {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-[820px] animate-[rmx-fade_.3s_ease]">
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink">Pengaturan Website</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">Pengaturan Website</h1>
       <p className="mt-0.5 mb-6 text-[14.5px] text-gray-500">
         Konfigurasi informasi perusahaan, SEO, dan sosial media
       </p>
@@ -34,7 +34,7 @@ export function SettingsForm(): React.JSX.Element {
       <div className="flex flex-col gap-[18px]">
         {/* Company */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-extrabold text-ink">Informasi Perusahaan</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">Informasi Perusahaan</h3>
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <Field label="Nama Perusahaan" full>
               <input defaultValue={COMPANY.name} className={FIELD} />
@@ -59,7 +59,7 @@ export function SettingsForm(): React.JSX.Element {
 
         {/* SEO */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-extrabold text-ink">SEO Website</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">SEO Website</h3>
           <div className="flex flex-col gap-3.5">
             <Field label="Default Meta Title">
               <input
@@ -87,7 +87,7 @@ export function SettingsForm(): React.JSX.Element {
 
         {/* Social */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-extrabold text-ink">Sosial Media</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">Sosial Media</h3>
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             {SOCIALS.map((s) => (
               <Field key={s.label} label={s.label}>
@@ -115,7 +115,7 @@ export function SettingsForm(): React.JSX.Element {
         </button>
         <button
           type="submit"
-          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-bold text-white hover:bg-brand-hover"
+          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-medium text-white hover:bg-brand-hover"
         >
           <Check className="h-[18px] w-[18px]" />
           Simpan Pengaturan

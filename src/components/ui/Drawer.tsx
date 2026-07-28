@@ -53,7 +53,7 @@ export function Drawer({
       <button
         type="button"
         aria-label="Tutup"
-        className="absolute inset-0 cursor-default bg-gray-900/40"
+        className="absolute inset-0 cursor-default bg-black/50"
         onClick={onClose}
       />
       <div

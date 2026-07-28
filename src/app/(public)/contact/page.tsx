@@ -24,7 +24,7 @@ export default function ContactPage(): ReactNode {
             <Headset className="h-[15px] w-[15px] text-[#FF6472]" />
             Kami siap membantu
           </span>
-          <h1 className="text-[30px] font-extrabold tracking-tight sm:text-[46px]">
+          <h1 className="text-[34px] font-semibold tracking-tight sm:text-[40px]">
             Butuh Bantuan?
           </h1>
           <p className="mx-auto mt-3 max-w-[560px] text-base leading-relaxed text-gray-300">
@@ -37,11 +37,11 @@ export default function ContactPage(): ReactNode {
       {/* Contact cards */}
       <section className="mx-auto max-w-[1280px] px-6 pt-9 pb-5">
         <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-2.5 rounded-card border border-gray-100 p-6">
-            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-[12px] bg-success-subtle text-success">
+          <div className="flex flex-col gap-2.5 rounded-card border border-gray-200 p-6">
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-card bg-success-subtle text-success">
               <WhatsAppIcon className="h-[22px] w-[22px]" />
             </span>
-            <div className="text-[15px] font-bold text-ink">WhatsApp</div>
+            <div className="text-[15px] font-semibold text-ink">WhatsApp</div>
             <div className="text-sm text-gray-500">{COMPANY.whatsappDisplay}</div>
             <a
               href={waLink(generalMessage())}
@@ -53,32 +53,32 @@ export default function ContactPage(): ReactNode {
             </a>
           </div>
 
-          <div className="flex flex-col gap-2.5 rounded-card border border-gray-100 p-6">
-            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-[12px] bg-brand-subtle text-brand">
+          <div className="flex flex-col gap-2.5 rounded-card border border-gray-200 p-6">
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-card bg-brand-subtle text-brand">
               <Mail className="h-[22px] w-[22px]" />
             </span>
-            <div className="text-[15px] font-bold text-ink">Email</div>
+            <div className="text-[15px] font-semibold text-ink">Email</div>
             <div className="text-sm text-gray-500">{COMPANY.email}</div>
             <span className="text-[13.5px] text-gray-400">
               Balasan &lt; 1 hari kerja
             </span>
           </div>
 
-          <div className="flex flex-col gap-2.5 rounded-card border border-gray-100 p-6">
-            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-[12px] bg-info-subtle text-info">
+          <div className="flex flex-col gap-2.5 rounded-card border border-gray-200 p-6">
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-card bg-info-subtle text-info">
               <MapPin className="h-[22px] w-[22px]" />
             </span>
-            <div className="text-[15px] font-bold text-ink">Kantor</div>
+            <div className="text-[15px] font-semibold text-ink">Kantor</div>
             <div className="text-sm leading-relaxed text-gray-500">
               {COMPANY.address}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2.5 rounded-card border border-gray-100 p-6">
-            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-[12px] bg-warning-subtle text-warning">
+          <div className="flex flex-col gap-2.5 rounded-card border border-gray-200 p-6">
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-card bg-warning-subtle text-warning">
               <Clock className="h-[22px] w-[22px]" />
             </span>
-            <div className="text-[15px] font-bold text-ink">Jam Operasional</div>
+            <div className="text-[15px] font-semibold text-ink">Jam Operasional</div>
             <div className="text-sm leading-relaxed text-gray-500">
               Senin – Sabtu
               <br />
@@ -91,12 +91,12 @@ export default function ContactPage(): ReactNode {
       {/* Map + FAQ */}
       <section className="mx-auto max-w-[1280px] px-6 pt-5 pb-13">
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-          <div className="overflow-hidden rounded-[18px] border border-gray-100">
+          <div className="overflow-hidden rounded-card border border-gray-200">
             <div className="relative flex h-[220px] items-center justify-center bg-gradient-to-br from-[#e9eaee] to-gray-200">
               <div className="absolute inset-0 bg-[linear-gradient(#d3d5db_1px,transparent_1px),linear-gradient(90deg,#d3d5db_1px,transparent_1px)] bg-[length:36px_36px] opacity-60" />
               <div className="relative text-center text-gray-500">
                 <MapPin className="mx-auto h-[34px] w-[34px] text-brand" />
-                <div className="mt-1.5 text-[13.5px] font-bold">
+                <div className="mt-1.5 text-[13.5px] font-semibold">
                   RE/MAX Indonesia HQ
                 </div>
                 <div className="text-[12.5px] text-gray-400">Google Maps</div>
@@ -115,8 +115,8 @@ export default function ContactPage(): ReactNode {
             </div>
           </div>
 
-          <div className="rounded-[18px] border border-gray-100 p-6">
-            <h3 className="mb-2 text-[17px] font-extrabold text-ink">
+          <div className="rounded-card border border-gray-200 p-6">
+            <h3 className="mb-2 text-[17px] font-semibold text-ink">
               Pertanyaan Umum (FAQ)
             </h3>
             <FaqAccordion />

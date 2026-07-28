@@ -148,8 +148,8 @@ export function SearchClient({
 
       {/* Search bar */}
       <div className="relative mb-[22px]">
-        <div className="flex h-15 items-center gap-3 rounded-card border-[1.5px] border-gray-200 bg-white px-5 shadow-card focus-within:border-brand">
-          <Search className="h-[22px] w-[22px] text-gray-400" />
+        <div className="flex h-15 items-center gap-3 rounded-pill border border-gray-200 bg-white px-5 shadow-card focus-within:border-border-strong">
+          <Search className="h-[22px] w-[22px] text-muted" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -160,14 +160,14 @@ export function SearchClient({
             }}
             placeholder="Cari polo, jaket, payung, tumbler…"
             aria-label="Cari produk"
-            className="flex-1 border-none bg-transparent text-lg text-ink outline-none placeholder:text-gray-400"
+            className="flex-1 border-none bg-transparent text-lg text-ink outline-none placeholder:text-muted"
           />
           {query.length > 0 && (
             <button
               type="button"
               aria-label="Bersihkan"
               onClick={() => setQuery("")}
-              className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-gray-100 text-gray-500"
+              className="flex h-[34px] w-[34px] items-center justify-center rounded-pill bg-gray-100 text-gray-500"
             >
               <X className="h-4 w-4" />
             </button>
@@ -175,13 +175,13 @@ export function SearchClient({
           <button
             type="button"
             onClick={() => submitSearch(query)}
-            className="h-11 rounded-btn bg-brand px-5.5 text-[15px] font-semibold text-white hover:bg-brand-hover"
+            className="h-11 rounded-pill bg-brand px-6 text-[15px] font-medium text-white hover:bg-brand-hover"
           >
             Cari
           </button>
         </div>
         {showSuggest && (
-          <div className="absolute top-[66px] right-0 left-0 z-40 rounded-[14px] border border-gray-100 bg-white p-2 shadow-menu">
+          <div className="absolute top-[66px] right-0 left-0 z-40 rounded-card border border-gray-200 bg-white p-2 shadow-menu">
             {suggestions.map((s) => (
               <button
                 key={`${s.kind}-${s.href}`}
@@ -219,7 +219,7 @@ export function SearchClient({
       ) : (
         <>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-[15px] text-gray-500">
+            <div className="text-[15px] text-muted">
               <strong className="text-ink">{results.length}</strong> produk ditemukan
               {committedQuery ? ` untuk "${committedQuery}"` : ""}
             </div>
@@ -227,7 +227,7 @@ export function SearchClient({
               <button
                 type="button"
                 onClick={() => setDrawerOpen(true)}
-                className="inline-flex h-11 items-center gap-[7px] rounded-btn border border-gray-200 bg-white px-4 text-sm font-semibold lg:hidden"
+                className="inline-flex h-11 items-center gap-[7px] rounded-pill border border-gray-200 bg-white px-4 text-sm font-semibold lg:hidden"
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filter
@@ -284,7 +284,7 @@ export function SearchClient({
       >
         <div className="flex flex-col overflow-y-auto p-[22px]">
           <div className="mb-[18px] flex items-center justify-between">
-            <span className="text-lg font-extrabold">Filter Produk</span>
+            <span className="text-lg font-semibold">Filter Produk</span>
             <button
               type="button"
               aria-label="Tutup filter"
@@ -304,7 +304,7 @@ export function SearchClient({
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
-            className="mt-6 h-[50px] w-full rounded-[13px] bg-brand text-[15px] font-bold text-white"
+            className="mt-6 h-[50px] w-full rounded-btn bg-brand text-[15px] font-medium text-white"
           >
             Lihat {results.length} Produk
           </button>
@@ -323,7 +323,7 @@ interface DiscoveryProps {
 function Discovery({ recent, onSearch, onClearRecent }: DiscoveryProps): React.JSX.Element {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div className="rounded-card border border-gray-100 p-5">
+      <div className="rounded-card border border-gray-200 p-5">
         <div className="mb-3 text-[13px] font-bold tracking-[0.05em] text-gray-400 uppercase">
           Pencarian Populer
         </div>
@@ -340,7 +340,7 @@ function Discovery({ recent, onSearch, onClearRecent }: DiscoveryProps): React.J
           ))}
         </div>
       </div>
-      <div className="rounded-card border border-gray-100 p-5">
+      <div className="rounded-card border border-gray-200 p-5">
         <div className="mb-3 flex items-center justify-between">
           <div className="text-[13px] font-bold tracking-[0.05em] text-gray-400 uppercase">
             Riwayat Pencarian
@@ -385,15 +385,15 @@ function EmptyState({ onReset }: { onReset: () => void }): React.JSX.Element {
       <div className="mx-auto mb-[18px] flex h-[74px] w-[74px] items-center justify-center rounded-[20px] bg-gray-50 text-gray-300">
         <SearchX className="h-[34px] w-[34px]" />
       </div>
-      <div className="mb-1.5 text-[19px] font-bold text-ink">Produk tidak ditemukan</div>
-      <div className="mx-auto mb-5 max-w-[380px] text-[14.5px] text-gray-500">
+      <div className="mb-1.5 text-[19px] font-semibold text-ink">Produk tidak ditemukan</div>
+      <div className="mx-auto mb-5 max-w-[380px] text-[14.5px] text-muted">
         Coba kata kunci lain atau atur ulang filter. Atau tanyakan langsung ke tim kami.
       </div>
       <div className="flex flex-wrap justify-center gap-2.5">
         <button
           type="button"
           onClick={onReset}
-          className="h-[46px] rounded-btn border border-gray-200 bg-white px-5 text-[14.5px] font-semibold"
+          className="h-[46px] rounded-btn border border-gray-200 bg-white px-5 text-[14.5px] font-medium hover:border-border-strong"
         >
           Reset Filter
         </button>
@@ -401,7 +401,7 @@ function EmptyState({ onReset }: { onReset: () => void }): React.JSX.Element {
           href={waLink(generalMessage())}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-[46px] items-center rounded-btn bg-brand px-5 text-[14.5px] font-semibold text-white"
+          className="inline-flex h-[46px] items-center rounded-btn bg-brand px-5 text-[14.5px] font-medium text-white"
         >
           Tanya via WhatsApp
         </a>

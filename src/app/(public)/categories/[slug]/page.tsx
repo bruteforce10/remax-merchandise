@@ -76,11 +76,11 @@ export default async function CategoryDetailPage({
             ]}
           />
           <div className="mt-5 flex flex-wrap items-center gap-[18px]">
-            <span className="flex h-[66px] w-[66px] items-center justify-center rounded-[18px] border border-brand/35 bg-brand/[0.18] text-[#FF6472]">
+            <span className="flex h-[66px] w-[66px] items-center justify-center rounded-card border border-brand/35 bg-brand/[0.18] text-[#FF6472]">
               <CategoryIcon name={category.icon} className="h-[30px] w-[30px]" />
             </span>
             <div className="min-w-[240px] flex-1">
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[40px]">
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-[40px]">
                 {category.name}
               </h1>
               <p className="mt-2 max-w-[640px] text-[15.5px] leading-relaxed text-gray-300">
@@ -104,7 +104,7 @@ export default async function CategoryDetailPage({
                   "inline-flex h-10 flex-none items-center gap-[7px] rounded-pill border px-4 text-sm font-semibold",
                   active
                     ? "border-brand bg-brand text-white"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300",
+                    : "border-gray-200 bg-white text-gray-600 hover:border-border-strong",
                 )}
               >
                 <CategoryIcon name={c.icon} className="h-[15px] w-[15px]" />
@@ -118,7 +118,7 @@ export default async function CategoryDetailPage({
 
         {/* Related categories */}
         <div className="mt-13">
-          <h2 className="mb-[18px] text-[22px] font-extrabold text-ink">
+          <h2 className="mb-[18px] text-[22px] font-semibold text-ink">
             Kategori Terkait
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -126,14 +126,14 @@ export default async function CategoryDetailPage({
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
-                className="flex items-center gap-3.5 rounded-card border border-gray-100 p-5 transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-hover"
+                className="flex items-center gap-3.5 rounded-card border border-gray-200 p-5 transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-hover"
               >
-                <span className="flex h-[46px] w-[46px] flex-none items-center justify-center rounded-[12px] bg-brand-subtle text-brand">
+                <span className="flex h-[46px] w-[46px] flex-none items-center justify-center rounded-card bg-brand-subtle text-brand">
                   <CategoryIcon name={c.icon} className="h-[22px] w-[22px]" />
                 </span>
                 <div>
-                  <div className="text-[15px] font-bold text-ink">{c.name}</div>
-                  <div className="text-[12.5px] text-gray-400">
+                  <div className="text-[15px] font-semibold text-ink">{c.name}</div>
+                  <div className="text-[12.5px] text-muted">
                     {counts[c.slug] ?? 0} produk
                   </div>
                 </div>

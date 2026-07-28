@@ -36,7 +36,7 @@ import type { Category } from "@/types/category";
 
 const PAGE_SIZE = 8;
 const SELECT_CLS =
-  "h-[42px] rounded-[11px] border border-admin-border bg-white px-3 text-sm font-semibold text-gray-700 cursor-pointer outline-none focus:border-brand";
+  "h-[42px] rounded-btn border border-admin-border bg-white px-3 text-sm font-semibold text-gray-700 cursor-pointer outline-none focus:border-brand";
 const TH = "px-3 py-3 text-left text-[12px] font-bold tracking-[0.04em] text-gray-400 uppercase";
 
 type SortKey = "recent" | "views" | "price-desc" | "price-asc";
@@ -246,7 +246,7 @@ export function ProductsTable({
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Produk</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Produk</h1>
           <p className="mt-0.5 text-[14.5px] text-gray-500">
             {items.length} produk dalam katalog
           </p>
@@ -262,8 +262,8 @@ export function ProductsTable({
 
       <div className="overflow-hidden rounded-card border border-admin-border bg-white">
         {/* Filter bar */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-gray-100 px-[18px] py-4">
-          <div className="flex h-[42px] min-w-[200px] flex-1 items-center gap-2.5 rounded-[11px] border border-admin-border bg-admin-bg px-3.5 focus-within:border-brand focus-within:bg-white">
+        <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 px-[18px] py-4">
+          <div className="flex h-[42px] min-w-[200px] flex-1 items-center gap-2.5 rounded-btn border border-admin-border bg-admin-bg px-3.5 focus-within:border-brand focus-within:bg-white">
             <Search className="h-[17px] w-[17px] text-gray-400" />
             <input
               value={search}
@@ -327,7 +327,7 @@ export function ProductsTable({
         <div className="rmx-scrollbar overflow-x-auto">
           <table className="w-full min-w-[940px] border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 bg-[#FAFBFC]">
+              <tr className="border-b border-gray-200 bg-[#FAFBFC]">
                 <th className="w-11 px-[18px] py-3 text-left">
                   <Checkbox checked={allChecked} onClick={toggleAll} />
                 </th>
@@ -358,11 +358,11 @@ export function ProductsTable({
                       </td>
                       <td className="px-3 py-3.5">
                         <Link href={`/admin/products/${p.sku}`} className="flex items-center gap-3">
-                          <span className="flex h-11 w-11 flex-none items-center justify-center rounded-[10px] bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
+                          <span className="flex h-11 w-11 flex-none items-center justify-center rounded-btn bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
                             <CategoryIcon name={cat?.icon ?? "package"} className="h-5 w-5" />
                           </span>
                           <span>
-                            <span className="block text-sm font-bold text-ink">{p.name}</span>
+                            <span className="block text-sm font-semibold text-ink">{p.name}</span>
                             <span className="block font-mono text-xs text-gray-400">{p.sku}</span>
                           </span>
                         </Link>
@@ -411,7 +411,7 @@ export function ProductsTable({
         {/* Empty state */}
         {!loading && total === 0 && (
           <div className="px-5 py-[70px] text-center">
-            <div className="mx-auto mb-4 flex h-[70px] w-[70px] items-center justify-center rounded-[18px] bg-gray-50 text-gray-300">
+            <div className="mx-auto mb-4 flex h-[70px] w-[70px] items-center justify-center rounded-card bg-gray-50 text-gray-300">
               <PackageSearch className="h-8 w-8" />
             </div>
             <div className="mb-1 text-[17px] font-bold text-ink">Tidak ada produk</div>
@@ -424,7 +424,7 @@ export function ProductsTable({
                 setStatusFilter("all");
                 setPage(1);
               }}
-              className="h-[42px] rounded-[11px] border border-admin-border bg-white px-[18px] text-sm font-semibold hover:bg-gray-50"
+              className="h-[42px] rounded-btn border border-admin-border bg-white px-[18px] text-sm font-semibold hover:bg-gray-50"
             >
               Reset Filter
             </button>
@@ -433,7 +433,7 @@ export function ProductsTable({
 
         {/* Pagination */}
         {!loading && total > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-[18px] py-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 px-[18px] py-3.5">
             <span className="text-[13px] text-gray-400">
               Menampilkan {rangeStart}–{rangeEnd} dari {total}
             </span>
@@ -452,7 +452,7 @@ export function ProductsTable({
                   onClick={() => setPage(n)}
                   aria-current={n === current ? "page" : undefined}
                   className={cn(
-                    "h-[38px] min-w-[38px] rounded-[10px] border px-2 font-mono text-sm font-bold",
+                    "h-[38px] min-w-[38px] rounded-btn border px-2 font-mono text-sm font-bold",
                     n === current
                       ? "border-brand bg-brand text-white"
                       : "border-admin-border bg-white text-ink hover:bg-gray-50",
@@ -475,10 +475,10 @@ export function ProductsTable({
 
       {/* Delete modal */}
       <Modal open={!!deleteSku} onClose={() => setDeleteSku(null)} ariaLabel="Hapus produk">
-        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-subtle text-danger">
+        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-card bg-brand-subtle text-danger">
           <TriangleAlert className="h-7 w-7" />
         </div>
-        <h3 className="mb-2 text-xl font-extrabold text-ink">Hapus Produk?</h3>
+        <h3 className="mb-2 text-xl font-semibold text-ink">Hapus Produk?</h3>
         <p className="mb-6 text-[14.5px] leading-relaxed text-gray-500">
           Anda akan menghapus <strong className="text-ink">{deleteTarget?.name}</strong>.
           Tindakan ini tidak dapat dibatalkan dan data terkait akan hilang permanen.
@@ -568,7 +568,7 @@ function IconAction({
       aria-label={title}
       onClick={onClick}
       className={cn(
-        "flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border border-admin-border bg-white text-gray-500 transition-colors",
+        "flex h-[34px] w-[34px] items-center justify-center rounded-btn border border-admin-border bg-white text-gray-500 transition-colors",
         danger ? "hover:border-[#F8D2D7] hover:bg-brand-subtle hover:text-danger" : "hover:bg-gray-50 hover:text-brand",
       )}
     >
@@ -598,7 +598,7 @@ function BulkBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border bg-white px-3 text-[13px] font-semibold disabled:opacity-50",
+        "inline-flex h-[34px] items-center gap-1.5 rounded-btn border bg-white px-3 text-[13px] font-semibold disabled:opacity-50",
         danger ? "border-[#F8D2D7] text-danger" : "border-admin-border text-gray-700 hover:bg-gray-50",
       )}
     >
@@ -625,7 +625,7 @@ function PageBtn({
       aria-label={aria}
       onClick={onClick}
       disabled={disabled}
-      className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-admin-border bg-white text-ink hover:bg-gray-50 disabled:opacity-40"
+      className="flex h-[38px] w-[38px] items-center justify-center rounded-btn border border-admin-border bg-white text-ink hover:bg-gray-50 disabled:opacity-40"
     >
       {children}
     </button>
@@ -640,7 +640,7 @@ function SkeletonRow(): React.JSX.Element {
       </td>
       <td className="px-3 py-4">
         <div className="flex items-center gap-3">
-          <div className="shimmer h-11 w-11 rounded-[10px]" />
+          <div className="shimmer h-11 w-11 rounded-btn" />
           <div className="h-3.5 w-40 rounded-md bg-gray-100" />
         </div>
       </td>
@@ -681,18 +681,18 @@ function QuickEditForm({
 
   return (
     <>
-      <div className="flex items-center justify-between border-b border-gray-100 px-[22px] py-5">
+      <div className="flex items-center justify-between border-b border-gray-200 px-[22px] py-5">
         <div>
           <div className="text-[12px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
             Quick Edit
           </div>
-          <div className="text-[17px] font-extrabold text-ink">{product.name}</div>
+          <div className="text-[17px] font-semibold text-ink">{product.name}</div>
         </div>
         <button
           type="button"
           aria-label="Tutup"
           onClick={onClose}
-          className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-admin-border bg-white"
+          className="flex h-[38px] w-[38px] items-center justify-center rounded-btn border border-admin-border bg-white"
         >
           <X className="h-[18px] w-[18px]" />
         </button>
@@ -763,7 +763,7 @@ function QuickEditForm({
         </div>
       </div>
 
-      <div className="flex gap-3 border-t border-gray-100 px-[22px] py-4">
+      <div className="flex gap-3 border-t border-gray-200 px-[22px] py-4">
         <button
           type="button"
           onClick={onClose}

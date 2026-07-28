@@ -106,16 +106,16 @@ export function ImageUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="w-full cursor-pointer rounded-[14px] border-2 border-dashed border-gray-200 bg-[#FAFBFC] px-6 py-8 text-center transition-colors hover:border-brand hover:bg-brand-subtle-2 disabled:cursor-wait"
+          className="w-full cursor-pointer rounded-card border-2 border-dashed border-gray-200 bg-[#FAFBFC] px-6 py-8 text-center transition-colors hover:border-brand hover:bg-brand-subtle-2 disabled:cursor-wait"
         >
-          <div className="mx-auto mb-3 flex h-13 w-13 items-center justify-center rounded-[14px] border border-admin-border bg-white text-brand">
+          <div className="mx-auto mb-3 flex h-13 w-13 items-center justify-center rounded-card border border-admin-border bg-white text-brand">
             {uploading ? (
               <Loader2 className="h-6 w-6 animate-spin" />
             ) : (
               <UploadCloud className="h-6 w-6" />
             )}
           </div>
-          <div className="text-[14.5px] font-bold text-ink">
+          <div className="text-[14.5px] font-semibold text-ink">
             {uploading ? "Mengunggah…" : "Pilih gambar untuk diunggah"}
           </div>
           <div className="mt-1 text-[13px] text-gray-400">{hint}</div>
@@ -138,7 +138,7 @@ export function ImageUpload({
             return (
               <div
                 key={img.id}
-                className="group relative aspect-square overflow-hidden rounded-[11px] border border-admin-border bg-gray-50"
+                className="group relative aspect-square overflow-hidden rounded-btn border border-admin-border bg-gray-50"
               >
                 <Image
                   src={img.url}

@@ -19,7 +19,7 @@ export function Breadcrumb({
 }: BreadcrumbProps): ReactElement {
   const sep = variant === "dark" ? "text-gray-600" : "text-gray-300";
   const link = variant === "dark" ? "text-gray-400 hover:text-white" : "text-gray-400 hover:text-brand";
-  const current = variant === "dark" ? "font-bold text-white" : "font-bold text-ink";
+  const current = variant === "dark" ? "font-semibold text-white" : "font-semibold text-ink";
 
   return (
     <nav

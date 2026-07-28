@@ -63,18 +63,36 @@ function mapOrder(o: RawOrder): Order {
   };
 }
 
+const ORDER_SELECT =
+  "id, session_id, customer_email, status, total_qty, estimated_total, created_at, order_items ( sku, product_sku, product_slug, name, options, qty, unit_price )";
+
 export async function getOrders(): Promise<Order[]> {
   try {
     const { data, error } = await supabaseAdmin()
       .from("orders")
-      .select(
-        "id, session_id, customer_email, status, total_qty, estimated_total, created_at, order_items ( sku, product_sku, product_slug, name, options, qty, unit_price )",
-      )
+      .select(ORDER_SELECT)
       .order("created_at", { ascending: false });
     if (error) throw error;
     return ((data ?? []) as RawOrder[]).map(mapOrder);
   } catch (error) {
     console.error("getOrders failed:", error);
+    return [];
+  }
+}
+
+/** A single customer's own orders, newest first (order-history page). */
+export async function getOrdersByEmail(email: string): Promise<Order[]> {
+  if (!email) return [];
+  try {
+    const { data, error } = await supabaseAdmin()
+      .from("orders")
+      .select(ORDER_SELECT)
+      .eq("customer_email", email)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return ((data ?? []) as RawOrder[]).map(mapOrder);
+  } catch (error) {
+    console.error("getOrdersByEmail failed:", error);
     return [];
   }
 }

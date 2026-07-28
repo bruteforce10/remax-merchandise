@@ -111,7 +111,7 @@ export function CategoriesGrid({
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Kategori</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Kategori</h1>
           <p className="mt-0.5 text-[14.5px] text-gray-500">{items.length} kategori aktif</p>
         </div>
         <div className="flex gap-2.5">
@@ -139,10 +139,10 @@ export function CategoriesGrid({
         {filtered.map((c) => (
           <div
             key={c.slug}
-            className="overflow-hidden rounded-card border border-admin-border bg-white transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            className="overflow-hidden rounded-card border border-admin-border bg-white transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-hover"
           >
             <div className="relative flex h-[88px] items-center justify-center bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea]">
-              <span className="flex h-12 w-12 items-center justify-center rounded-[13px] bg-white text-brand shadow-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-card bg-white text-brand shadow-sm">
                 <CategoryIcon name={c.icon} className="h-6 w-6" />
               </span>
               {c.featured && (
@@ -154,14 +154,14 @@ export function CategoriesGrid({
             </div>
             <div className="p-4">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-[15.5px] font-bold text-ink">{c.name}</div>
+                <div className="text-[15.5px] font-semibold text-ink">{c.name}</div>
                 <StatusBadge status={c.status} dot={false} />
               </div>
               <div className="mt-0.5 mb-2 font-mono text-[12.5px] text-gray-400">/{c.slug}</div>
               <p className="line-clamp-2 h-[38px] text-[13px] leading-relaxed text-gray-500">
                 {c.description}
               </p>
-              <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+              <div className="mt-3 flex items-center justify-between border-t border-gray-200 pt-3">
                 <span className="text-[12.5px] text-gray-400">
                   <strong className="text-ink">{c.count}</strong> produk · urutan {c.order}
                 </span>
@@ -177,10 +177,10 @@ export function CategoriesGrid({
 
       {/* Delete modal */}
       <Modal open={!!deleteSlug} onClose={() => setDeleteSlug(null)} ariaLabel="Hapus kategori">
-        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-subtle text-danger">
+        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-card bg-brand-subtle text-danger">
           <TriangleAlert className="h-7 w-7" />
         </div>
-        <h3 className="mb-2 text-xl font-extrabold text-ink">Hapus Kategori?</h3>
+        <h3 className="mb-2 text-xl font-semibold text-ink">Hapus Kategori?</h3>
         <p className="mb-6 text-[14.5px] leading-relaxed text-gray-500">
           Anda akan menghapus <strong className="text-ink">{deleteTarget?.name}</strong>.
           Produk pada kategori ini tidak ikut terhapus.
@@ -197,7 +197,7 @@ export function CategoriesGrid({
             type="button"
             onClick={remove}
             disabled={deleting}
-            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95 disabled:opacity-60"
+            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-medium text-white hover:brightness-95 disabled:opacity-60"
           >
             {deleting ? "Menghapus…" : "Hapus"}
           </button>
@@ -269,7 +269,7 @@ function CategoryForm({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-extrabold text-ink">
+        <h3 className="text-lg font-semibold text-ink">
           {initial ? "Edit Kategori" : "Kategori Baru"}
         </h3>
         <button
@@ -381,7 +381,7 @@ function CategoryForm({
             });
             if (!ok) setPending(false);
           }}
-          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
+          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-medium text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {pending ? "Menyimpan…" : "Simpan"}
         </button>

@@ -45,7 +45,7 @@ export function AdminLogin(): React.JSX.Element {
             priority
             className="h-10 w-auto"
           />
-          <h1 className="mt-3 text-xl font-extrabold tracking-tight text-ink">
+          <h1 className="mt-3 text-xl font-semibold tracking-tight text-ink">
             RE/MAX <span className="text-brand">Admin</span>
           </h1>
           <p className="text-[13px] font-semibold text-gray-400">Merchandise CMS</p>
@@ -53,9 +53,9 @@ export function AdminLogin(): React.JSX.Element {
 
         <form
           onSubmit={(e) => void handleSubmit(e)}
-          className="rounded-[18px] border border-admin-border bg-white p-7 shadow-card"
+          className="rounded-card border border-admin-border bg-white p-7 shadow-card"
         >
-          <h2 className="text-lg font-extrabold text-ink">Masuk</h2>
+          <h2 className="text-lg font-semibold text-ink">Masuk</h2>
           <p className="mt-0.5 mb-5 text-[13.5px] text-gray-500">
             Kelola katalog merchandise Anda.
           </p>
@@ -69,7 +69,7 @@ export function AdminLogin(): React.JSX.Element {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-[46px] rounded-btn border border-gray-200 bg-admin-bg px-3.5 text-[14.5px] text-ink outline-none focus:border-brand focus:bg-white"
+              className="h-12 rounded-input border border-gray-200 bg-admin-bg px-3.5 text-[14.5px] text-ink outline-none focus:border-brand focus:bg-white"
             />
           </div>
 
@@ -83,14 +83,14 @@ export function AdminLogin(): React.JSX.Element {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="h-[46px] rounded-btn border border-gray-200 bg-admin-bg px-3.5 text-[14.5px] text-ink outline-none focus:border-brand focus:bg-white"
+              className="h-12 rounded-input border border-gray-200 bg-admin-bg px-3.5 text-[14.5px] text-ink outline-none focus:border-brand focus:bg-white"
             />
           </div>
 
           <button
             type="submit"
             disabled={pending}
-            className="mt-5 flex h-[48px] w-full items-center justify-center rounded-btn bg-brand text-[15px] font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
+            className="mt-5 flex h-[48px] w-full items-center justify-center rounded-btn bg-brand text-[15px] font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
           >
             {pending ? "Memproses…" : "Masuk"}
           </button>

@@ -99,7 +99,7 @@ export function AdminShell({
   ): React.JSX.Element => (
     <>
       {showLogo && (
-        <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 pt-5 pb-[18px]">
+        <div className="flex items-center gap-2.5 border-b border-gray-200 px-5 pt-5 pb-[18px]">
           <Image
             src="/assets/logo-mark.png"
             alt="RE/MAX"
@@ -108,7 +108,7 @@ export function AdminShell({
             className="h-[30px] w-auto"
           />
           <div>
-            <div className="text-[15px] font-extrabold tracking-tight text-ink">
+            <div className="text-[15px] font-semibold tracking-tight text-ink">
               RE/MAX <span className="text-brand">Admin</span>
             </div>
             <div className="text-[11px] font-semibold text-gray-400">
@@ -127,7 +127,7 @@ export function AdminShell({
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
+                "flex items-center gap-3 rounded-btn px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
                 active
                   ? "bg-brand-subtle text-brand"
                   : "text-gray-600 hover:bg-gray-50",
@@ -143,12 +143,12 @@ export function AdminShell({
             </Link>
           );
         })}
-        <div className="my-2.5 h-px bg-gray-100" />
+        <div className="my-2.5 h-px bg-gray-200" />
         <Link
           href="/admin/profile"
           onClick={onNavigate}
           className={cn(
-            "flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
+            "flex items-center gap-3 rounded-btn px-3 py-2.5 text-[14.5px] font-semibold transition-colors",
             isActive("/admin/profile")
               ? "bg-brand-subtle text-brand"
               : "text-gray-600 hover:bg-gray-50",
@@ -163,23 +163,23 @@ export function AdminShell({
             onNavigate?.();
             void handleSignOut();
           }}
-          className="flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-left text-[14.5px] font-semibold text-danger transition-colors hover:bg-brand-subtle"
+          className="flex items-center gap-3 rounded-btn px-3 py-2.5 text-left text-[14.5px] font-semibold text-danger transition-colors hover:bg-brand-subtle"
         >
           <LogOut className="h-[18px] w-[18px]" />
           Keluar
         </button>
       </nav>
-      <div className="border-t border-gray-100 p-3.5">
+      <div className="border-t border-gray-200 p-3.5">
         <Link
           href="/admin/profile"
           onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-[12px] p-2 transition-colors hover:bg-gray-50"
+          className="flex items-center gap-2.5 rounded-btn p-2 transition-colors hover:bg-gray-50"
         >
           <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-sm font-bold text-white">
             {initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13.5px] font-bold text-ink">
+            <span className="block truncate text-[13.5px] font-semibold text-ink">
               Admin REMAX
             </span>
             <span className="block truncate text-[11.5px] text-gray-400">
@@ -207,7 +207,7 @@ export function AdminShell({
         widthClassName="w-[264px]"
         ariaLabel="Menu admin"
       >
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
           <div className="flex items-center gap-2.5">
             <Image
               src="/assets/logo-mark.png"
@@ -216,7 +216,7 @@ export function AdminShell({
               height={207}
               className="h-7 w-auto"
             />
-            <span className="text-[15px] font-extrabold">
+            <span className="text-[15px] font-semibold">
               RE/MAX <span className="text-brand">Admin</span>
             </span>
           </div>
@@ -224,7 +224,7 @@ export function AdminShell({
             type="button"
             aria-label="Tutup menu"
             onClick={() => setDrawerOpen(false)}
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-gray-100 bg-white"
+            className="flex h-9 w-9 items-center justify-center rounded-btn border border-gray-200 bg-white"
           >
             <X className="h-[18px] w-[18px]" />
           </button>
@@ -241,7 +241,7 @@ export function AdminShell({
             type="button"
             aria-label="Buka menu"
             onClick={() => setDrawerOpen(true)}
-            className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[11px] border border-admin-border bg-white lg:hidden"
+            className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-btn border border-admin-border bg-white lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -254,7 +254,7 @@ export function AdminShell({
           </div>
           <Link
             href="/admin/products"
-            className="hidden h-[42px] w-[280px] items-center gap-2.5 rounded-[11px] border border-admin-border bg-admin-bg px-3.5 text-sm text-gray-400 transition-colors hover:border-gray-300 lg:flex"
+            className="hidden h-[42px] w-[280px] items-center gap-2.5 rounded-btn border border-admin-border bg-admin-bg px-3.5 text-sm text-gray-400 transition-colors hover:border-gray-300 lg:flex"
           >
             <Search className="h-[17px] w-[17px]" />
             <span className="flex-1 text-left">Cari produk…</span>
@@ -264,7 +264,7 @@ export function AdminShell({
           </Link>
           <Link
             href="/admin/products/new"
-            className="inline-flex h-[42px] flex-none items-center gap-2 rounded-[11px] bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+            className="inline-flex h-[42px] flex-none items-center gap-2 rounded-btn bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             <Plus className="h-[17px] w-[17px]" />
             <span className="hidden sm:inline">Produk Baru</span>

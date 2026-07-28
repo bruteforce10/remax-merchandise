@@ -246,12 +246,12 @@ export function ProductEditor({
         <Link
           href="/admin/products"
           aria-label="Kembali"
-          className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[11px] border border-admin-border bg-white hover:bg-gray-50"
+          className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-btn border border-admin-border bg-white hover:bg-gray-50"
         >
           <ArrowLeft className="h-[19px] w-[19px]" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-[23px] font-extrabold tracking-tight text-ink">
+          <h1 className="text-[23px] font-semibold tracking-tight text-ink">
             {mode === "edit" ? "Edit Produk" : "Produk Baru"}
           </h1>
           <p className="mt-0.5 text-[13.5px] text-gray-400">
@@ -265,7 +265,7 @@ export function ProductEditor({
         <div className="flex min-w-0 flex-col gap-[18px]">
           {/* Basic info */}
           <section className={CARD}>
-            <h3 className="mb-[18px] text-base font-extrabold text-ink">Informasi Dasar</h3>
+            <h3 className="mb-[18px] text-base font-semibold text-ink">Informasi Dasar</h3>
             <div className="flex flex-col gap-3.5">
               <Field label="Nama Produk">
                 <input
@@ -328,7 +328,7 @@ export function ProductEditor({
 
           {/* Price & stock */}
           <section className={CARD}>
-            <h3 className="mb-[18px] text-base font-extrabold text-ink">Harga &amp; Stok</h3>
+            <h3 className="mb-[18px] text-base font-semibold text-ink">Harga &amp; Stok</h3>
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
               <Field label="Harga Mulai">
                 <div className="flex h-[46px] items-center gap-1.5 rounded-btn border border-admin-border bg-admin-bg px-3.5 focus-within:border-brand focus-within:bg-white">
@@ -356,7 +356,7 @@ export function ProductEditor({
 
           {/* Variants */}
           <section className={CARD}>
-            <h3 className="mb-[18px] text-base font-extrabold text-ink">Varian</h3>
+            <h3 className="mb-[18px] text-base font-semibold text-ink">Varian</h3>
             <div className="flex flex-col gap-4">
               <div>
                 <span className={`${LABEL} mb-2 block`}>Ukuran</span>
@@ -489,7 +489,7 @@ export function ProductEditor({
               </div>
 
               {/* Custom variants */}
-              <div className="border-t border-gray-100 pt-4">
+              <div className="border-t border-gray-200 pt-4">
                 <div className="mb-2 flex items-center justify-between">
                   <span className={LABEL}>Varian Kustom</span>
                   <button
@@ -525,7 +525,7 @@ export function ProductEditor({
           <section className={CARD}>
             <div className="mb-[18px] flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="text-base font-extrabold text-ink">
+                <h3 className="text-base font-semibold text-ink">
                   Stok per Varian
                 </h3>
                 <p className="mt-0.5 max-w-[420px] text-[13px] text-gray-400">
@@ -567,7 +567,7 @@ export function ProductEditor({
                     {variants.map((row, i) => (
                       <tr
                         key={row.sku}
-                        className="border-b border-gray-100 last:border-b-0"
+                        className="border-b border-gray-200 last:border-b-0"
                       >
                         <td className="py-2 pr-3 font-mono text-[12px] text-gray-500">
                           {row.sku}
@@ -626,7 +626,7 @@ export function ProductEditor({
 
           {/* Images */}
           <section className={CARD}>
-            <h3 className="mb-[18px] text-base font-extrabold text-ink">Gambar Produk</h3>
+            <h3 className="mb-[18px] text-base font-semibold text-ink">Gambar Produk</h3>
             <ImageUpload
               value={images}
               onChange={setImages}
@@ -640,7 +640,7 @@ export function ProductEditor({
           <section className={CARD}>
             <div className="mb-[18px] flex items-center gap-2">
               <SearchCheck className="h-[19px] w-[19px] text-brand" />
-              <h3 className="text-base font-extrabold text-ink">SEO</h3>
+              <h3 className="text-base font-semibold text-ink">SEO</h3>
             </div>
             <div className="flex flex-col gap-3.5">
               <p className="rounded-btn bg-admin-bg px-3.5 py-2.5 text-[12.5px] leading-relaxed text-gray-500">
@@ -672,7 +672,7 @@ export function ProductEditor({
         {/* Right */}
         <div className="flex flex-col gap-[18px] lg:sticky lg:top-[78px]">
           <section className="rounded-card border border-admin-border bg-white p-5">
-            <h3 className="mb-3.5 text-[15px] font-extrabold text-ink">Status</h3>
+            <h3 className="mb-3.5 text-[15px] font-semibold text-ink">Status</h3>
             <div className="flex flex-col gap-2">
               {(
                 [
@@ -700,7 +700,7 @@ export function ProductEditor({
                       {active && <span className="h-2.5 w-2.5 rounded-full bg-brand" />}
                     </span>
                     <span>
-                      <span className="block text-sm font-bold text-ink">{label}</span>
+                      <span className="block text-sm font-semibold text-ink">{label}</span>
                       <span className="block text-xs text-gray-400">{desc}</span>
                     </span>
                   </button>
@@ -710,8 +710,8 @@ export function ProductEditor({
           </section>
 
           <section className="rounded-card border border-admin-border bg-white p-5">
-            <h3 className="mb-3 text-[15px] font-extrabold text-ink">Pratinjau</h3>
-            <div className="overflow-hidden rounded-[13px] border border-admin-border">
+            <h3 className="mb-3 text-[15px] font-semibold text-ink">Pratinjau</h3>
+            <div className="overflow-hidden rounded-card border border-admin-border">
               <div className="relative flex aspect-square items-center justify-center bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-300">
                 {images[0] ? (
                   <Image
@@ -731,10 +731,10 @@ export function ProductEditor({
                 <div className="text-[11px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
                   {previewCategory?.name ?? ""}
                 </div>
-                <div className="my-0.5 text-sm font-bold text-ink">
+                <div className="my-0.5 text-sm font-semibold text-ink">
                   {name || "Nama Produk"}
                 </div>
-                <div className="font-mono text-[15px] font-extrabold text-brand">
+                <div className="font-mono text-[15px] font-semibold text-brand">
                   Rp {price ? formatNumber(parseInt(price, 10) || 0) : "0"}
                 </div>
               </div>
@@ -759,7 +759,7 @@ export function ProductEditor({
           type="button"
           onClick={save}
           disabled={pending || uploading}
-          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
+          className="inline-flex h-[46px] items-center gap-2 rounded-btn bg-brand px-[22px] text-[14.5px] font-medium text-white hover:bg-brand-hover disabled:opacity-60"
         >
           <Check className="h-[18px] w-[18px]" />
           {uploading ? "Mengunggah gambar…" : pending ? "Menyimpan…" : "Simpan Produk"}

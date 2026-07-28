@@ -74,7 +74,7 @@ export default async function DashboardPage(): Promise<ReactNode> {
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
+          <h1 className="text-[26px] font-semibold tracking-tight text-ink">
             Selamat datang, Admin
           </h1>
           <p className="mt-0.5 text-[15px] text-gray-500">
@@ -99,7 +99,7 @@ export default async function DashboardPage(): Promise<ReactNode> {
           {/* Views chart */}
           <div className={`${PANEL} p-5.5`}>
             <div className="mb-1.5 flex items-center justify-between">
-              <h3 className="text-base font-extrabold text-ink">
+              <h3 className="text-base font-semibold text-ink">
                 Tampilan Produk (14 hari)
               </h3>
               <span className="text-[13px] text-gray-400">
@@ -124,8 +124,8 @@ export default async function DashboardPage(): Promise<ReactNode> {
 
           {/* Recent products */}
           <div className={`${PANEL} overflow-hidden`}>
-            <div className="flex items-center justify-between border-b border-gray-100 px-5.5 py-4.5">
-              <h3 className="text-base font-extrabold text-ink">Produk Terbaru</h3>
+            <div className="flex items-center justify-between border-b border-gray-200 px-5.5 py-4.5">
+              <h3 className="text-base font-semibold text-ink">Produk Terbaru</h3>
               <Link href="/admin/products" className="text-[13px] font-semibold">
                 Lihat semua
               </Link>
@@ -138,11 +138,11 @@ export default async function DashboardPage(): Promise<ReactNode> {
                   href={`/admin/products/${p.sku}`}
                   className="flex items-center gap-3.5 border-b border-gray-50 px-5.5 py-3.5 transition-colors last:border-b-0 hover:bg-[#FAFBFC]"
                 >
-                  <span className="flex h-11 w-11 flex-none items-center justify-center rounded-[10px] bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
+                  <span className="flex h-11 w-11 flex-none items-center justify-center rounded-btn bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
                     <CategoryIcon name={cat?.icon ?? "package"} className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[14.5px] font-bold text-ink">{p.name}</div>
+                    <div className="truncate text-[14.5px] font-semibold text-ink">{p.name}</div>
                     <div className="text-[12.5px] text-gray-400">
                       {cat?.name} · {formatPrice(p.price)}
                     </div>
@@ -155,8 +155,8 @@ export default async function DashboardPage(): Promise<ReactNode> {
 
           {/* Recent leads */}
           <div className={`${PANEL} overflow-hidden`}>
-            <div className="flex items-center justify-between border-b border-gray-100 px-5.5 py-4.5">
-              <h3 className="text-base font-extrabold text-ink">Leads Terbaru</h3>
+            <div className="flex items-center justify-between border-b border-gray-200 px-5.5 py-4.5">
+              <h3 className="text-base font-semibold text-ink">Leads Terbaru</h3>
               <Link href="/admin/leads" className="text-[13px] font-semibold">
                 Lihat semua
               </Link>
@@ -166,11 +166,11 @@ export default async function DashboardPage(): Promise<ReactNode> {
                 key={l.id}
                 className="flex items-center gap-3.5 border-b border-gray-50 px-5.5 py-3.5 last:border-b-0"
               >
-                <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-[10px] bg-success-subtle text-success">
+                <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-btn bg-success-subtle text-success">
                   <MessageCircle className="h-[18px] w-[18px]" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-bold text-ink">{l.product}</div>
+                  <div className="truncate text-sm font-semibold text-ink">{l.product}</div>
                   <div className="text-[12.5px] text-gray-400">
                     {l.qty} pcs · {l.device} · {l.date}
                   </div>
@@ -185,18 +185,18 @@ export default async function DashboardPage(): Promise<ReactNode> {
         <div className="flex flex-col gap-5">
           {/* Quick actions */}
           <div className={`${PANEL} p-5`}>
-            <h3 className="mb-3.5 text-[15px] font-extrabold text-ink">Aksi Cepat</h3>
+            <h3 className="mb-3.5 text-[15px] font-semibold text-ink">Aksi Cepat</h3>
             <div className="grid grid-cols-2 gap-2.5">
               {QUICK_ACTIONS.map((a) => (
                 <Link
                   key={a.href}
                   href={a.href}
-                  className="flex flex-col items-start gap-2.5 rounded-[13px] border border-admin-border p-3.5 transition-colors hover:border-[#F6C9CE] hover:bg-brand-subtle-2"
+                  className="flex flex-col items-start gap-2.5 rounded-card border border-admin-border p-3.5 transition-colors hover:border-[#F6C9CE] hover:bg-brand-subtle-2"
                 >
-                  <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-brand-subtle text-brand">
+                  <span className="flex h-[34px] w-[34px] items-center justify-center rounded-btn bg-brand-subtle text-brand">
                     <a.icon className="h-[17px] w-[17px]" />
                   </span>
-                  <span className="text-[13px] font-bold text-ink">{a.label}</span>
+                  <span className="text-[13px] font-semibold text-ink">{a.label}</span>
                 </Link>
               ))}
             </div>
@@ -204,13 +204,13 @@ export default async function DashboardPage(): Promise<ReactNode> {
 
           {/* Popular */}
           <div className={`${PANEL} p-5`}>
-            <h3 className="mb-3.5 text-[15px] font-extrabold text-ink">Paling Populer</h3>
+            <h3 className="mb-3.5 text-[15px] font-semibold text-ink">Paling Populer</h3>
             {popular.map((p, i) => (
               <div
                 key={p.sku}
                 className="flex items-center gap-3 border-b border-gray-50 py-2.5 last:border-b-0"
               >
-                <span className="w-6 font-mono text-sm font-extrabold text-gray-300">
+                <span className="w-6 font-mono text-sm font-semibold text-gray-300">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0 flex-1">

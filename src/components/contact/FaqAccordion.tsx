@@ -35,7 +35,7 @@ export function FaqAccordion(): React.JSX.Element {
       {FAQS.map((f, i) => {
         const isOpen = i === open;
         return (
-          <div key={f.q} className="border-b border-gray-100 last:border-b-0">
+          <div key={f.q} className="border-b border-gray-200 last:border-b-0">
             <button
               type="button"
               onClick={() => setOpen(isOpen ? -1 : i)}
@@ -50,7 +50,7 @@ export function FaqAccordion(): React.JSX.Element {
               )}
             </button>
             {isOpen && (
-              <div className="pb-3.5 text-sm leading-relaxed text-gray-500">
+              <div className="pb-3.5 text-sm leading-relaxed text-body">
                 {f.a}
               </div>
             )}

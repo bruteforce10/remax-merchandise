@@ -4,13 +4,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-btn font-semibold transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-btn font-medium transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
   {
     variants: {
       variant: {
-        brand: "bg-brand text-white hover:bg-brand-hover",
+        brand: "bg-brand text-white hover:bg-brand-hover disabled:bg-brand-disabled",
         outline:
-          "border border-gray-200 bg-white text-ink hover:bg-gray-50 hover:border-gray-300",
+          "border border-gray-200 bg-white text-ink hover:border-border-strong",
         ghost: "text-ink hover:bg-gray-50",
         dark: "bg-gray-900 text-white hover:bg-black",
         whatsapp: "bg-whatsapp text-white hover:bg-whatsapp-dark",
@@ -19,10 +19,10 @@ const buttonVariants = cva(
           "border border-danger-subtle bg-white text-danger hover:bg-danger-subtle",
       },
       size: {
-        sm: "h-9 px-3.5 text-[13.5px]",
-        md: "h-11 px-5 text-[14.5px]",
-        lg: "h-[50px] px-6 text-[15px]",
-        xl: "h-14 px-7 text-base",
+        sm: "h-10 px-4 text-[14px]",
+        md: "h-12 px-6 text-[16px]",
+        lg: "h-[52px] px-7 text-[16px]",
+        xl: "h-14 px-8 text-[16px]",
         icon: "h-11 w-11",
       },
     },

@@ -393,10 +393,17 @@ refactor: extract ProductCard into reusable component
 - [ ] Admin settings and profile
 - [ ] SEO hardening (all metadata, JSON-LD, sitemap, robots.txt)
 
-# Out of scope (MVP) — do not implement
-- Customer login / register
-- Checkout / payment gateway
-- Shipping / order management
+# Phase 2 — added (customer accounts & quotation orders)
+- [x] Customer Google login (OAuth) + dedicated /account/login page
+- [x] Login-gated checkout everywhere (product card, detail, cart) → records a pending order
+- [x] Customer order history (/account/orders) + profile edit (/account/profile, stored in Supabase Auth user metadata)
+- [x] Navbar account menu (login icon / avatar dropdown / logout)
+- [x] Admin order confirmation with atomic stock decrement (Supabase)
+
+# Out of scope — do not implement
+- Customer email/password register or password reset (Google OAuth only)
+- Payment gateway / online payment
+- Shipping / fulfillment / delivery tracking
 - Wishlist, product reviews, blog
 ```
 
@@ -480,9 +487,10 @@ If a prompt or instruction is ambiguous, **ask first before coding**. Do not ass
 - Never create Prisma migrations without confirmation
 - Never expose database credentials to the client side
 
-# Scope (MVP)
-- Never implement checkout, payment, or order management
-- Never implement customer auth (login/register)
+# Scope
+- Never implement a payment gateway or online payment
+- Never implement email/password customer register or password reset (Google OAuth only)
+- Never implement shipping / fulfillment / delivery tracking
 - Never implement wishlist or product reviews
 - Enforce the "Out of Scope" list strictly — new features go in a separate PRD
 ```

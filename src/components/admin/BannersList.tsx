@@ -107,7 +107,7 @@ export function BannersList({
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Banner Homepage</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Banner Homepage</h1>
           <p className="mt-0.5 text-[14.5px] text-gray-500">
             Kelola slider promosi di halaman utama
           </p>
@@ -123,7 +123,7 @@ export function BannersList({
       </div>
 
       <div className="mb-5 flex items-start gap-3 rounded-card border border-info/25 bg-info-subtle px-4 py-3.5">
-        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-white text-info">
+        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-btn bg-white text-info">
           <Info className="h-[18px] w-[18px]" />
         </span>
         <p className="text-[13.5px] leading-relaxed text-gray-600">
@@ -161,7 +161,7 @@ export function BannersList({
               </button>
             </div>
             <div
-              className="relative flex h-24 w-[200px] flex-none items-center justify-center overflow-hidden rounded-[12px] text-white/50"
+              className="relative flex h-24 w-[200px] flex-none items-center justify-center overflow-hidden rounded-card text-white/50"
               style={{ background: b.gradient }}
             >
               {b.imageUrl ? (
@@ -180,7 +180,7 @@ export function BannersList({
               </span>
             </div>
             <div className="min-w-[180px] flex-1">
-              <div className="text-base font-bold text-ink">{b.alt}</div>
+              <div className="text-base font-semibold text-ink">{b.alt}</div>
               <div className="mt-1 flex flex-wrap gap-3.5 text-[12.5px] text-gray-400">
                 <span className="inline-flex items-center gap-1.5">
                   <LinkIcon className="h-[13px] w-[13px]" />
@@ -202,10 +202,10 @@ export function BannersList({
       </div>
 
       <Modal open={!!deleteId} onClose={() => setDeleteId(null)} ariaLabel="Hapus banner">
-        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-subtle text-danger">
+        <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-card bg-brand-subtle text-danger">
           <TriangleAlert className="h-7 w-7" />
         </div>
-        <h3 className="mb-2 text-xl font-extrabold text-ink">Hapus Banner?</h3>
+        <h3 className="mb-2 text-xl font-semibold text-ink">Hapus Banner?</h3>
         <p className="mb-6 text-[14.5px] leading-relaxed text-gray-500">
           Anda akan menghapus banner <strong className="text-ink">{deleteTarget?.alt}</strong>.
         </p>
@@ -221,7 +221,7 @@ export function BannersList({
             type="button"
             onClick={remove}
             disabled={deleting}
-            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-bold text-white hover:brightness-95 disabled:opacity-60"
+            className="h-12 flex-1 rounded-btn bg-danger text-[14.5px] font-medium text-white hover:brightness-95 disabled:opacity-60"
           >
             {deleting ? "Menghapus…" : "Hapus"}
           </button>
@@ -260,7 +260,7 @@ function ActionBtn({
       aria-label={label}
       onClick={onClick}
       className={cn(
-        "flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-admin-border bg-white text-gray-500",
+        "flex h-[38px] w-[38px] items-center justify-center rounded-btn border border-admin-border bg-white text-gray-500",
         danger ? "hover:bg-brand-subtle hover:text-danger" : "hover:bg-gray-50 hover:text-brand",
       )}
     >
@@ -294,7 +294,7 @@ function BannerForm({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-extrabold text-ink">
+        <h3 className="text-lg font-semibold text-ink">
           {initial ? "Edit Banner" : "Banner Baru"}
         </h3>
         <button
@@ -390,7 +390,7 @@ function BannerForm({
             });
             if (!ok) setPending(false);
           }}
-          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-bold text-white hover:bg-brand-hover disabled:opacity-60"
+          className="h-12 flex-1 rounded-btn bg-brand text-[14.5px] font-medium text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {uploading ? "Mengunggah gambar…" : pending ? "Menyimpan…" : "Simpan"}
         </button>

@@ -63,7 +63,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink">Leads Penawaran</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Leads Penawaran</h1>
           <p className="mt-0.5 text-[14.5px] text-gray-500">
             Klik WhatsApp &amp; permintaan quotation
           </p>
@@ -87,7 +87,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
               type="button"
               onClick={() => setStatusFilter(f.value)}
               className={cn(
-                "inline-flex h-[38px] items-center gap-2 rounded-[10px] border px-3.5 text-[13px] font-semibold",
+                "inline-flex h-[38px] items-center gap-2 rounded-pill border px-3.5 text-[13px] font-semibold",
                 active
                   ? "border-brand bg-brand-subtle text-brand"
                   : "border-admin-border bg-white text-gray-600 hover:bg-gray-50",
@@ -104,7 +104,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
         <div className="rmx-scrollbar overflow-x-auto">
           <table className="w-full min-w-[900px] border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 bg-[#FAFBFC]">
+              <tr className="border-b border-gray-200 bg-[#FAFBFC]">
                 <th className={TH}>Tanggal</th>
                 <th className={TH}>Produk</th>
                 <th className={TH}>Qty</th>
@@ -124,7 +124,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
                     <td className="px-4 py-3.5 text-[13px] whitespace-nowrap text-gray-600">{l.date}</td>
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[9px] bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
+                        <span className="flex h-9 w-9 flex-none items-center justify-center rounded-btn bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
                           <Package className="h-[17px] w-[17px]" />
                         </span>
                         <span className="text-[13.5px] font-semibold text-ink">{l.product}</span>
@@ -152,7 +152,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
                       <button
                         type="button"
                         onClick={() => setDetail(l)}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-[9px] border border-admin-border bg-white px-3 text-[12.5px] font-semibold hover:bg-gray-50 hover:text-brand"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-btn border border-admin-border bg-white px-3 text-[12.5px] font-semibold hover:bg-gray-50 hover:text-brand"
                       >
                         <Eye className="h-[14px] w-[14px]" />
                         Detail
@@ -170,7 +170,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }): React.JSX.Element {
         {detail && (
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-extrabold text-ink">Detail Lead</h3>
+              <h3 className="text-lg font-semibold text-ink">Detail Lead</h3>
               <button
                 type="button"
                 aria-label="Tutup"
@@ -209,7 +209,7 @@ function DetailRow({
   mono?: boolean;
 }): React.JSX.Element {
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 py-3 last:border-b-0">
+    <div className="flex items-center justify-between border-b border-gray-200 py-3 last:border-b-0">
       <span className="text-[13.5px] text-gray-500">{label}</span>
       <span className={cn("text-[13.5px] font-semibold text-ink", mono && "font-mono")}>
         {value}

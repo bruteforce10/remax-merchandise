@@ -21,22 +21,25 @@ export interface ProductMessageOptions {
   options?: Record<string, string>;
   /** Unit price of the selected variant; defaults to the product base price. */
   unitPrice?: number;
+  /** Order reference to include when the checkout recorded an order. */
+  ref?: string;
 }
 
 /** Single-product inquiry (product card + product detail). */
 export function productMessage(
   product: Product,
   qty: number,
-  { options = {}, unitPrice }: ProductMessageOptions = {},
+  { options = {}, unitPrice, ref }: ProductMessageOptions = {},
 ): string {
-  const lines = [
-    "Halo Admin,",
+  const lines = ["Halo Admin,"];
+  if (ref) lines.push(`No. Pesanan: ${ref}`);
+  lines.push(
     "Saya tertarik produk:",
     "",
     `Nama: ${product.name}`,
     `SKU: ${product.sku}`,
     `Qty: ${qty} pcs`,
-  ];
+  );
   for (const [key, value] of Object.entries(options)) {
     lines.push(`${key}: ${value}`);
   }

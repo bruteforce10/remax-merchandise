@@ -31,7 +31,7 @@ export function HeroSlider({
 
   return (
     <section className="mx-auto max-w-[1280px] px-6 pt-7 pb-2">
-      <div className="relative flex min-h-[400px] items-center overflow-hidden rounded-[24px] border border-gray-100 bg-white sm:min-h-[440px]">
+      <div className="relative flex min-h-[400px] items-center overflow-hidden rounded-[20px] border border-gray-200 bg-white sm:min-h-[440px]">
         {current.imageUrl ? (
           <Image
             key={current.id}

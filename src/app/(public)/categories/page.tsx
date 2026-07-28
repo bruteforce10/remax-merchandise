@@ -23,10 +23,10 @@ export default async function CategoriesPage(): Promise<ReactNode> {
   return (
     <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-[22px] pb-14">
       <Breadcrumb items={[{ label: "Beranda", href: "/" }, { label: "Kategori" }]} />
-      <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
         Kategori Merchandise
       </h1>
-      <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-gray-500">
+      <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-muted">
         Temukan produk berdasarkan jenisnya — dari apparel hingga corporate gift,
         semua bisa dikustomisasi dengan brand Anda.
       </p>

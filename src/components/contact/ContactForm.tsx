@@ -27,7 +27,7 @@ const INITIAL: Record<Field, string> = {
 };
 
 const FIELD_BASE =
-  "h-[46px] rounded-btn border bg-white px-3.5 text-[14.5px] text-ink outline-none focus:border-brand";
+  "h-12 rounded-input border bg-white px-3.5 text-[14.5px] text-ink outline-none focus:border-brand";
 
 export function ContactForm(): React.JSX.Element {
   const [values, setValues] = React.useState<Record<Field, string>>(INITIAL);
@@ -57,9 +57,9 @@ export function ContactForm(): React.JSX.Element {
   }
 
   return (
-    <div className="rounded-[18px] border border-gray-100 p-7">
-      <h2 className="text-[22px] font-extrabold text-ink">Kirim Pesan</h2>
-      <p className="mt-0.5 mb-5 text-sm text-gray-500">
+    <div className="rounded-card border border-gray-200 p-7">
+      <h2 className="text-[22px] font-semibold tracking-tight text-ink">Kirim Pesan</h2>
+      <p className="mt-0.5 mb-5 text-sm text-muted">
         Isi form, tim kami akan menghubungi Anda kembali.
       </p>
 
@@ -115,7 +115,7 @@ export function ContactForm(): React.JSX.Element {
               rows={4}
               placeholder="Ceritakan kebutuhan merchandise Anda…"
               className={cn(
-                "resize-y rounded-btn border bg-white px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-brand",
+                "resize-y rounded-input border bg-white px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-brand",
                 errors.message ? "border-danger" : "border-gray-200",
               )}
             />
@@ -125,7 +125,7 @@ export function ContactForm(): React.JSX.Element {
         <div className="mt-[18px] flex flex-wrap gap-3">
           <button
             type="submit"
-            className="h-[50px] rounded-[13px] bg-brand px-6 text-[15px] font-bold text-white hover:bg-brand-hover"
+            className="h-[50px] rounded-btn bg-brand px-6 text-[15px] font-medium text-white hover:bg-brand-hover"
           >
             Kirim Pesan
           </button>
@@ -133,7 +133,7 @@ export function ContactForm(): React.JSX.Element {
             href={waLink(generalMessage())}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-[50px] items-center gap-2 rounded-[13px] border-[1.5px] border-gray-200 bg-white px-[22px] text-[15px] font-semibold text-ink hover:bg-gray-50"
+            className="inline-flex h-[50px] items-center gap-2 rounded-btn border border-gray-200 bg-white px-[22px] text-[15px] font-medium text-ink hover:border-border-strong"
           >
             <MessageCircle className="h-[18px] w-[18px] text-success" />
             Chat WhatsApp

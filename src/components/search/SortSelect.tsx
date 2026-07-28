@@ -10,8 +10,8 @@ interface SortSelectProps {
 
 export function SortSelect({ value, onChange }: SortSelectProps): ReactElement {
   return (
-    <div className="inline-flex h-11 items-center gap-2 rounded-btn border border-gray-200 bg-white pr-3 pl-3.5">
-      <span className="text-[13px] text-gray-400">Urutkan</span>
+    <div className="inline-flex h-11 items-center gap-2 rounded-pill border border-gray-200 bg-white pr-4 pl-4">
+      <span className="text-[13px] text-muted">Urutkan</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as SortOption)}

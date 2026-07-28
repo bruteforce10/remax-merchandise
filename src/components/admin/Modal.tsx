@@ -47,10 +47,10 @@ export function Modal({
       <button
         type="button"
         aria-label="Tutup"
-        className="absolute inset-0 cursor-default bg-gray-900/50"
+        className="absolute inset-0 cursor-default bg-black/50"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-[440px] animate-[rmx-pop_.2s_ease] rounded-modal bg-white p-7 shadow-[0_24px_60px_rgba(0,0,0,0.25)]">
+      <div className="relative w-full max-w-[440px] animate-[rmx-pop_.2s_ease] rounded-modal border border-hairline bg-white p-6 shadow-menu">
         {children}
       </div>
     </div>,

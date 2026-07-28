@@ -19,8 +19,8 @@ export function SiteFooter(): ReactElement {
   ).filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (
-    <footer className="mt-6 bg-gray-900 text-gray-300">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-9 px-6 pt-13 pb-7 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-16 border-t border-gray-200 bg-white text-ink">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-9 px-6 pt-12 pb-8 sm:grid-cols-2 lg:grid-cols-4">
         <div className="min-w-[200px]">
           <div className="mb-4 flex items-center gap-2.5">
             <Image
@@ -30,7 +30,7 @@ export function SiteFooter(): ReactElement {
               height={207}
               className="h-8 w-auto"
             />
-            <span className="text-lg font-extrabold tracking-tight text-white">
+            <span className="text-lg font-semibold tracking-tight text-ink">
               RE/MAX <span className="text-brand">Merchandise</span>
             </span>
           </div>
@@ -42,7 +42,7 @@ export function SiteFooter(): ReactElement {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] bg-white/10 text-[13px] font-bold text-white transition-colors hover:bg-brand"
+                className="flex h-10 w-10 items-center justify-center rounded-pill bg-surface-strong text-[13px] font-semibold text-ink transition-colors hover:bg-brand hover:text-white"
               >
                 {s.short}
               </a>
@@ -51,7 +51,7 @@ export function SiteFooter(): ReactElement {
         </div>
 
         <div>
-          <div className="mb-4 text-[13px] font-bold tracking-[0.06em] text-white uppercase">
+          <div className="mb-4 text-[16px] font-medium text-ink">
             Tautan Cepat
           </div>
           <div className="flex flex-col gap-2.5">
@@ -59,7 +59,7 @@ export function SiteFooter(): ReactElement {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm text-gray-300 transition-colors hover:text-white"
+                className="text-[14px] text-body transition-colors hover:text-ink hover:underline"
               >
                 {l.label}
               </Link>
@@ -68,15 +68,13 @@ export function SiteFooter(): ReactElement {
         </div>
 
         <div>
-          <div className="mb-4 text-[13px] font-bold tracking-[0.06em] text-white uppercase">
-            Kategori
-          </div>
+          <div className="mb-4 text-[16px] font-medium text-ink">Kategori</div>
           <div className="flex flex-col gap-2.5">
             {footerCategories.map((c) => (
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
-                className="text-sm text-gray-300 transition-colors hover:text-white"
+                className="text-[14px] text-body transition-colors hover:text-ink hover:underline"
               >
                 {c.name}
               </Link>
@@ -85,10 +83,8 @@ export function SiteFooter(): ReactElement {
         </div>
 
         <div>
-          <div className="mb-4 text-[13px] font-bold tracking-[0.06em] text-white uppercase">
-            Kontak
-          </div>
-          <div className="flex flex-col gap-3 text-sm">
+          <div className="mb-4 text-[16px] font-medium text-ink">Kontak</div>
+          <div className="flex flex-col gap-3 text-[14px] text-body">
             <span className="flex items-center gap-2.5">
               <Phone className="h-4 w-4 text-brand" />
               {COMPANY.phoneDisplay}
@@ -105,8 +101,8 @@ export function SiteFooter(): ReactElement {
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-6 py-5 text-[13px] text-gray-500">
+      <div className="border-t border-gray-200">
+        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-6 py-5 text-[13px] text-muted">
           <span>
             © {new Date().getFullYear()} RE/MAX Indonesia Merchandise. Seluruh
             hak cipta dilindungi.
