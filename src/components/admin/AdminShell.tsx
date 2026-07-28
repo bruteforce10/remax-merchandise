@@ -14,6 +14,7 @@ import {
   Plus,
   Search,
   Settings,
+  ShoppingCart,
   User,
   X,
   type LucideIcon,
@@ -52,10 +53,12 @@ function pageTitle(pathname: string, nav: NavItem[]): string {
 export function AdminShell({
   children,
   newLeadsCount,
+  newOrdersCount,
   userEmail = "",
 }: {
   children: React.ReactNode;
   newLeadsCount: number;
+  newOrdersCount: number;
   userEmail?: string;
 }): React.JSX.Element {
   const pathname = usePathname();
@@ -76,6 +79,12 @@ export function AdminShell({
     { href: "/admin/categories", label: "Kategori", icon: Layers },
     { href: "/admin/banners", label: "Banner", icon: GalleryHorizontalEnd },
     { href: "/admin/leads", label: "Leads", icon: Inbox, badge: newLeadsCount },
+    {
+      href: "/admin/orders",
+      label: "Pesanan",
+      icon: ShoppingCart,
+      badge: newOrdersCount,
+    },
     { href: "/admin/analytics", label: "Analitik", icon: BarChart3 },
     { href: "/admin/settings", label: "Pengaturan", icon: Settings },
   ];

@@ -14,6 +14,8 @@ import {
   getProductSlugs,
   getRelatedProducts,
 } from "@/services/content/products";
+import { getStockByProduct } from "@/services/operational/inventory";
+import type { ProductDetail } from "@/types/product";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -46,11 +48,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps): Promise<ReactNode> {
   const { slug } = await params;
-  const product = await getProductDetailBySlug(slug);
-  if (!product) notFound();
-  const category = await getCategoryBySlug(product.categorySlug);
+  const detail = await getProductDetailBySlug(slug);
+  if (!detail) notFound();
+  const category = await getCategoryBySlug(detail.categorySlug);
   if (!category) notFound();
-  const related = await getRelatedProducts(product, 4);
+  const related = await getRelatedProducts(detail, 4);
+
+  // Live stock (source of truth) from Supabase overrides the Hygraph seed.
+  const stock = await getStockByProduct(detail.sku);
+  const product: ProductDetail = {
+    ...detail,
+    stock: detail.sku in stock ? stock[detail.sku] : detail.stock,
+    variants: detail.variants.map((v) =>
+      v.sku in stock ? { ...v, stock: stock[v.sku] } : v,
+    ),
+  };
 
   const hasVariants = product.variants.length > 0;
   const displayPrice = priceFrom(product.variants, product.price);

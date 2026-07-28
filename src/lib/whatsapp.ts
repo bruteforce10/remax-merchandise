@@ -56,7 +56,7 @@ export interface CartMessageLine {
 }
 
 /** Quotation request for the whole cart. */
-export function cartMessage(lines: CartMessageLine[]): string {
+export function cartMessage(lines: CartMessageLine[], ref?: string): string {
   const productCount = lines.length;
   const totalQty = lines.reduce((sum, l) => sum + l.qty, 0);
   const body = lines
@@ -73,6 +73,7 @@ export function cartMessage(lines: CartMessageLine[]): string {
     .join("\n");
   return (
     "Halo Admin,\n" +
+    (ref ? `No. Pesanan: ${ref}\n` : "") +
     "Saya ingin meminta penawaran (quotation) untuk produk berikut:\n\n" +
     `${body}\n\n` +
     `Total jenis produk: ${productCount}\n` +

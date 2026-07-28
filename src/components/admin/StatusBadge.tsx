@@ -3,8 +3,9 @@ import type { ReactElement } from "react";
 import { cn } from "@/lib/utils";
 import type { ProductStatus } from "@/types/admin";
 import type { LeadStatus } from "@/types/lead";
+import type { OrderStatus } from "@/types/order";
 
-type StatusKey = ProductStatus | LeadStatus;
+type StatusKey = ProductStatus | LeadStatus | OrderStatus;
 
 const MAP: Record<StatusKey, { label: string; cls: string }> = {
   published: { label: "Published", cls: "bg-success-subtle text-success-fg" },
@@ -12,6 +13,9 @@ const MAP: Record<StatusKey, { label: string; cls: string }> = {
   new: { label: "Baru", cls: "bg-brand-subtle text-brand-dark" },
   contacted: { label: "Dihubungi", cls: "bg-warning-subtle text-warning-fg" },
   completed: { label: "Selesai", cls: "bg-success-subtle text-success-fg" },
+  pending: { label: "Menunggu", cls: "bg-warning-subtle text-warning-fg" },
+  confirmed: { label: "Dikonfirmasi", cls: "bg-success-subtle text-success-fg" },
+  rejected: { label: "Ditolak", cls: "bg-gray-100 text-gray-500" },
 };
 
 export function StatusBadge({

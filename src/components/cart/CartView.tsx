@@ -5,7 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
 
+import { createOrder } from "@/actions/orders";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
@@ -22,9 +24,19 @@ export function CartView({
   isAuthenticated,
   userEmail,
 }: CartViewProps): React.JSX.Element {
-  const { lines, count, totalQty, estimatedTotal, hydrated, setQty, remove } =
-    useCart();
+  const {
+    lines,
+    count,
+    totalQty,
+    estimatedTotal,
+    hydrated,
+    setQty,
+    remove,
+    clear,
+    sessionId,
+  } = useCart();
   const router = useRouter();
+  const [checkingOut, setCheckingOut] = React.useState(false);
 
   async function handleGoogleLogin(): Promise<void> {
     const supabase = createClient();
@@ -39,6 +51,40 @@ export function CartView({
   async function handleSignOut(): Promise<void> {
     await createClient().auth.signOut();
     router.refresh();
+  }
+
+  async function handleCheckout(): Promise<void> {
+    setCheckingOut(true);
+    const res = await createOrder({
+      sessionId,
+      items: lines.map((l) => ({
+        sku: lineKey(l),
+        productSku: l.product.sku,
+        productSlug: l.product.slug,
+        name: l.product.name,
+        options: l.variant?.options ?? {},
+        qty: l.qty,
+        unitPrice: lineUnitPrice(l),
+      })),
+    });
+    if (!res.success || !res.data) {
+      toast.error(res.message);
+      setCheckingOut(false);
+      return;
+    }
+    const href = waLink(
+      cartMessage(
+        lines.map((l) => ({
+          product: l.product,
+          qty: l.qty,
+          options: l.variant?.options,
+          unitPrice: lineUnitPrice(l),
+        })),
+        res.data.ref,
+      ),
+    );
+    clear();
+    window.location.href = href;
   }
 
   return (
@@ -203,24 +249,15 @@ export function CartView({
 
             <div className="flex flex-col justify-center gap-3 rounded-[18px] border border-gray-100 p-6">
               {isAuthenticated ? (
-                <a
-                  href={waLink(
-                    cartMessage(
-                      lines.map((l) => ({
-                        product: l.product,
-                        qty: l.qty,
-                        options: l.variant?.options,
-                        unitPrice: lineUnitPrice(l),
-                      })),
-                    ),
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover"
+                <button
+                  type="button"
+                  onClick={() => void handleCheckout()}
+                  disabled={checkingOut}
+                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand text-[16.5px] font-bold text-white shadow-cta hover:bg-brand-hover disabled:opacity-60"
                 >
                   <CreditCard className="h-[21px] w-[21px]" />
-                  Checkout Pembayaran
-                </a>
+                  {checkingOut ? "Memproses…" : "Checkout Pembayaran"}
+                </button>
               ) : (
                 <button
                   type="button"

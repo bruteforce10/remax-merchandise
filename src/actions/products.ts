@@ -15,6 +15,7 @@ import {
   UPDATE_PRODUCT,
   UPSERT_PRODUCT_VARIANT,
 } from "@/lib/hygraph/mutations";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { ActionResult } from "@/types/action";
 
 const productSchema = z.object({
@@ -57,6 +58,7 @@ type ProductData = z.output<typeof productSchema>;
 
 function revalidateProducts(): void {
   revalidateTag("products");
+  revalidateTag("inventory");
   revalidatePath("/");
   revalidatePath("/search");
   revalidatePath("/admin/products");
@@ -148,6 +150,53 @@ async function syncVariants(
   }
 }
 
+/**
+ * Sync Supabase `inventory` (the live source of truth for stock) from the saved
+ * product: one row per variant, or a single row keyed by the product SKU for a
+ * simple product. Empty stock becomes 0. Prunes rows for SKUs no longer present.
+ */
+async function syncInventory(data: ProductData): Promise<void> {
+  const rows =
+    data.variants.length > 0
+      ? data.variants.map((v) => ({
+          sku: v.sku,
+          product_sku: data.sku,
+          name: v.title ? `${data.name} — ${v.title}` : data.name,
+          stock: v.stock ?? 0,
+        }))
+      : [
+          {
+            sku: data.sku,
+            product_sku: data.sku,
+            name: data.name,
+            stock: data.stock ?? 0,
+          },
+        ];
+
+  const db = supabaseAdmin();
+  const { error: upsertError } = await db
+    .from("inventory")
+    .upsert(rows, { onConflict: "sku" });
+  if (upsertError) throw upsertError;
+
+  const keep = rows.map((r) => r.sku);
+  const { data: existing, error: selectError } = await db
+    .from("inventory")
+    .select("sku")
+    .eq("product_sku", data.sku);
+  if (selectError) throw selectError;
+  const stale = (existing ?? [])
+    .map((r) => r.sku as string)
+    .filter((sku) => !keep.includes(sku));
+  if (stale.length > 0) {
+    const { error: deleteError } = await db
+      .from("inventory")
+      .delete()
+      .in("sku", stale);
+    if (deleteError) throw deleteError;
+  }
+}
+
 export async function createProduct(
   input: ProductInput,
 ): Promise<ActionResult> {
@@ -169,6 +218,7 @@ export async function createProduct(
     // the publishStatus field (filtered in public queries) gates visibility.
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
     await syncVariants(parsed.data.sku, parsed.data.variants, false);
+    await syncInventory(parsed.data);
     revalidateProducts();
     return { success: true, data: null, message: "Produk disimpan" };
   } catch (error) {
@@ -202,6 +252,7 @@ export async function updateProduct(
     });
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
     await syncVariants(parsed.data.sku, parsed.data.variants, true);
+    await syncInventory(parsed.data);
     revalidateProducts();
     return { success: true, data: null, message: "Produk diperbarui" };
   } catch (error) {
@@ -253,6 +304,15 @@ export async function quickUpdateProduct(
       },
     });
     await client.request(PUBLISH_PRODUCT, { sku });
+    // Simple-product live stock lives in Supabase; a variable product has no
+    // row keyed by its own SKU, so this is a safe no-op there.
+    if (stock !== null) {
+      await supabaseAdmin()
+        .from("inventory")
+        .update({ stock, name })
+        .eq("sku", sku)
+        .eq("product_sku", sku);
+    }
     revalidateProducts();
     return { success: true, data: null, message: "Perubahan disimpan" };
   } catch (error) {

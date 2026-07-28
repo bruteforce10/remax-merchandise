@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/Toaster";
 import { isAdminEmail } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getLeads } from "@/services/operational/leads";
+import { getPendingOrderCount } from "@/services/operational/orders";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · RE/MAX Admin" },
@@ -28,10 +29,15 @@ export default async function AdminPanelLayout({
 
   const leads = await getLeads();
   const newLeadsCount = leads.filter((l) => l.status === "new").length;
+  const newOrdersCount = await getPendingOrderCount();
 
   return (
     <>
-      <AdminShell newLeadsCount={newLeadsCount} userEmail={user?.email ?? ""}>
+      <AdminShell
+        newLeadsCount={newLeadsCount}
+        newOrdersCount={newOrdersCount}
+        userEmail={user?.email ?? ""}
+      >
         {children}
       </AdminShell>
       <Toaster />
