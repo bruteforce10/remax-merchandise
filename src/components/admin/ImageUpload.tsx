@@ -5,7 +5,7 @@ import Image from "next/image";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { deleteAsset, uploadAsset } from "@/actions/assets";
+import { deleteAsset, finalizeAsset, uploadAsset } from "@/actions/assets";
 import { cn } from "@/lib/utils";
 import type { AssetImage } from "@/types/admin";
 
@@ -22,6 +22,19 @@ interface ImageUploadProps {
   onUploadingChange?: (uploading: boolean) => void;
 }
 
+/** An asset that finished uploading to storage but is still being processed by
+ * Hygraph; finalizeAsset(id) is polled until it publishes. */
+interface PendingUpload {
+  id: string;
+  name: string;
+}
+
+const FINALIZE_INTERVAL_MS = 3000;
+const FINALIZE_MAX_TRIES = 40; // ~2 min ceiling before giving up client-side
+
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export function ImageUpload({
   value,
   onChange,
@@ -31,28 +44,83 @@ export function ImageUpload({
   onUploadingChange,
 }: ImageUploadProps): React.JSX.Element {
   const [uploading, setUploading] = React.useState(false);
+  const [pending, setPending] = React.useState<PendingUpload[]>([]);
   const [deletingIds, setDeletingIds] = React.useState<Set<string>>(
     () => new Set(),
   );
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const full = value.length >= max;
 
-  function setUploadingState(next: boolean): void {
-    setUploading(next);
-    onUploadingChange?.(next);
+  // Latest committed value — lets concurrent finalize polls append safely
+  // without reading a stale `value` closure.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+  const mounted = React.useRef(true);
+  React.useEffect(() => {
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  const total = value.length + pending.length;
+  const full = total >= max;
+
+  // Lock the parent form while anything is in flight — an upload, an asset still
+  // being finalized, or a delete — so a product can't be saved mid-operation or
+  // while referencing a not-yet-published image. This effect is the single
+  // source of truth for the lock signal.
+  const busy = uploading || pending.length > 0 || deletingIds.size > 0;
+  React.useEffect(() => {
+    onUploadingChange?.(busy);
+  }, [busy, onUploadingChange]);
+
+  function commitImages(images: AssetImage[]): void {
+    if (images.length === 0) return;
+    const next = [...valueRef.current, ...images];
+    valueRef.current = next;
+    onChange(next);
+  }
+
+  /** Poll finalizeAsset(id) until Hygraph finishes processing and publishes. */
+  async function pollFinalize(id: string): Promise<void> {
+    for (let i = 0; i < FINALIZE_MAX_TRIES; i += 1) {
+      await sleep(FINALIZE_INTERVAL_MS);
+      if (!mounted.current) return;
+      let res: Awaited<ReturnType<typeof finalizeAsset>>;
+      try {
+        res = await finalizeAsset(id);
+      } catch {
+        continue; // transient — keep polling
+      }
+      if (!mounted.current) return;
+      if (res.success && res.data && !res.data.pending) {
+        commitImages([{ id: res.data.id, url: res.data.url }]);
+        setPending((p) => p.filter((x) => x.id !== id));
+        toast.success("Gambar terunggah");
+        return;
+      }
+      if (!res.success) {
+        setPending((p) => p.filter((x) => x.id !== id));
+        toast.error(res.message);
+        return;
+      }
+      // still pending → keep polling
+    }
+    setPending((p) => p.filter((x) => x.id !== id));
+    toast.error("Gambar terlalu lama diproses. Coba unggah ulang.");
   }
 
   async function handleFiles(files: FileList | null): Promise<void> {
     if (!files || files.length === 0) return;
-    const remaining = max - value.length;
+    const remaining = max - total;
     if (remaining <= 0) {
       toast.error(`Maksimal ${max} gambar`);
       return;
     }
     const selected = Array.from(files).slice(0, remaining);
     const maxBytes = maxSizeMb * 1024 * 1024;
-    setUploadingState(true);
+    setUploading(true);
     const uploaded: AssetImage[] = [];
+    const started: PendingUpload[] = [];
     try {
       for (const file of selected) {
         if (file.size > maxBytes) {
@@ -64,35 +132,44 @@ export function ImageUpload({
         fd.append("maxBytes", String(maxBytes));
         const res = await uploadAsset(fd);
         if (res.success && res.data) {
-          uploaded.push(res.data);
+          if (res.data.pending) {
+            started.push({ id: res.data.id, name: file.name });
+          } else {
+            uploaded.push({ id: res.data.id, url: res.data.url });
+          }
         } else {
           toast.error(res.message);
         }
       }
     } finally {
-      setUploadingState(false);
+      setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
     }
     if (uploaded.length > 0) {
-      onChange([...value, ...uploaded]);
+      commitImages(uploaded);
       toast.success(`${uploaded.length} gambar terunggah`);
+    }
+    if (started.length > 0) {
+      setPending((p) => [...p, ...started]);
+      toast.info(`${started.length} gambar sedang diproses…`);
+      for (const s of started) void pollFinalize(s.id);
     }
   }
 
   async function removeImage(id: string): Promise<void> {
-    // Purge the asset from Hygraph so removed uploads don't linger. Lock the
-    // parent form (same signal as upload) so it can't be saved mid-delete.
+    // Purge the asset from Hygraph so removed uploads don't linger. Adding the
+    // id to deletingIds flips `busy`, which locks the parent form via the effect.
     setDeletingIds((s) => new Set(s).add(id));
-    onUploadingChange?.(true);
     const res = await deleteAsset(id);
-    onUploadingChange?.(false);
     setDeletingIds((s) => {
       const next = new Set(s);
       next.delete(id);
       return next;
     });
     if (res.success) {
-      onChange(value.filter((v) => v.id !== id));
+      const next = valueRef.current.filter((v) => v.id !== id);
+      valueRef.current = next;
+      onChange(next);
       toast.success("Gambar dihapus");
     } else {
       toast.error(res.message);
@@ -131,7 +208,7 @@ export function ImageUpload({
         onChange={(e) => handleFiles(e.target.files)}
       />
 
-      {value.length > 0 && (
+      {total > 0 && (
         <div className="mt-3.5 grid grid-cols-4 gap-2.5">
           {value.map((img, i) => {
             const isDeleting = deletingIds.has(img.id);
@@ -174,6 +251,19 @@ export function ImageUpload({
               </div>
             );
           })}
+
+          {pending.map((p) => (
+            <div
+              key={p.id}
+              className="relative flex aspect-square items-center justify-center overflow-hidden rounded-btn border border-dashed border-admin-border bg-gray-50"
+              title={`${p.name} sedang diproses`}
+            >
+              <div className="flex flex-col items-center gap-1.5 text-gray-400">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span className="text-[10px] font-semibold">Memproses…</span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

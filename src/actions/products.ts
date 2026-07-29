@@ -1,9 +1,10 @@
 "use server";
 
-import { gql } from "graphql-request";
+import { gql, type GraphQLClient } from "graphql-request";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 
+import { deleteAsset } from "@/actions/assets";
 import { hygraphWrite } from "@/lib/hygraph/client";
 import { hygraphErrorMessage } from "@/lib/hygraph/errors";
 import {
@@ -104,6 +105,16 @@ const VARIANT_SKUS_QUERY = gql`
   }
 `;
 
+const PRODUCT_IMAGES_QUERY = gql`
+  query ProductImages($sku: String!) {
+    products(where: { sku: $sku }, stage: DRAFT, first: 1) {
+      images {
+        id
+      }
+    }
+  }
+`;
+
 /**
  * Sync a product's variants in Hygraph: upsert + publish each submitted variant,
  * then (on update) delete variants no longer present. Runs sequentially to stay
@@ -197,6 +208,32 @@ async function syncInventory(data: ProductData): Promise<void> {
   }
 }
 
+/**
+ * Best-effort cleanup of a partially-created product. A create that fails *after*
+ * the Hygraph product row exists would otherwise strand the SKU — Hygraph enforces
+ * a unique `sku`, so every retry would then die with "value is not unique for the
+ * field sku". Removing the partial product (and any variants we attempted) frees
+ * the SKU so the admin can simply save again.
+ */
+async function rollbackCreatedProduct(
+  client: GraphQLClient,
+  sku: string,
+  variantSkus: string[],
+): Promise<void> {
+  try {
+    for (const variantSku of variantSkus) {
+      try {
+        await client.request(DELETE_PRODUCT_VARIANT, { sku: variantSku });
+      } catch {
+        // Variant may never have been created — ignore.
+      }
+    }
+    await client.request(DELETE_PRODUCT, { sku });
+  } catch (cleanupError) {
+    console.error("createProduct rollback failed:", cleanupError);
+  }
+}
+
 export async function createProduct(
   input: ProductInput,
 ): Promise<ActionResult> {
@@ -209,11 +246,13 @@ export async function createProduct(
     };
   }
 
+  const client = hygraphWrite();
+  let productCreated = false;
   try {
-    const client = hygraphWrite();
     await client.request(CREATE_PRODUCT, {
       data: toHygraphData(parsed.data, "connect"),
     });
+    productCreated = true;
     // Always publish so the published stage carries the latest field values;
     // the publishStatus field (filtered in public queries) gates visibility.
     await client.request(PUBLISH_PRODUCT, { sku: parsed.data.sku });
@@ -223,6 +262,13 @@ export async function createProduct(
     return { success: true, data: null, message: "Produk disimpan" };
   } catch (error) {
     console.error("createProduct failed:", error);
+    if (productCreated) {
+      await rollbackCreatedProduct(
+        client,
+        parsed.data.sku,
+        parsed.data.variants.map((v) => v.sku),
+      );
+    }
     return {
       success: false,
       data: null,
@@ -327,7 +373,50 @@ export async function quickUpdateProduct(
 
 export async function deleteProduct(sku: string): Promise<ActionResult> {
   try {
-    await hygraphWrite().request(DELETE_PRODUCT, { sku });
+    const client = hygraphWrite();
+    // Hygraph doesn't cascade relations, so collect the product's image asset
+    // ids up front (they must be deleted explicitly or they linger orphaned in
+    // the asset library).
+    const { products } = await client.request<{
+      products: { images: { id: string }[] }[];
+    }>(PRODUCT_IMAGES_QUERY, { sku });
+    const imageIds = products[0]?.images.map((img) => img.id) ?? [];
+
+    // Delete the product's variants first (also not cascaded), then the product.
+    const { productVariants } = await client.request<{
+      productVariants: { sku: string }[];
+    }>(VARIANT_SKUS_QUERY, { sku });
+    for (const v of productVariants) {
+      try {
+        await client.request(DELETE_PRODUCT_VARIANT, { sku: v.sku });
+      } catch (variantError) {
+        console.error(
+          `deleteProduct: failed to delete variant ${v.sku}:`,
+          variantError,
+        );
+      }
+    }
+    await client.request(DELETE_PRODUCT, { sku });
+
+    // Delete the now-unreferenced image assets from Hygraph.
+    for (const id of imageIds) {
+      const res = await deleteAsset(id);
+      if (!res.success) {
+        console.error(
+          `deleteProduct: failed to delete asset ${id}: ${res.message}`,
+        );
+      }
+    }
+
+    // Remove the live stock rows in Supabase (every row is keyed by product_sku,
+    // covering both a simple product and all of its variants).
+    const { error } = await supabaseAdmin()
+      .from("inventory")
+      .delete()
+      .eq("product_sku", sku);
+    if (error) {
+      console.error("deleteProduct: inventory cleanup failed:", error);
+    }
     revalidateProducts();
     return { success: true, data: null, message: "Produk dihapus" };
   } catch (error) {
