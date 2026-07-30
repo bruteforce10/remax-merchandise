@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
+﻿/* eslint-disable no-console */
 /**
  * Seed the 15 catalog categories from the static constants into Hygraph and
- * publish them. Idempotent — re-running upserts by slug instead of duplicating.
+ * publish them. Idempotent - re-running upserts by slug instead of duplicating.
  *
  *   pnpm hygraph:seed:categories
  */
@@ -72,7 +72,7 @@ async function seed(ep: string, tok: string): Promise<void> {
       colors: c.colors,
       sizes: c.sizes,
       description: c.description,
-      seoTitle: `${c.name} | RE/MAX Merchandise`,
+      seoTitle: `${c.name} | REMAX Gifts`,
       seoDescription: c.description.slice(0, 155),
     };
 
@@ -82,7 +82,7 @@ async function seed(ep: string, tok: string): Promise<void> {
       update: fields,
     });
     await client.request<PublishResult>(PUBLISH, { slug: c.slug });
-    console.log(`  ✓ ${c.slug} — ${c.name}`);
+    console.log(`  OK ${c.slug} - ${c.name}`);
   }
 
   console.log(`Seeded and published ${CATEGORIES.length} categories.`);
@@ -92,3 +92,4 @@ seed(endpoint, token).catch((err: unknown) => {
   console.error(err);
   process.exit(1);
 });
+

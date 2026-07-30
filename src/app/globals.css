@@ -1,15 +1,15 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ============================================================================
-   RE/MAX Merchandise — Design Tokens (Tailwind CSS v4, CSS-first @theme)
+   REMAX Gifts - Design Tokens (Tailwind CSS v4, CSS-first @theme)
 
    Structure follows the Airbnb design language documented in DESIGN.md
    (generous whitespace, soft rounding, hairline borders, a single shadow
-   tier, modest type weights) — but the primary brand voltage stays RE/MAX
+   tier, modest type weights) - but the primary brand voltage stays RE/MAX
    red (#e11d2e), not Airbnb Rausch. Font family stays Geist; only the
    DESIGN.md type scale (sizes / weights / line-heights / tracking) is adopted.
 
-   Never hardcode hex in components — reference these token utilities instead.
+   Never hardcode hex in components - reference these token utilities instead.
    ========================================================================== */
 @theme {
   /* Fonts (wired from next/font variables set on <html>) */
@@ -17,7 +17,7 @@
     "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  /* Brand — RE/MAX red kept as the single accent voltage (Airbnb structure,
+  /* Brand - RE/MAX red kept as the single accent voltage (Airbnb structure,
      REMAX color). Used scarcely: primary CTAs, brand links, active states. */
   --color-brand: #e11d2e;
   --color-brand-hover: #c41626;
@@ -26,8 +26,8 @@
   --color-brand-subtle: #fdecee;
   --color-brand-subtle-2: #fef7f8;
 
-  /* Ink + neutral scale — retuned to Airbnb's warm-neutral ramp
-     (#222 ink → #f7f7f7 surface) so grays read soft and human. */
+  /* Ink + neutral scale - retuned to Airbnb's warm-neutral ramp
+     (#222 ink -> #f7f7f7 surface) so grays read soft and human. */
   --color-ink: #222222;
   --color-gray-50: #f7f7f7;
   --color-gray-100: #f2f2f2;
@@ -71,7 +71,7 @@
   --color-admin-bg: #f7f7f7;
   --color-admin-border: #ebebeb;
 
-  /* Radius — Airbnb shape language: 8px buttons/inputs, 14px cards,
+  /* Radius - Airbnb shape language: 8px buttons/inputs, 14px cards,
      16px modals, full pills. */
   --radius-card: 14px;
   --radius-btn: 8px;
@@ -79,7 +79,7 @@
   --radius-modal: 16px;
   --radius-pill: 9999px;
 
-  /* Shadows — a single soft tier (DESIGN.md: depth comes from photography +
+  /* Shadows - a single soft tier (DESIGN.md: depth comes from photography +
      hairlines, not layered elevation). Hover is a subtle lift of the same. */
   --shadow-card: rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px 0,
     rgba(0, 0, 0, 0.1) 0 4px 8px 0;
@@ -100,11 +100,11 @@
 }
 
 /* ---------------------------------------------------------------------------
-   shadcn/ui compatibility layer — semantic variables mapped to the palette
+   shadcn/ui compatibility layer - semantic variables mapped to the palette
    so `npx shadcn add <component>` works out of the box.
    ------------------------------------------------------------------------- */
 :root {
-  --radius: 0.875rem; /* 14px — matches --radius-card */
+  --radius: 0.875rem; /* 14px - matches --radius-card */
   --background: #ffffff;
   --foreground: #222222;
   --card: #ffffff;
@@ -174,8 +174,8 @@
     text-rendering: optimizeLegibility;
   }
   /* Inline links carry the brand voltage by default (DESIGN.md: inline brand
-     links are the accent). Structural links that must read as ink — nav,
-     footer, breadcrumbs — set `text-ink`/`text-body` explicitly. */
+     links are the accent). Structural links that must read as ink - nav,
+     footer, breadcrumbs - set `text-ink`/`text-body` explicitly. */
   a {
     color: var(--color-brand);
     text-decoration: none;
@@ -404,3 +404,4 @@
     scroll-behavior: auto !important;
   }
 }
+

@@ -25,8 +25,12 @@ if (!endpoint || !token) {
 }
 
 const SEED_BANNERS = [
-  { alt: "Banner premium merchandise RE/MAX", link: "/search", order: 1 },
-  { alt: "Banner seragam & event kit custom", link: "/categories/jacket", order: 2 },
+  { alt: "Banner premium merchandise REMAX", link: "/search", order: 1 },
+  {
+    alt: "Banner seragam & event kit custom",
+    link: "/categories/jacket",
+    order: 2,
+  },
   { alt: "Banner promo corporate gift", link: "/contact", order: 3 },
 ];
 

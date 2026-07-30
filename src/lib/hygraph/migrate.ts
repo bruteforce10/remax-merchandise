@@ -1,13 +1,13 @@
-/* eslint-disable no-console */
+﻿/* eslint-disable no-console */
 /**
- * Hygraph schema migration — creates the Product, Category, and Banner content
- * models (plus supporting enumerations) for the REMAX Merchandise Catalog.
+ * Hygraph schema migration - creates the Product, Category, and Banner content
+ * models (plus supporting enumerations) for the REMAX Gifts Catalog.
  *
  * Run once against a project that does not yet have these models:
  *   pnpm hygraph:migrate
  *
  * Uses @hygraph/management-sdk v1.6 (flat Client API). Re-running against a
- * project that already has the models will fail — use the update/delete calls
+ * project that already has the models will fail - use the update/delete calls
  * to amend an existing schema instead.
  */
 import process from "node:process";
@@ -90,7 +90,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
     });
   };
 
-  // ── Enumerations ──────────────────────────────────────────────────────────
+  // Enumerations -------------------------------------------------------------
   client.createEnumeration({
     apiId: "ProductBadge",
     displayName: "Product Badge",
@@ -109,7 +109,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
     ],
   });
 
-  // ── Category ──────────────────────────────────────────────────────────────
+  // Category ----------------------------------------------------------------
   client.createModel({ apiId: "Category", apiIdPlural: "Categories", displayName: "Category" });
   str("Category", "name", "Name", { isRequired: true, isTitle: true });
   str("Category", "slug", "Slug", { isRequired: true, isUnique: true });
@@ -123,7 +123,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
   str("Category", "seoDescription", "SEO Description");
   asset("Category", "image", "Image", "categoryImage");
 
-  // ── Product ───────────────────────────────────────────────────────────────
+  // Product -----------------------------------------------------------------
   client.createModel({ apiId: "Product", apiIdPlural: "Products", displayName: "Product" });
   str("Product", "name", "Name", { isRequired: true, isTitle: true });
   str("Product", "slug", "Slug", { isRequired: true, isUnique: true });
@@ -157,7 +157,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
     },
   });
 
-  // ── Banner ────────────────────────────────────────────────────────────────
+  // Banner ------------------------------------------------------------------
   client.createModel({ apiId: "Banner", apiIdPlural: "Banners", displayName: "Banner" });
   str("Banner", "alt", "Image Alt", { isRequired: true, isTitle: true });
   str("Banner", "link", "Link");
@@ -165,7 +165,7 @@ async function run(managementEndpoint: string, token: string): Promise<void> {
   client.createEnumerableField({ modelApiId: "Banner", apiId: "publishStatus", displayName: "Status", enumerationApiId: "PublishStatus", isRequired: true });
   asset("Banner", "image", "Image", "bannerImage");
 
-  console.log("Submitting migration 'remax-catalog-schema-v1'…");
+  console.log("Submitting migration 'remax-catalog-schema-v1'...");
   const result = await client.run(true);
 
   if (result.errors) {
@@ -179,3 +179,4 @@ run(endpoint, authToken).catch((err: unknown) => {
   console.error(err);
   process.exit(1);
 });
+

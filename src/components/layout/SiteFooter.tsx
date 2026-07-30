@@ -31,7 +31,7 @@ export function SiteFooter(): ReactElement {
               className="h-8 w-auto"
             />
             <span className="text-lg font-semibold tracking-tight text-ink">
-              RE/MAX <span className="text-brand">Merchandise</span>
+              REMAX <span className="text-brand">Gifts</span>
             </span>
           </div>
           <div className="flex gap-2.5">
@@ -104,10 +104,10 @@ export function SiteFooter(): ReactElement {
       <div className="border-t border-gray-200">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-6 py-5 text-[13px] text-muted">
           <span>
-            © {new Date().getFullYear()} RE/MAX Indonesia Merchandise. Seluruh
-            hak cipta dilindungi.
+            © {new Date().getFullYear()} REMAX Gifts. Seluruh hak cipta
+            dilindungi.
           </span>
-          <span>Bukan platform pembayaran — hanya permintaan penawaran.</span>
+          <span>Bukan platform pembayaran - hanya permintaan penawaran.</span>
         </div>
       </div>
     </footer>

@@ -143,16 +143,24 @@ export interface RawBanner {
   order: number | null;
   publishStatus?: string | null;
   createdAt?: string;
-  image: { id: string; url: string } | null;
+  image: {
+    id: string;
+    url: string;
+    width?: number | null;
+    height?: number | null;
+  } | null;
 }
 
 export function mapPublicBanner(b: RawBanner): Banner {
   const order = b.order ?? 1;
+  const width = b.image?.width ?? 0;
+  const height = b.image?.height ?? 0;
   return {
     id: b.id,
     alt: b.alt,
     link: b.link ?? "",
     imageUrl: b.image?.url ?? null,
+    imageAspectRatio: width > 0 && height > 0 ? width / height : null,
     gradient: gradientForOrder(order),
     order,
   };
@@ -184,7 +192,12 @@ export interface RawAdminProduct {
 function parseCustomVariants(value: unknown): ProductCustomVariant[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item, i) => {
-    if (item && typeof item === "object" && "name" in item && "values" in item) {
+    if (
+      item &&
+      typeof item === "object" &&
+      "name" in item &&
+      "values" in item
+    ) {
       const raw = item as { name: unknown; values: unknown };
       const values = Array.isArray(raw.values)
         ? raw.values.map((v) => String(v))
@@ -206,7 +219,8 @@ export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
     stock: p.stock ?? null,
     badge: mapBadge(p.badge),
     imageUrl: p.images?.[0]?.url ?? null,
-    status: p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
+    status:
+      p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
     views: 0,
     waClicks: 0,
   };

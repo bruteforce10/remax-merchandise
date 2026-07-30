@@ -23,7 +23,7 @@ export function ProfilePanel(): React.JSX.Element {
           </span>
           <div className="min-w-[180px] flex-1">
             <div className="text-[19px] font-semibold text-ink">Admin REMAX</div>
-            <div className="text-sm text-gray-500">admin@remax.co.id</div>
+            <div className="text-sm text-gray-500">support@remax.co.id</div>
             <span className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-brand-subtle px-3 py-1 text-[12px] font-bold text-brand">
               <Shield className="h-[13px] w-[13px]" />
               Super Admin
@@ -48,11 +48,11 @@ export function ProfilePanel(): React.JSX.Element {
             </label>
             <label className="flex flex-col gap-1.5">
               <span className={LABEL}>Email</span>
-              <input defaultValue="admin@remax.co.id" className={FIELD} />
+              <input defaultValue="support@remax.co.id" className={FIELD} />
             </label>
             <label className="flex flex-col gap-1.5">
               <span className={LABEL}>Telepon</span>
-              <input defaultValue="0895 0904 6152" className={FIELD} />
+              <input defaultValue="087716289585" className={FIELD} />
             </label>
             <label className="flex flex-col gap-1.5">
               <span className={LABEL}>Peran</span>

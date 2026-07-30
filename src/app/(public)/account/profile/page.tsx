@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import type { ReactElement } from "react";
 
@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Profil Saya",
-  description: "Kelola data profil akun RE/MAX Merchandise Anda.",
+  description: "Kelola data profil akun REMAX Gifts Anda.",
   robots: { index: false, follow: false },
 };
 
@@ -47,3 +47,4 @@ export default async function ProfilePage(): Promise<ReactElement> {
     </div>
   );
 }
+

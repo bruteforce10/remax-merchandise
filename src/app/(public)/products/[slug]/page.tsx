@@ -77,7 +77,7 @@ export default async function ProductPage({ params }: PageProps): Promise<ReactN
     sku: product.sku,
     category: category.name,
     description: category.description,
-    brand: { "@type": "Brand", name: "RE/MAX" },
+    brand: { "@type": "Brand", name: "REMAX" },
     offers: {
       "@type": "Offer",
       priceCurrency: "IDR",

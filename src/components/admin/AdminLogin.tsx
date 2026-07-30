@@ -39,16 +39,16 @@ export function AdminLogin(): React.JSX.Element {
         <div className="mb-6 flex flex-col items-center text-center">
           <Image
             src="/assets/logo-mark.png"
-            alt="RE/MAX"
+            alt="REMAX"
             width={182}
             height={207}
             priority
             className="h-10 w-auto"
           />
           <h1 className="mt-3 text-xl font-semibold tracking-tight text-ink">
-            RE/MAX <span className="text-brand">Admin</span>
+            REMAX <span className="text-brand">Admin</span>
           </h1>
-          <p className="text-[13px] font-semibold text-gray-400">Merchandise CMS</p>
+          <p className="text-[13px] font-semibold text-gray-400">Gifts CMS</p>
         </div>
 
         <form
@@ -61,7 +61,10 @@ export function AdminLogin(): React.JSX.Element {
           </p>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="text-[13px] font-semibold text-gray-600">
+            <label
+              htmlFor="email"
+              className="text-[13px] font-semibold text-gray-600"
+            >
               Email
             </label>
             <input
@@ -74,7 +77,10 @@ export function AdminLogin(): React.JSX.Element {
           </div>
 
           <div className="mt-3.5 flex flex-col gap-1.5">
-            <label htmlFor="password" className="text-[13px] font-semibold text-gray-600">
+            <label
+              htmlFor="password"
+              className="text-[13px] font-semibold text-gray-600"
+            >
               Password
             </label>
             <input
@@ -82,7 +88,7 @@ export function AdminLogin(): React.JSX.Element {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="********"
               className="h-12 rounded-input border border-gray-200 bg-admin-bg px-3.5 text-[14.5px] text-ink outline-none focus:border-brand focus:bg-white"
             />
           </div>
@@ -92,12 +98,12 @@ export function AdminLogin(): React.JSX.Element {
             disabled={pending}
             className="mt-5 flex h-[48px] w-full items-center justify-center rounded-btn bg-brand text-[15px] font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
           >
-            {pending ? "Memproses…" : "Masuk"}
+            {pending ? "Memproses..." : "Masuk"}
           </button>
 
           <p className="mt-3.5 flex items-center justify-center gap-1.5 text-[12px] text-gray-400">
             <Lock className="h-3 w-3" />
-            Akses terbatas untuk admin RE/MAX
+            Akses terbatas untuk admin REMAX
           </p>
         </form>
 

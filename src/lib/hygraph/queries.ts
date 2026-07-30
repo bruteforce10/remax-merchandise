@@ -186,6 +186,8 @@ export const BANNERS_QUERY = gql`
       order
       image {
         url
+        width
+        height
       }
     }
   }

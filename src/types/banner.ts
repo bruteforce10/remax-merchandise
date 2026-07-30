@@ -7,6 +7,8 @@ export interface Banner {
   link: string;
   /** Hygraph asset URL, or null when no image is attached yet. */
   imageUrl: string | null;
+  /** Natural image ratio used to size the hero without cropping or empty space. */
+  imageAspectRatio: number | null;
   /** CSS gradient fallback used when no image is attached. */
   gradient: string;
   order: number;

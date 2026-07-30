@@ -1,11 +1,11 @@
-# Product Requirements Document (PRD)
-## REMAX Merchandise Catalog
+﻿# Product Requirements Document (PRD)
+## REMAX Gifts Catalog
 
 | | |
 |---|---|
 | **Version** | MVP v1.0 |
 | **Product Type** | Headless Commerce Product Catalog |
-| **Status** | Draft — untuk direview stakeholder |
+| **Status** | Draft â€” untuk direview stakeholder |
 | **Document Owner** | *(isi nama PM)* |
 | **Last Updated** | 21 Juli 2026 |
 
@@ -13,17 +13,17 @@
 
 ## 1. Executive Summary
 
-REMAX Merchandise Catalog adalah website katalog merchandise resmi REMAX Indonesia yang modern, cepat, SEO-friendly, dan scalable. Website ini menjadi pusat referensi produk merchandise bagi agen REMAX, kantor franchise, corporate client, dan event organizer, sekaligus mempermudah proses inquiry melalui WhatsApp.
+REMAX Gifts Catalog adalah website katalog official gifts REMAX Indonesia yang modern, cepat, SEO-friendly, dan scalable. Website ini menjadi pusat referensi produk gifts bagi agen REMAX, kantor franchise, corporate client, dan event organizer, sekaligus mempermudah proses inquiry melalui WhatsApp.
 
-Pada tahap MVP, produk ini secara sengaja **bukan marketplace dan bukan e-commerce penuh** — tidak ada login pelanggan, checkout, maupun payment gateway. Fokus MVP adalah *discovery* produk yang cepat dan menyenangkan, serta konversi minat menjadi inquiry (lead) via WhatsApp.
+Pada tahap MVP, produk ini secara sengaja **bukan marketplace dan bukan e-commerce penuh** â€” tidak ada login pelanggan, checkout, maupun payment gateway. Fokus MVP adalah *discovery* produk yang cepat dan menyenangkan, serta konversi minat menjadi inquiry (lead) via WhatsApp.
 
-Yang membedakan proyek ini adalah pendekatan arsitekturnya: konten (produk, kategori, banner) dipisahkan dari data operasional (analytics, leads, cart) sejak awal, menggunakan Hygraph sebagai headless CMS dan Supabase sebagai database operasional. Pemisahan ini dirancang agar sistem dapat berkembang menjadi e-commerce penuh (Phase 2 & 3 — login, checkout, payment, CRM, AI) tanpa migrasi arsitektur.
+Yang membedakan proyek ini adalah pendekatan arsitekturnya: konten (produk, kategori, banner) dipisahkan dari data operasional (analytics, leads, cart) sejak awal, menggunakan Hygraph sebagai headless CMS dan Supabase sebagai database operasional. Pemisahan ini dirancang agar sistem dapat berkembang menjadi e-commerce penuh (Phase 2 & 3 â€” login, checkout, payment, CRM, AI) tanpa migrasi arsitektur.
 
 ---
 
 ## 2. Problem Statement
 
-> Catatan: brief awal belum menyertakan pain point pengguna secara eksplisit. Bagian ini disusun berdasarkan tujuan bisnis yang diberikan — mohon divalidasi dengan riset/data internal jika tersedia.
+> Catatan: brief awal belum menyertakan pain point pengguna secara eksplisit. Bagian ini disusun berdasarkan tujuan bisnis yang diberikan â€” mohon divalidasi dengan riset/data internal jika tersedia.
 
 Saat ini REMAX Indonesia diasumsikan belum memiliki katalog digital terpusat yang profesional untuk merchandise-nya. Agen, kantor franchise, dan corporate client kemungkinan mengandalkan katalog manual (PDF, chat, atau komunikasi langsung) untuk melihat produk dan meminta penawaran, yang membuat proses discovery produk lambat, tidak konsisten, dan sulit di-scale seiring bertambahnya jumlah agen dan variasi produk.
 
@@ -175,7 +175,7 @@ Karena target angka spesifik belum ditentukan di brief awal, berikut kerangka me
 |---|---|---|---|
 | North Star (kandidat) | Total WhatsApp inquiry per bulan dari katalog | `Lead`, `Event` (type=wa_click) | *TBD* |
 | Adoption | Total product views per minggu | `ProductStats.views` | *TBD* |
-| Engagement | Rasio Cart → Send to WhatsApp | `Cart` vs `Lead` | *TBD* |
+| Engagement | Rasio Cart â†’ Send to WhatsApp | `Cart` vs `Lead` | *TBD* |
 | Engagement | Search-to-result click-through rate | `SearchLog`, `Event` | *TBD* |
 | Business Impact | Jumlah leads terkonversi jadi transaksi offline | Data internal sales (di luar sistem) | *TBD* |
 | Performance | Lighthouse Performance/SEO/Accessibility/Best Practices | Alat audit (Lighthouse) | 95+ / 100 / 95+ / 100 |
@@ -186,10 +186,10 @@ Karena target angka spesifik belum ditentukan di brief awal, berikut kerangka me
 ## 7. Scope
 
 ### 7.1 In Scope (MVP)
-Product Catalog · Product Search · Category · Product Detail · Cart (Quotation) · WhatsApp Inquiry · Admin Dashboard · Analytics dasar · SEO
+Product Catalog Â· Product Search Â· Category Â· Product Detail Â· Cart (Quotation) Â· WhatsApp Inquiry Â· Admin Dashboard Â· Analytics dasar Â· SEO
 
 ### 7.2 Out of Scope (MVP)
-Login Customer · Register · Checkout · Payment Gateway · Shipping · Order Management · Wishlist · Review · Blog
+Login Customer Â· Register Â· Checkout Â· Payment Gateway Â· Shipping Â· Order Management Â· Wishlist Â· Review Â· Blog
 
 ### 7.3 Definition of Done (MVP Acceptance Criteria)
 
@@ -222,9 +222,9 @@ Login Customer · Register · Checkout · Payment Gateway · Shipping · Order M
 Arsitektur memisahkan **Public Website**, **Admin Dashboard**, dan **Operational Database** menjadi tiga alur berbeda yang saling terhubung ke Next.js:
 
 ```
-Public Website (Next.js) → GraphQL API → Hygraph CMS
-Admin Dashboard (Next.js) → Hygraph Management API → Hygraph CMS
-Operational Data: Next.js API → Prisma → Supabase PostgreSQL
+Public Website (Next.js) â†’ GraphQL API â†’ Hygraph CMS
+Admin Dashboard (Next.js) â†’ Hygraph Management API â†’ Hygraph CMS
+Operational Data: Next.js API â†’ Prisma â†’ Supabase PostgreSQL
 ```
 
 Prinsip utamanya: **konten** (produk, kategori, banner, halaman statis) dikelola di Hygraph, sedangkan **data operasional** (analytics, leads, search log, event, cart, settings) dikelola di Supabase melalui Prisma.
@@ -234,8 +234,8 @@ Prinsip utamanya: **konten** (produk, kategori, banner, halaman statis) dikelola
 | Layer | Teknologi |
 |---|---|
 | Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion |
-| CMS (content) | Hygraph — Product, Category, Banner, Static Page |
-| Database (operational) | Supabase PostgreSQL — Analytics, Leads, Search, Cart, Settings |
+| CMS (content) | Hygraph â€” Product, Category, Banner, Static Page |
+| Database (operational) | Supabase PostgreSQL â€” Analytics, Leads, Search, Cart, Settings |
 | ORM | Prisma |
 | Storage | Supabase Storage (semua gambar; Hygraph hanya menyimpan URL) |
 | Deployment | Vercel |
@@ -255,7 +255,7 @@ Prinsip utamanya: **konten** (produk, kategori, banner, halaman statis) dikelola
 - **Setting:** companyName, whatsapp, email, maps, socialMedia.
 
 ### 8.5 Security
-- Seluruh operasi tulis (write) dilakukan melalui server (Server Actions / Route Handlers) — tidak langsung dari client ke Hygraph.
+- Seluruh operasi tulis (write) dilakukan melalui server (Server Actions / Route Handlers) â€” tidak langsung dari client ke Hygraph.
 - Management API token Hygraph tidak boleh terekspos ke browser.
 - Environment variables dikelola melalui Vercel.
 
@@ -305,26 +305,26 @@ Setiap halaman harus menyertakan: meta title, meta description, Open Graph, Twit
 ```
 
 ### 9.2 Visual Style
-Minimal, premium, corporate — terinspirasi Apple & Shopify. White space luas, gambar besar, sudut membulat 16px, soft shadow. Pendekatan desktop-first namun tetap fully responsive.
+Minimal, premium, corporate â€” terinspirasi Apple & Shopify. White space luas, gambar besar, sudut membulat 16px, soft shadow. Pendekatan desktop-first namun tetap fully responsive.
 
 ### 9.3 Responsive Grid (Featured Products)
-Desktop: 4 kolom · Tablet: 3 kolom · Mobile: 2 kolom.
+Desktop: 4 kolom Â· Tablet: 3 kolom Â· Mobile: 2 kolom.
 
 ### 9.4 Admin Dashboard UX
-Fokus pada kemudahan penggunaan tanpa training — form editor produk yang jelas per section (basic info, gallery, variants, SEO), bulk actions untuk efisiensi (duplicate, delete, publish), dan overview cards yang scannable dalam hitungan detik.
+Fokus pada kemudahan penggunaan tanpa training â€” form editor produk yang jelas per section (basic info, gallery, variants, SEO), bulk actions untuk efisiensi (duplicate, delete, publish), dan overview cards yang scannable dalam hitungan detik.
 
 ---
 
 ## 10. Timeline & Milestones
 
-> Brief awal belum mencantumkan timeline atau tenggat waktu. Berikut struktur fase yang disarankan sebagai starting point — **tanggal dan durasi aktual perlu dikonfirmasi bersama tim engineering dan stakeholder bisnis.**
+> Brief awal belum mencantumkan timeline atau tenggat waktu. Berikut struktur fase yang disarankan sebagai starting point â€” **tanggal dan durasi aktual perlu dikonfirmasi bersama tim engineering dan stakeholder bisnis.**
 
-1. **Discovery & Design** — finalisasi wireframe, design system, dan content model Hygraph.
-2. **Setup Infrastruktur** — Hygraph, Supabase, Prisma schema, Vercel project.
-3. **Pengembangan Public Website** — Home, Search, Category, Product Detail, Cart, Contact.
-4. **Pengembangan Admin Dashboard** — Product/Category/Banner/Media/Leads/Analytics/Settings/Profile.
-5. **SEO & Performance Hardening** — audit Lighthouse, structured data, sitemap.
-6. **QA & UAT** — termasuk uji coba alur admin tanpa training.
+1. **Discovery & Design** â€” finalisasi wireframe, design system, dan content model Hygraph.
+2. **Setup Infrastruktur** â€” Hygraph, Supabase, Prisma schema, Vercel project.
+3. **Pengembangan Public Website** â€” Home, Search, Category, Product Detail, Cart, Contact.
+4. **Pengembangan Admin Dashboard** â€” Product/Category/Banner/Media/Leads/Analytics/Settings/Profile.
+5. **SEO & Performance Hardening** â€” audit Lighthouse, structured data, sitemap.
+6. **QA & UAT** â€” termasuk uji coba alur admin tanpa training.
 7. **Launch**.
 
 ---
@@ -354,9 +354,9 @@ Fokus pada kemudahan penggunaan tanpa training — form editor produk yang jelas
 - Domain & DNS untuk website.
 
 ### Assumptions
-- MVP tidak memerlukan pembayaran online maupun proses order — hanya sampai tahap quotation/inquiry.
+- MVP tidak memerlukan pembayaran online maupun proses order â€” hanya sampai tahap quotation/inquiry.
 - Mata uang tunggal (IDR) dan bahasa utama Bahasa Indonesia.
-- Satu jenis akses admin sudah cukup untuk MVP (field "Role" di Profile ada, namun sistem Role Permission granular baru masuk Phase 3 — perlu klarifikasi, lihat Open Questions).
+- Satu jenis akses admin sudah cukup untuk MVP (field "Role" di Profile ada, namun sistem Role Permission granular baru masuk Phase 3 â€” perlu klarifikasi, lihat Open Questions).
 - Cart tanpa login (berbasis `sessionId`) dapat diterima secara bisnis untuk use case B2B/quotation ini.
 
 ---
@@ -368,7 +368,7 @@ Fokus pada kemudahan penggunaan tanpa training — form editor produk yang jelas
 3. Pendekatan integrasi WhatsApp: link `wa.me` sederhana atau WhatsApp Business (Cloud) API untuk pesan terstruktur?
 4. Apakah harga produk ditampilkan publik, atau sebagian kategori/harga bersifat "request quote only" mengingat basis pelanggan B2B/corporate?
 5. Apakah MOQ bersifat enforced (tidak bisa input quantity di bawah MOQ) atau hanya informasi?
-6. Field "Role" ada di Profile — apakah MVP butuh minimal 2 level akses (mis. Admin vs Super Admin), mengingat Role Permission granular baru direncanakan di Phase 3?
+6. Field "Role" ada di Profile â€” apakah MVP butuh minimal 2 level akses (mis. Admin vs Super Admin), mengingat Role Permission granular baru direncanakan di Phase 3?
 7. Apakah website perlu mendukung Bahasa Inggris untuk corporate client, atau Bahasa Indonesia saja?
 8. Kebijakan retensi/privasi untuk data leads (nomor WA, nama) yang tersimpan di Supabase?
 9. Apakah dibutuhkan integrasi analytics eksternal (Google Analytics/GTM) di luar dashboard analytics internal?
@@ -376,4 +376,6 @@ Fokus pada kemudahan penggunaan tanpa training — form editor produk yang jelas
 
 ---
 
-*Dokumen ini disusun ulang dari brief awal ke dalam format PRD standar (Executive Summary → Problem Statement → Goals → Personas → User Stories → Success Metrics → Scope → Technical → Design → Timeline → Risks → Dependencies → Open Questions). Bagian yang ditandai TBD/perlu klarifikasi sebaiknya diisi bersama stakeholder sebelum dokumen ini difinalkan untuk sign-off.*
+*Dokumen ini disusun ulang dari brief awal ke dalam format PRD standar (Executive Summary â†’ Problem Statement â†’ Goals â†’ Personas â†’ User Stories â†’ Success Metrics â†’ Scope â†’ Technical â†’ Design â†’ Timeline â†’ Risks â†’ Dependencies â†’ Open Questions). Bagian yang ditandai TBD/perlu klarifikasi sebaiknya diisi bersama stakeholder sebelum dokumen ini difinalkan untuk sign-off.*
+
+

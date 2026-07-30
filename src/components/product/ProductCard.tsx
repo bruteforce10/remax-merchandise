@@ -28,7 +28,7 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
               src={product.imageUrl}
               alt={product.name}
               fill
-              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px"
+              sizes="(max-width: 1068px) 50vw, (max-width: 1800px) 25vw, 300px"
               className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             />
           ) : (

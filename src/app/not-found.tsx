@@ -9,7 +9,7 @@ export default function NotFound(): ReactNode {
         <Link href="/" className="inline-flex items-center gap-2.5">
           <Image
             src="/assets/logo-full.png"
-            alt="RE/MAX"
+            alt="REMAX"
             width={866}
             height={238}
             className="h-[26px] w-auto"

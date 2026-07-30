@@ -16,6 +16,7 @@ import {
   TriangleAlert,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { toast } from "sonner";
@@ -37,7 +38,8 @@ import type { Category } from "@/types/category";
 const PAGE_SIZE = 8;
 const SELECT_CLS =
   "h-[42px] rounded-btn border border-admin-border bg-white px-3 text-sm font-semibold text-gray-700 cursor-pointer outline-none focus:border-brand";
-const TH = "px-3 py-3 text-left text-[12px] font-bold tracking-[0.04em] text-gray-400 uppercase";
+const TH =
+  "px-3 py-3 text-left text-[12px] font-bold tracking-[0.04em] text-gray-400 uppercase";
 
 type SortKey = "recent" | "views" | "price-desc" | "price-asc";
 
@@ -55,7 +57,9 @@ export function ProductsTable({
   );
   const [search, setSearch] = React.useState("");
   const [catFilter, setCatFilter] = React.useState("all");
-  const [statusFilter, setStatusFilter] = React.useState<"all" | ProductStatus>("all");
+  const [statusFilter, setStatusFilter] = React.useState<"all" | ProductStatus>(
+    "all",
+  );
   const [sort, setSort] = React.useState<SortKey>("recent");
   const [page, setPage] = React.useState(1);
   const [selected, setSelected] = React.useState<Record<string, boolean>>({});
@@ -74,7 +78,9 @@ export function ProductsTable({
     const list = items.filter((p) => {
       if (search) {
         const q = search.toLowerCase();
-        if (!(p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)))
+        if (!(
+          p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
+        ))
           return false;
       }
       if (catFilter !== "all" && p.categorySlug !== catFilter) return false;
@@ -82,20 +88,26 @@ export function ProductsTable({
       return true;
     });
     if (sort === "views") return [...list].sort((a, b) => b.views - a.views);
-    if (sort === "price-desc") return [...list].sort((a, b) => b.price - a.price);
-    if (sort === "price-asc") return [...list].sort((a, b) => a.price - b.price);
+    if (sort === "price-desc")
+      return [...list].sort((a, b) => b.price - a.price);
+    if (sort === "price-asc")
+      return [...list].sort((a, b) => a.price - b.price);
     return list;
   }, [items, search, catFilter, statusFilter, sort]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const current = Math.min(page, pageCount);
-  const pageItems = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const pageItems = filtered.slice(
+    (current - 1) * PAGE_SIZE,
+    current * PAGE_SIZE,
+  );
   const rangeStart = total === 0 ? 0 : (current - 1) * PAGE_SIZE + 1;
   const rangeEnd = Math.min(current * PAGE_SIZE, total);
 
   const selectionCount = Object.values(selected).filter(Boolean).length;
-  const allChecked = pageItems.length > 0 && pageItems.every((p) => selected[p.sku]);
+  const allChecked =
+    pageItems.length > 0 && pageItems.every((p) => selected[p.sku]);
 
   function resetPage<T>(setter: (v: T) => void): (v: T) => void {
     return (v) => {
@@ -202,14 +214,18 @@ export function ProductsTable({
       ),
     );
     setBusy(false);
-    const okSkus = targets.filter((_, i) => results[i].success).map((p) => p.sku);
+    const okSkus = targets
+      .filter((_, i) => results[i].success)
+      .map((p) => p.sku);
     if (okSkus.length > 0) {
       setItems((list) =>
         list.map((p) => (okSkus.includes(p.sku) ? { ...p, status } : p)),
       );
       setSelected({});
       toast.success(
-        status === "published" ? "Produk dipublikasikan" : "Produk disembunyikan",
+        status === "published"
+          ? "Produk dipublikasikan"
+          : "Produk disembunyikan",
       );
     }
     const failed = results.find((r) => !r.success);
@@ -233,7 +249,9 @@ export function ProductsTable({
       toast.error(res.message);
       return false;
     }
-    setItems((list) => list.map((p) => (p.sku === patch.sku ? { ...p, ...patch } : p)));
+    setItems((list) =>
+      list.map((p) => (p.sku === patch.sku ? { ...p, ...patch } : p)),
+    );
     toast.success(res.message);
     setEditSku(null);
     return true;
@@ -246,7 +264,9 @@ export function ProductsTable({
     <div className="animate-[rmx-fade_.3s_ease]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">Produk</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">
+            Produk
+          </h1>
           <p className="mt-0.5 text-[14.5px] text-gray-500">
             {items.length} produk dalam katalog
           </p>
@@ -287,7 +307,11 @@ export function ProductsTable({
           </select>
           <select
             value={statusFilter}
-            onChange={(e) => resetPage(setStatusFilter)(e.target.value as "all" | ProductStatus)}
+            onChange={(e) =>
+              resetPage(setStatusFilter)(
+                e.target.value as "all" | ProductStatus,
+              )
+            }
             className={SELECT_CLS}
             aria-label="Filter status"
           >
@@ -315,10 +339,31 @@ export function ProductsTable({
               {selectionCount} dipilih
             </span>
             <div className="ml-auto flex flex-wrap gap-2">
-              <BulkBtn icon={CheckCircle2} label="Publish" tone="success" disabled={busy} onClick={() => bulkStatus("published")} />
-              <BulkBtn icon={EyeOff} label="Unpublish" disabled={busy} onClick={() => bulkStatus("draft")} />
-              <BulkBtn icon={Download} label="Export" onClick={() => toast.success("Export dimulai")} />
-              <BulkBtn icon={Trash2} label="Hapus" danger disabled={busy} onClick={bulkDelete} />
+              <BulkBtn
+                icon={CheckCircle2}
+                label="Publish"
+                tone="success"
+                disabled={busy}
+                onClick={() => bulkStatus("published")}
+              />
+              <BulkBtn
+                icon={EyeOff}
+                label="Unpublish"
+                disabled={busy}
+                onClick={() => bulkStatus("draft")}
+              />
+              <BulkBtn
+                icon={Download}
+                label="Export"
+                onClick={() => toast.success("Export dimulai")}
+              />
+              <BulkBtn
+                icon={Trash2}
+                label="Hapus"
+                danger
+                disabled={busy}
+                onClick={bulkDelete}
+              />
             </div>
           </div>
         )}
@@ -342,68 +387,110 @@ export function ProductsTable({
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
-              ) : pageItems.length > 0 ? (
-                pageItems.map((p) => {
-                  const cat = categoryMap[p.categorySlug];
-                  const checked = !!selected[p.sku];
-                  return (
-                    <tr
-                      key={p.sku}
-                      className="border-b border-gray-50 transition-colors hover:bg-[#FAFBFC]"
-                    >
-                      <td className="px-[18px] py-3.5">
-                        <Checkbox checked={checked} onClick={() => toggle(p.sku)} />
-                      </td>
-                      <td className="px-3 py-3.5">
-                        <Link href={`/admin/products/${p.sku}`} className="flex items-center gap-3">
-                          <span className="flex h-11 w-11 flex-none items-center justify-center rounded-btn bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
-                            <CategoryIcon name={cat?.icon ?? "package"} className="h-5 w-5" />
-                          </span>
-                          <span>
-                            <span className="block text-sm font-semibold text-ink">{p.name}</span>
-                            <span className="block font-mono text-xs text-gray-400">{p.sku}</span>
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-3 py-3.5 text-[13.5px] text-gray-600">{cat?.name}</td>
-                      <td className="px-3 py-3.5 text-right font-mono text-[13.5px] font-bold text-ink">
-                        {formatPrice(p.price)}
-                      </td>
-                      <td className="px-3 py-3.5 text-right font-mono text-[13.5px]">
-                        <span
-                          className={cn(
-                            p.stock === null
-                              ? "text-gray-400"
-                              : p.stock === 0
-                                ? "text-danger"
-                                : p.stock <= 20
-                                  ? "text-warning"
-                                  : "text-gray-600",
-                          )}
+              {loading
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))
+                : pageItems.length > 0
+                  ? pageItems.map((p) => {
+                      const cat = categoryMap[p.categorySlug];
+                      const checked = !!selected[p.sku];
+                      return (
+                        <tr
+                          key={p.sku}
+                          className="border-b border-gray-50 transition-colors hover:bg-[#FAFBFC]"
                         >
-                          {p.stock === null ? "—" : p.stock}
-                        </span>
-                      </td>
-                      <td className="px-3 py-3.5 text-right font-mono text-[13.5px] text-gray-600">
-                        {formatNumber(p.views)}
-                      </td>
-                      <td className="px-3 py-3.5 text-right font-mono text-[13.5px] text-gray-600">{p.waClicks}</td>
-                      <td className="px-3 py-3.5">
-                        <StatusBadge status={p.status} />
-                      </td>
-                      <td className="px-3 py-3.5">
-                        <div className="flex justify-end gap-1">
-                          <IconAction icon={Pencil} title="Quick edit" onClick={() => setEditSku(p.sku)} />
-                          <IconAction icon={Copy} title="Duplikat" onClick={() => duplicate(p)} />
-                          <IconAction icon={Trash2} title="Hapus" danger onClick={() => setDeleteSku(p.sku)} />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : null}
+                          <td className="px-[18px] py-3.5">
+                            <Checkbox
+                              checked={checked}
+                              onClick={() => toggle(p.sku)}
+                            />
+                          </td>
+                          <td className="px-3 py-3.5">
+                            <Link
+                              href={`/admin/products/${p.sku}`}
+                              className="flex items-center gap-3"
+                            >
+                              <span className="relative flex h-11 w-11 flex-none items-center justify-center overflow-hidden rounded-btn bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea] text-gray-400">
+                                {p.imageUrl ? (
+                                  <Image
+                                    src={p.imageUrl}
+                                    alt={p.name}
+                                    fill
+                                    sizes="200px"
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <CategoryIcon
+                                    name={cat?.icon ?? "package"}
+                                    className="h-5 w-5"
+                                  />
+                                )}
+                              </span>
+                              <span>
+                                <span className="block text-sm font-semibold text-ink">
+                                  {p.name}
+                                </span>
+                                <span className="block font-mono text-xs text-gray-400">
+                                  {p.sku}
+                                </span>
+                              </span>
+                            </Link>
+                          </td>
+                          <td className="px-3 py-3.5 text-[13.5px] text-gray-600">
+                            {cat?.name}
+                          </td>
+                          <td className="px-3 py-3.5 text-right font-mono text-[13.5px] font-bold text-ink">
+                            {formatPrice(p.price)}
+                          </td>
+                          <td className="px-3 py-3.5 text-right font-mono text-[13.5px]">
+                            <span
+                              className={cn(
+                                p.stock === null
+                                  ? "text-gray-400"
+                                  : p.stock === 0
+                                    ? "text-danger"
+                                    : p.stock <= 20
+                                      ? "text-warning"
+                                      : "text-gray-600",
+                              )}
+                            >
+                              {p.stock === null ? "—" : p.stock}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3.5 text-right font-mono text-[13.5px] text-gray-600">
+                            {formatNumber(p.views)}
+                          </td>
+                          <td className="px-3 py-3.5 text-right font-mono text-[13.5px] text-gray-600">
+                            {p.waClicks}
+                          </td>
+                          <td className="px-3 py-3.5">
+                            <StatusBadge status={p.status} />
+                          </td>
+                          <td className="px-3 py-3.5">
+                            <div className="flex justify-end gap-1">
+                              <IconAction
+                                icon={Pencil}
+                                title="Quick edit"
+                                onClick={() => setEditSku(p.sku)}
+                              />
+                              <IconAction
+                                icon={Copy}
+                                title="Duplikat"
+                                onClick={() => duplicate(p)}
+                              />
+                              <IconAction
+                                icon={Trash2}
+                                title="Hapus"
+                                danger
+                                onClick={() => setDeleteSku(p.sku)}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
             </tbody>
           </table>
         </div>
@@ -414,8 +501,12 @@ export function ProductsTable({
             <div className="mx-auto mb-4 flex h-[70px] w-[70px] items-center justify-center rounded-card bg-gray-50 text-gray-300">
               <PackageSearch className="h-8 w-8" />
             </div>
-            <div className="mb-1 text-[17px] font-bold text-ink">Tidak ada produk</div>
-            <div className="mb-[18px] text-sm text-gray-400">Coba ubah pencarian atau filter.</div>
+            <div className="mb-1 text-[17px] font-bold text-ink">
+              Tidak ada produk
+            </div>
+            <div className="mb-[18px] text-sm text-gray-400">
+              Coba ubah pencarian atau filter.
+            </div>
             <button
               type="button"
               onClick={() => {
@@ -474,14 +565,19 @@ export function ProductsTable({
       </div>
 
       {/* Delete modal */}
-      <Modal open={!!deleteSku} onClose={() => setDeleteSku(null)} ariaLabel="Hapus produk">
+      <Modal
+        open={!!deleteSku}
+        onClose={() => setDeleteSku(null)}
+        ariaLabel="Hapus produk"
+      >
         <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-card bg-brand-subtle text-danger">
           <TriangleAlert className="h-7 w-7" />
         </div>
         <h3 className="mb-2 text-xl font-semibold text-ink">Hapus Produk?</h3>
         <p className="mb-6 text-[14.5px] leading-relaxed text-gray-500">
-          Anda akan menghapus <strong className="text-ink">{deleteTarget?.name}</strong>.
-          Tindakan ini tidak dapat dibatalkan dan data terkait akan hilang permanen.
+          Anda akan menghapus{" "}
+          <strong className="text-ink">{deleteTarget?.name}</strong>. Tindakan
+          ini tidak dapat dibatalkan dan data terkait akan hilang permanen.
         </p>
         <div className="flex gap-3">
           <button
@@ -569,7 +665,9 @@ function IconAction({
       onClick={onClick}
       className={cn(
         "flex h-[34px] w-[34px] items-center justify-center rounded-btn border border-admin-border bg-white text-gray-500 transition-colors",
-        danger ? "hover:border-[#F8D2D7] hover:bg-brand-subtle hover:text-danger" : "hover:bg-gray-50 hover:text-brand",
+        danger
+          ? "hover:border-[#F8D2D7] hover:bg-brand-subtle hover:text-danger"
+          : "hover:bg-gray-50 hover:text-brand",
       )}
     >
       <Icon className="h-[15px] w-[15px]" />
@@ -599,10 +697,18 @@ function BulkBtn({
       disabled={disabled}
       className={cn(
         "inline-flex h-[34px] items-center gap-1.5 rounded-btn border bg-white px-3 text-[13px] font-semibold disabled:opacity-50",
-        danger ? "border-[#F8D2D7] text-danger" : "border-admin-border text-gray-700 hover:bg-gray-50",
+        danger
+          ? "border-[#F8D2D7] text-danger"
+          : "border-admin-border text-gray-700 hover:bg-gray-50",
       )}
     >
-      <Icon className={cn("h-[15px] w-[15px]", tone === "success" && "text-success", danger && "text-danger")} />
+      <Icon
+        className={cn(
+          "h-[15px] w-[15px]",
+          tone === "success" && "text-success",
+          danger && "text-danger",
+        )}
+      />
       {label}
     </button>
   );
@@ -686,7 +792,9 @@ function QuickEditForm({
           <div className="text-[12px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
             Quick Edit
           </div>
-          <div className="text-[17px] font-semibold text-ink">{product.name}</div>
+          <div className="text-[17px] font-semibold text-ink">
+            {product.name}
+          </div>
         </div>
         <button
           type="button"
@@ -700,12 +808,20 @@ function QuickEditForm({
 
       <div className="rmx-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto p-[22px]">
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-semibold text-gray-600">Nama Produk</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} className={field} />
+          <span className="text-[13px] font-semibold text-gray-600">
+            Nama Produk
+          </span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={field}
+          />
         </label>
         <div className="grid grid-cols-2 gap-3.5">
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold text-gray-600">Harga Mulai</span>
+            <span className="text-[13px] font-semibold text-gray-600">
+              Harga Mulai
+            </span>
             <div className="flex h-[46px] items-center gap-1.5 rounded-btn border border-admin-border bg-admin-bg px-3.5 focus-within:border-brand focus-within:bg-white">
               <span className="font-mono text-gray-400">Rp</span>
               <input
@@ -717,7 +833,9 @@ function QuickEditForm({
             </div>
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold text-gray-600">Stok</span>
+            <span className="text-[13px] font-semibold text-gray-600">
+              Stok
+            </span>
             <input
               value={stock}
               onChange={(e) => setStock(e.target.value.replace(/\D/g, ""))}
@@ -728,7 +846,9 @@ function QuickEditForm({
           </label>
         </div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-semibold text-gray-600">Kategori</span>
+          <span className="text-[13px] font-semibold text-gray-600">
+            Kategori
+          </span>
           <select
             value={categorySlug}
             onChange={(e) => setCategorySlug(e.target.value)}
@@ -742,7 +862,9 @@ function QuickEditForm({
           </select>
         </label>
         <div className="flex flex-col gap-2">
-          <span className="text-[13px] font-semibold text-gray-600">Status</span>
+          <span className="text-[13px] font-semibold text-gray-600">
+            Status
+          </span>
           <div className="flex gap-2.5">
             {(["published", "draft"] as ProductStatus[]).map((s) => (
               <button

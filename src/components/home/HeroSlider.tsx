@@ -30,8 +30,8 @@ export function HeroSlider({
   const go = (i: number): void => setIndex(((i % count) + count) % count);
 
   return (
-    <section className="mx-auto max-w-[1280px] px-6 pt-7 pb-2">
-      <div className="relative flex min-h-[400px] items-center overflow-hidden rounded-[20px] border border-gray-200 bg-white sm:min-h-[440px]">
+    <section>
+      <div className="relative flex aspect-[3/1] items-center overflow-hidden bg-white">
         {current.imageUrl ? (
           <Image
             key={current.id}
@@ -39,8 +39,8 @@ export function HeroSlider({
             alt={current.alt}
             fill
             priority
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            className="animate-[rmx-fade_.45s_ease] object-cover"
+            sizes="100vw"
+            className="animate-[rmx-fade_.45s_ease] object-contain"
           />
         ) : (
           <div className="absolute inset-0 bg-gray-50 bg-[repeating-linear-gradient(45deg,rgba(0,0,0,0.035)_0,rgba(0,0,0,0.035)_22px,transparent_22px,transparent_44px)]" />

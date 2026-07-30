@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { CategoryCard } from "@/components/category/CategoryCard";
@@ -7,9 +7,9 @@ import { getCategories } from "@/services/content/categories";
 import { getProducts } from "@/services/content/products";
 
 export const metadata: Metadata = {
-  title: "Kategori Merchandise",
+  title: "Kategori Gifts",
   description:
-    "Jelajahi seluruh kategori merchandise RE/MAX Indonesia — polo, jaket, hoodie, payung, tumbler, tote bag, dan corporate gift lainnya.",
+    "Jelajahi seluruh kategori merchandise REMAX Indonesia - polo, jaket, hoodie, payung, tumbler, tote bag, dan corporate gift lainnya.",
   alternates: { canonical: "/categories" },
 };
 
@@ -24,10 +24,10 @@ export default async function CategoriesPage(): Promise<ReactNode> {
     <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-[22px] pb-14">
       <Breadcrumb items={[{ label: "Beranda", href: "/" }, { label: "Kategori" }]} />
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-        Kategori Merchandise
+        Kategori Gifts
       </h1>
       <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-muted">
-        Temukan produk berdasarkan jenisnya — dari apparel hingga corporate gift,
+        Temukan produk berdasarkan jenisnya - dari apparel hingga corporate gift,
         semua bisa dikustomisasi dengan brand Anda.
       </p>
 
@@ -39,3 +39,4 @@ export default async function CategoriesPage(): Promise<ReactNode> {
     </div>
   );
 }
+

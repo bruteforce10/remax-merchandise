@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 
 export const metadata: Metadata = {
-  title: "Masuk · RE/MAX Admin",
+  title: "Masuk · REMAX Admin",
   robots: { index: false, follow: false },
 };
 

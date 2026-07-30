@@ -28,7 +28,7 @@ export function CustomerLogin({ next }: { next: string }): React.JSX.Element {
         <div className="mb-7 flex flex-col items-center text-center">
           <Image
             src="/assets/logo-mark.png"
-            alt="RE/MAX"
+            alt="REMAX"
             width={182}
             height={207}
             className="mb-4 h-12 w-auto"
@@ -37,8 +37,8 @@ export function CustomerLogin({ next }: { next: string }): React.JSX.Element {
             Masuk ke Akun
           </h1>
           <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
-            Login untuk checkout, menyimpan riwayat pesanan, dan mengelola profil
-            Anda.
+            Login untuk checkout, menyimpan riwayat pesanan, dan mengelola
+            profil Anda.
           </p>
         </div>
 

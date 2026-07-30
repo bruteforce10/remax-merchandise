@@ -1,4 +1,4 @@
-import { WA_NUMBER } from "@/lib/constants";
+﻿import { WA_NUMBER } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/types/product";
 
@@ -10,7 +10,7 @@ export function waLink(text: string): string {
 /** Generic corporate inquiry (header CTA, floating button, empty states). */
 export function generalMessage(): string {
   return (
-    "Halo Admin RE/MAX Merchandise,\n" +
+    "Halo Admin REMAX Gifts,\n" +
     "Saya ingin menanyakan produk merchandise / custom untuk kebutuhan corporate. " +
     "Mohon dibantu ya. Terima kasih."
   );
@@ -84,3 +84,4 @@ export function cartMessage(lines: CartMessageLine[], ref?: string): string {
     "Mohon info harga & ketersediaannya. Terima kasih."
   );
 }
+

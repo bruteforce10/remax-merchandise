@@ -4,15 +4,15 @@
  */
 
 export const WA_NUMBER: string =
-  process.env.NEXT_PUBLIC_WA_NUMBER ?? "6289509046152";
+  process.env.NEXT_PUBLIC_WA_NUMBER ?? "6287716289585";
 
 export const SITE_URL: string =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://remax-merchandise.vercel.app";
 
-export const SITE_NAME = "RE/MAX Merchandise";
+export const SITE_NAME = "REMAX Gifts";
 
 export const SITE_DESCRIPTION =
-  "Katalog merchandise RE/MAX Indonesia premium  — polo, jaket, hoodie, payung, tumbler, tote bag, dll";
+  "Katalog gifts REMAX Indonesia premium - polo, jaket, hoodie, payung, tumbler, tote bag, dll";
 
 export interface CompanyInfo {
   name: string;
@@ -29,16 +29,16 @@ export interface CompanyInfo {
 }
 
 export const COMPANY: CompanyInfo = {
-  name: "RE/MAX Indonesia Merchandise",
+  name: "REMAX Gifts",
   shortName: SITE_NAME,
-  tagline: "Merchandise resmi untuk jaringan RE/MAX Indonesia",
-  phoneDisplay: "0895 0904 6152",
-  whatsappDisplay: "0895 0904 6152",
-  email: "merchandise@remax.co.id",
+  tagline: "Official gifts untuk jaringan REMAX Indonesia",
+  phoneDisplay: "087716289585",
+  whatsappDisplay: "087716289585",
+  email: "support@remax.co.id",
   address: "Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan 12190",
   addressShort: "Jakarta Selatan, DKI Jakarta",
-  hours: "Senin – Sabtu, 09.00 – 18.00 WIB",
-  hoursShort: "Sen–Sab, 09.00–18.00",
+  hours: "Senin - Jumat, 09:00 - 18:00 WIB",
+  hoursShort: "Sen-Jum, 09:00-18:00",
   mapsUrl: "https://maps.google.com",
 };
 

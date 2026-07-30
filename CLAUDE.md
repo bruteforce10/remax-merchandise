@@ -1,15 +1,15 @@
-# CLAUDE.md — REMAX Merchandise Catalog
+﻿# CLAUDE.md - REMAX Gifts Catalog
 
 ## 1. Project Overview
 
-- **Name**: REMAX Merchandise Catalog
+- **Name**: REMAX Gifts Catalog
 - **Description**: A modern, fast, SEO-friendly headless commerce product catalog for REMAX Indonesia official merchandise
-- **Goal**: Provide a centralized digital catalog for REMAX agents, franchise offices, corporate clients, and event organizers — converting product discovery into WhatsApp inquiries (leads), not e-commerce checkout
+- **Goal**: Provide a centralized digital catalog for REMAX agents, franchise offices, corporate clients, and event organizers â€” converting product discovery into WhatsApp inquiries (leads), not e-commerce checkout
 - **Target Users**: REMAX agents, REMAX marketing, franchise offices, corporate clients, event organizers; secondary: vendors, purchasing staff, business owners
 - **Version**: MVP v1.0
 - **Status**: Active development
 
-> MVP is intentionally **not** a marketplace or full e-commerce — no customer login, checkout, or payment gateway. Focus: product discovery + WhatsApp inquiry (lead) conversion.
+> MVP is intentionally **not** a marketplace or full e-commerce â€” no customer login, checkout, or payment gateway. Focus: product discovery + WhatsApp inquiry (lead) conversion.
 
 ---
 
@@ -19,15 +19,15 @@
 - **Framework**: Next.js 15 (App Router)
 - **Styling**: Tailwind CSS v4
 - **UI Library**: shadcn/ui, Framer Motion
-- **CMS (content)**: Hygraph — Products, Categories, Banners, Static Pages
-- **Database (operational)**: Supabase PostgreSQL — Analytics, Leads, SearchLog, Events, Cart, Settings
+- **CMS (content)**: Hygraph â€” Products, Categories, Banners, Static Pages
+- **Database (operational)**: Supabase PostgreSQL â€” Analytics, Leads, SearchLog, Events, Cart, Settings
 - **ORM**: Prisma
 - **Storage**: Supabase Storage (all images; Hygraph only stores URLs)
 - **Validation**: Zod
 - **Package Manager**: pnpm
 - **Deployment**: Vercel
 
-> **Never use npm or yarn — always use pnpm.**
+> **Never use npm or yarn â€” always use pnpm.**
 
 ---
 
@@ -63,7 +63,7 @@ pnpm test             # Run all tests
 ```
 /
   src/
-    app/                    # Next.js App Router — pages and layouts
+    app/                    # Next.js App Router â€” pages and layouts
       (public)/             # Public website routes
       (admin)/              # Admin dashboard routes
       api/                  # Route Handlers (Server-side only)
@@ -90,7 +90,7 @@ pnpm test             # Run all tests
 - Business logic always in `src/services/` or `src/actions/`
 - TypeScript types always in `src/types/`
 - Helpers and utilities always in `src/lib/`
-- Data fetch functions always in `src/services/` — never directly inside components
+- Data fetch functions always in `src/services/` â€” never directly inside components
 - Do not create new folders without confirmation
 
 ---
@@ -98,13 +98,13 @@ pnpm test             # Run all tests
 ## 5. Architecture Principles
 
 ```
-Public Website (Next.js) → GraphQL API → Hygraph CMS
-Admin Dashboard (Next.js) → Hygraph Management API → Hygraph CMS
-Operational Data: Next.js API/Actions → Prisma → Supabase PostgreSQL
+Public Website (Next.js) â†’ GraphQL API â†’ Hygraph CMS
+Admin Dashboard (Next.js) â†’ Hygraph Management API â†’ Hygraph CMS
+Operational Data: Next.js API/Actions â†’ Prisma â†’ Supabase PostgreSQL
 ```
 
-**Content** (products, categories, banners, static pages) → managed in Hygraph.
-**Operational data** (analytics, leads, search logs, events, cart, settings) → managed in Supabase via Prisma.
+**Content** (products, categories, banners, static pages) â†’ managed in Hygraph.
+**Operational data** (analytics, leads, search logs, events, cart, settings) â†’ managed in Supabase via Prisma.
 
 This separation is intentional so Phase 2 (auth, checkout, payment) can be added without architecture migration.
 
@@ -143,7 +143,7 @@ Refactors        : refactor/[name]
 ```
 # TypeScript
 - strict mode is required at all times
-- Never use 'any' type — use unknown, generics, or proper types
+- Never use 'any' type â€” use unknown, generics, or proper types
 - Always write explicit return types on functions
 - Use interface for object shapes; type for unions/intersections
 
@@ -220,9 +220,9 @@ layout > spacing > sizing > color > typography > state
 - Grid: desktop 4 cols | tablet 3 cols | mobile 2 cols (featured products)
 
 # Visual Style
-- Minimal, premium, corporate — inspired by Apple & Shopify
+- Minimal, premium, corporate â€” inspired by Apple & Shopify
 - Generous white space, large images, 16px border-radius, soft shadows
-- Design tokens via CSS variables — never hardcode color hex values
+- Design tokens via CSS variables â€” never hardcode color hex values
 ```
 
 ---
@@ -241,7 +241,7 @@ layout > spacing > sizing > color > typography > state
 - Use ISR (revalidate) for product/category pages
 
 # Supabase / Prisma (Operational)
-- All writes go through Server Actions or Route Handlers — never from client directly
+- All writes go through Server Actions or Route Handlers â€” never from client directly
 - Prisma client instance lives in src/lib/prisma/
 
 # API Routes
@@ -265,8 +265,8 @@ layout > spacing > sizing > color > typography > state
 - Never skip error handling in API routes or Server Actions
 
 # Data
-- Cart stored by sessionId — no login required (by design for MVP)
-- Lead data (WhatsApp numbers) stored in Supabase — respect data retention policy
+- Cart stored by sessionId â€” no login required (by design for MVP)
+- Lead data (WhatsApp numbers) stored in Supabase â€” respect data retention policy
 ```
 
 ---
@@ -282,7 +282,7 @@ Best Practices: 100
 Page Load    : < 2 seconds
 
 # Images
-- Always use next/image — never plain <img> tags
+- Always use next/image â€” never plain <img> tags
 - Specify width and height for every image
 - All images stored in Supabase Storage; Hygraph only stores URLs
 
@@ -371,9 +371,9 @@ refactor: extract ProductCard into reusable component
 
 ```
 # Completed and working
-  (none yet — project starting)
+  (none yet â€” project starting)
 
-# In progress — do not modify without confirmation
+# In progress â€” do not modify without confirmation
   (none yet)
 
 # Planned (MVP scope)
@@ -393,14 +393,14 @@ refactor: extract ProductCard into reusable component
 - [ ] Admin settings and profile
 - [ ] SEO hardening (all metadata, JSON-LD, sitemap, robots.txt)
 
-# Phase 2 — added (customer accounts & quotation orders)
+# Phase 2 â€” added (customer accounts & quotation orders)
 - [x] Customer Google login (OAuth) + dedicated /account/login page
-- [x] Login-gated checkout everywhere (product card, detail, cart) → records a pending order
+- [x] Login-gated checkout everywhere (product card, detail, cart) â†’ records a pending order
 - [x] Customer order history (/account/orders) + profile edit (/account/profile, stored in Supabase Auth user metadata)
 - [x] Navbar account menu (login icon / avatar dropdown / logout)
 - [x] Admin order confirmation with atomic stock decrement (Supabase)
 
-# Out of scope — do not implement
+# Out of scope â€” do not implement
 - Customer email/password register or password reset (Google OAuth only)
 - Payment gateway / online payment
 - Shipping / fulfillment / delivery tracking
@@ -440,19 +440,19 @@ Page      : About, Contact, FAQ
 Copy .env.example to .env.local for local development.
 Never commit .env or .env.local to the repository.
 
-# Public Variables — safe for client use
+# Public Variables â€” safe for client use
 NEXT_PUBLIC_SITE_URL          # Base URL of the website
 NEXT_PUBLIC_WA_NUMBER         # REMAX official WhatsApp number for inquiry
 NEXT_PUBLIC_SUPABASE_URL      # Supabase project URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY # Supabase anon/public key
 
-# Server-only Variables — NEVER expose to client
+# Server-only Variables â€” NEVER expose to client
 DATABASE_URL                  # Supabase PostgreSQL connection string (Prisma)
 SUPABASE_SERVICE_ROLE_KEY     # Supabase service role key for server-side ops
 HYGRAPH_ENDPOINT              # Hygraph GraphQL read API endpoint
 HYGRAPH_TOKEN                 # Hygraph read API token
 HYGRAPH_MANAGEMENT_ENDPOINT   # Hygraph Management API endpoint
-HYGRAPH_MANAGEMENT_TOKEN      # Hygraph Management API token — NEVER expose to browser
+HYGRAPH_MANAGEMENT_TOKEN      # Hygraph Management API token â€” NEVER expose to browser
 ```
 
 ---
@@ -479,7 +479,7 @@ If a prompt or instruction is ambiguous, **ask first before coding**. Do not ass
 - Never expose Hygraph Management API token to the browser
 - Never write fetch functions directly inside components (use services/)
 - Never use useEffect for data fetching
-- Never use plain <img> tags — always use next/image
+- Never use plain <img> tags â€” always use next/image
 - Never use inline styles for values expressible as Tailwind utilities
 
 # Database
@@ -492,5 +492,7 @@ If a prompt or instruction is ambiguous, **ask first before coding**. Do not ass
 - Never implement email/password customer register or password reset (Google OAuth only)
 - Never implement shipping / fulfillment / delivery tracking
 - Never implement wishlist or product reviews
-- Enforce the "Out of Scope" list strictly — new features go in a separate PRD
+- Enforce the "Out of Scope" list strictly â€” new features go in a separate PRD
 ```
+
+

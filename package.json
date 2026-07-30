@@ -2,7 +2,7 @@
   "name": "remax-merchandise-catalog",
   "version": "1.0.0",
   "private": true,
-  "description": "REMAX Merchandise Catalog — headless commerce product catalog for RE/MAX Indonesia official merchandise",
+  "description": "REMAX Gifts Catalog - headless commerce product catalog for REMAX Indonesia official gifts",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

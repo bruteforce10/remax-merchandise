@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Check } from "lucide-react";
 import * as React from "react";
@@ -13,7 +13,7 @@ const CARD = "rounded-card border border-admin-border bg-white p-5.5";
 
 const SOCIALS: { label: string; badge: string; value: string }[] = [
   { label: "Instagram", badge: "IG", value: "@remax.indonesia" },
-  { label: "Facebook", badge: "FB", value: "RE/MAX Indonesia" },
+  { label: "Facebook", badge: "FB", value: "REMAX Indonesia" },
   { label: "LinkedIn", badge: "IN", value: "remax-indonesia" },
   { label: "YouTube", badge: "YT", value: "@remaxindonesia" },
 ];
@@ -25,8 +25,13 @@ export function SettingsForm(): React.JSX.Element {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-[820px] animate-[rmx-fade_.3s_ease]">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">Pengaturan Website</h1>
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-[820px] animate-[rmx-fade_.3s_ease]"
+    >
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">
+        Pengaturan Website
+      </h1>
       <p className="mt-0.5 mb-6 text-[14.5px] text-gray-500">
         Konfigurasi informasi perusahaan, SEO, dan sosial media
       </p>
@@ -34,7 +39,9 @@ export function SettingsForm(): React.JSX.Element {
       <div className="flex flex-col gap-[18px]">
         {/* Company */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-semibold text-ink">Informasi Perusahaan</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">
+            Informasi Perusahaan
+          </h3>
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <Field label="Nama Perusahaan" full>
               <input defaultValue={COMPANY.name} className={FIELD} />
@@ -49,7 +56,10 @@ export function SettingsForm(): React.JSX.Element {
               <input defaultValue={COMPANY.email} className={FIELD} />
             </Field>
             <Field label="Google Maps">
-              <input defaultValue="maps.google.com/remax-id" className={FIELD} />
+              <input
+                defaultValue="maps.google.com/remax-id"
+                className={FIELD}
+              />
             </Field>
             <Field label="Alamat" full>
               <input defaultValue={COMPANY.address} className={FIELD} />
@@ -59,24 +69,29 @@ export function SettingsForm(): React.JSX.Element {
 
         {/* SEO */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-semibold text-ink">SEO Website</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">
+            SEO Website
+          </h3>
           <div className="flex flex-col gap-3.5">
             <Field label="Default Meta Title">
               <input
-                defaultValue="RE/MAX Merchandise — Premium Corporate Merchandise"
+                defaultValue="REMAX Gifts - Premium Corporate Gifts"
                 className={FIELD}
               />
             </Field>
             <Field label="Default Meta Description">
               <textarea
                 rows={2}
-                defaultValue="Katalog merchandise premium & custom untuk jaringan RE/MAX Indonesia."
+                defaultValue="Katalog gifts premium & custom untuk jaringan REMAX Indonesia."
                 className="resize-y rounded-btn border border-admin-border bg-admin-bg px-3.5 py-3 text-sm outline-none focus:border-brand focus:bg-white"
               />
             </Field>
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
               <Field label="Google Analytics ID">
-                <input defaultValue="G-XXXXXXXXXX" className={`${FIELD} font-mono`} />
+                <input
+                  defaultValue="G-XXXXXXXXXX"
+                  className={`${FIELD} font-mono`}
+                />
               </Field>
               <Field label="Search Console">
                 <input defaultValue="Terverifikasi" className={FIELD} />
@@ -87,7 +102,9 @@ export function SettingsForm(): React.JSX.Element {
 
         {/* Social */}
         <section className={CARD}>
-          <h3 className="mb-[18px] text-base font-semibold text-ink">Sosial Media</h3>
+          <h3 className="mb-[18px] text-base font-semibold text-ink">
+            Sosial Media
+          </h3>
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             {SOCIALS.map((s) => (
               <Field key={s.label} label={s.label}>

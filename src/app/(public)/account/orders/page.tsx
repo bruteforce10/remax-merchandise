@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import type { ReactElement } from "react";
 
@@ -9,7 +9,7 @@ import { getOrdersByEmail } from "@/services/operational/orders";
 
 export const metadata: Metadata = {
   title: "Riwayat Pesanan",
-  description: "Lihat status dan detail pesanan Anda di RE/MAX Merchandise.",
+  description: "Lihat status dan detail pesanan Anda di REMAX Gifts.",
   robots: { index: false, follow: false },
 };
 
@@ -43,3 +43,4 @@ export default async function OrdersPage(): Promise<ReactElement> {
     </div>
   );
 }
+

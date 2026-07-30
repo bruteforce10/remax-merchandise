@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: category.description,
     alternates: { canonical: `/categories/${slug}` },
     openGraph: {
-      title: `${category.name} | RE/MAX Merchandise`,
+      title: `${category.name} | REMAX Gifts`,
       description: category.description,
       url: `/categories/${slug}`,
     },
@@ -145,3 +145,4 @@ export default async function CategoryDetailPage({
     </div>
   );
 }
+

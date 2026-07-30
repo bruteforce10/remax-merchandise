@@ -1,6 +1,6 @@
-# RE/MAX Merchandise Catalog
+﻿# REMAX Gifts Catalog
 
-Katalog merchandise resmi RE/MAX Indonesia — modern, cepat, dan SEO-friendly.
+Katalog merchandise resmi RE/MAX Indonesia â€” modern, cepat, dan SEO-friendly.
 Fokus MVP: **product discovery + inquiry (lead) via WhatsApp** (bukan e-commerce/checkout).
 
 > Status: **Front-end publik selesai dengan data statis.** Dashboard admin dan
@@ -15,8 +15,8 @@ Fokus MVP: **product discovery + inquiry (lead) via WhatsApp** (bukan e-commerce
 
 ## Prasyarat
 
-- Node.js ≥ 18 (dites di v22)
-- **pnpm** (proyek wajib pnpm — bukan npm/yarn)
+- Node.js â‰¥ 18 (dites di v22)
+- **pnpm** (proyek wajib pnpm â€” bukan npm/yarn)
 
 ```bash
 # aktifkan pnpm (salah satu):
@@ -29,13 +29,13 @@ npm install -g pnpm
 
 ```bash
 pnpm install      # install dependencies
-pnpm dev          # dev server  → http://localhost:3000
+pnpm dev          # dev server  â†’ http://localhost:3000
 pnpm build        # production build
 pnpm start        # jalankan hasil build
 pnpm lint         # linting
 ```
 
-Salin `.env.example` → `.env.local` untuk konfigurasi lokal
+Salin `.env.example` â†’ `.env.local` untuk konfigurasi lokal
 (`NEXT_PUBLIC_WA_NUMBER`, dll). Jangan commit `.env*`.
 
 ## Struktur
@@ -44,8 +44,8 @@ Salin `.env.example` → `.env.local` untuk konfigurasi lokal
 src/
   app/(public)/     Home, Search, Categories, Category detail,
                     Product detail, Cart, Contact  (+ not-found, sitemap, robots)
-  components/       ui/ · layout/ · home/ · product/ · category/ · search/ · cart/ · contact/
-  services/content/ Fetcher konten (statis → Hygraph di Phase 2)
+  components/       ui/ Â· layout/ Â· home/ Â· product/ Â· category/ Â· search/ Â· cart/ Â· contact/
+  services/content/ Fetcher konten (statis â†’ Hygraph di Phase 2)
   lib/              data (seed), catalog helpers, format, whatsapp, constants
   providers/        CartProvider (context + localStorage, sessionId)
   types/            Model TypeScript
@@ -53,8 +53,8 @@ src/
 
 ## Rute Publik
 
-`/` · `/search` · `/categories` · `/categories/[slug]` · `/products/[slug]` ·
-`/cart` · `/contact`
+`/` Â· `/search` Â· `/categories` Â· `/categories/[slug]` Â· `/products/[slug]` Â·
+`/cart` Â· `/contact`
 
 ## Catatan Arsitektur
 
@@ -62,3 +62,4 @@ Konten (produk/kategori/banner) dipisah dari data operasional sejak awal agar
 Phase 2 (Hygraph CMS + Supabase/Prisma) bisa ditambahkan tanpa migrasi
 arsitektur. Semua fetcher sudah `async` dan tinggal diisi query GraphQL.
 Halaman admin (`/admin/*`) direncanakan menyusul.
+

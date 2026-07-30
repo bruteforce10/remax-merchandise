@@ -1,9 +1,9 @@
--- REMAX Merchandise — orders + inventory (Supabase Postgres).
+﻿-- REMAX Gifts - orders + inventory (Supabase Postgres).
 -- Run once in the Supabase SQL editor. Safe to re-run.
 -- All access is via the service-role key from server actions; RLS is enabled
 -- with NO policies so the anon/publishable key cannot read or write these tables.
 
--- ── Tables ──────────────────────────────────────────────────────────────────
+-- Tables -------------------------------------------------------------------
 create table if not exists public.inventory (
   sku          text primary key,
   product_sku  text not null,
@@ -41,14 +41,14 @@ create table if not exists public.order_items (
 );
 create index if not exists order_items_order_id_idx on public.order_items (order_id);
 
--- ── Row Level Security: service-role only ───────────────────────────────────
--- Enable RLS with no policies → anon/authenticated keys get zero rows; the
+-- Row Level Security: service-role only ------------------------------------
+-- Enable RLS with no policies -> anon/authenticated keys get zero rows; the
 -- service-role key (used only by server actions) bypasses RLS entirely.
 alter table public.inventory   enable row level security;
 alter table public.orders      enable row level security;
 alter table public.order_items enable row level security;
 
--- ── Atomic order confirmation ───────────────────────────────────────────────
+-- Atomic order confirmation -------------------------------------------------
 -- Locks the order and the inventory rows it touches, blocks if any item is
 -- short (returning the shortfalls), otherwise decrements all and confirms.
 create or replace function public.confirm_order(p_order_id uuid)
@@ -109,3 +109,4 @@ begin
   return jsonb_build_object('ok', true);
 end;
 $$;
+

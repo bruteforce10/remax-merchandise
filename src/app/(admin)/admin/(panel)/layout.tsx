@@ -10,7 +10,7 @@ import { getLeads } from "@/services/operational/leads";
 import { getPendingOrderCount } from "@/services/operational/orders";
 
 export const metadata: Metadata = {
-  title: { default: "Admin", template: "%s · RE/MAX Admin" },
+  title: { default: "Admin", template: "%s · REMAX Admin" },
   robots: { index: false, follow: false },
 };
 

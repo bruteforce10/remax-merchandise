@@ -2,7 +2,6 @@
 
 import {
   BarChart3,
-  Bell,
   ChevronRight,
   GalleryHorizontalEnd,
   Inbox,
@@ -102,17 +101,17 @@ export function AdminShell({
         <div className="flex items-center gap-2.5 border-b border-gray-200 px-5 pt-5 pb-[18px]">
           <Image
             src="/assets/logo-mark.png"
-            alt="RE/MAX"
+            alt="REMAX"
             width={182}
             height={207}
             className="h-[30px] w-auto"
           />
           <div>
             <div className="text-[15px] font-semibold tracking-tight text-ink">
-              RE/MAX <span className="text-brand">Admin</span>
+              REMAX <span className="text-brand">Admin</span>
             </div>
             <div className="text-[11px] font-semibold text-gray-400">
-              Merchandise CMS
+              Gifts CMS
             </div>
           </div>
         </div>
@@ -183,7 +182,7 @@ export function AdminShell({
               Admin REMAX
             </span>
             <span className="block truncate text-[11.5px] text-gray-400">
-              {userEmail || "admin@remax.co.id"}
+              {userEmail || "support@remax.co.id"}
             </span>
           </span>
           <ChevronRight className="h-4 w-4 text-gray-300" />
@@ -194,12 +193,10 @@ export function AdminShell({
 
   return (
     <div className="flex min-h-screen bg-admin-bg">
-      {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen w-64 flex-none flex-col border-r border-admin-border bg-white lg:flex">
         {sidebarBody()}
       </aside>
 
-      {/* Mobile drawer */}
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -234,7 +231,6 @@ export function AdminShell({
         </div>
       </Drawer>
 
-      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex items-center gap-4 border-b border-admin-border bg-white/90 px-6 py-3 backdrop-blur-[10px]">
           <button
@@ -257,9 +253,9 @@ export function AdminShell({
             className="hidden h-[42px] w-[280px] items-center gap-2.5 rounded-btn border border-admin-border bg-admin-bg px-3.5 text-sm text-gray-400 transition-colors hover:border-gray-300 lg:flex"
           >
             <Search className="h-[17px] w-[17px]" />
-            <span className="flex-1 text-left">Cari produk…</span>
+            <span className="flex-1 text-left">Cari produk...</span>
             <span className="rounded-md border border-gray-200 px-1.5 py-0.5 font-mono text-[11px] text-gray-300">
-              ⌘K
+              Ctrl+K
             </span>
           </Link>
           <Link
@@ -278,7 +274,6 @@ export function AdminShell({
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
       <nav className="fixed right-0 bottom-0 left-0 z-30 flex border-t border-admin-border bg-white px-1 py-1.5 lg:hidden">
         {BOTTOM_NAV.map((n) => {
           const active = isActive(n.href);

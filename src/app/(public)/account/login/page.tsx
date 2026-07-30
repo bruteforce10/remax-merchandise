@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import type { ReactElement } from "react";
 
@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Masuk",
   description:
-    "Masuk ke akun RE/MAX Merchandise untuk checkout dan melihat riwayat pesanan.",
+    "Masuk ke akun REMAX Gifts untuk checkout dan melihat riwayat pesanan.",
   robots: { index: false, follow: false },
 };
 
@@ -31,3 +31,4 @@ export default async function LoginPage({
 
   return <CustomerLogin next={safeNext} />;
 }
+

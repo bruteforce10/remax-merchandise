@@ -1,4 +1,10 @@
-import { BadgeCheck, Gem, MessageCircle, Truck, type LucideIcon } from "lucide-react";
+﻿import {
+  BadgeCheck,
+  Gem,
+  MessageCircle,
+  Truck,
+  type LucideIcon,
+} from "lucide-react";
 import type { ReactElement } from "react";
 
 interface Feature {
@@ -10,8 +16,9 @@ interface Feature {
 const FEATURES: Feature[] = [
   {
     icon: BadgeCheck,
-    title: "Merchandise Resmi",
-    description: "Produk berlisensi resmi RE/MAX Indonesia, terjamin keasliannya.",
+    title: "Official Gifts",
+    description:
+      "Produk berlisensi resmi REMAX Indonesia, terjamin keasliannya.",
   },
   {
     icon: Gem,
@@ -21,7 +28,8 @@ const FEATURES: Feature[] = [
   {
     icon: MessageCircle,
     title: "Mudah Dipesan",
-    description: "Tanya harga & ketersediaan langsung via WhatsApp, tanpa ribet.",
+    description:
+      "Tanya harga & ketersediaan langsung via WhatsApp, tanpa ribet.",
   },
   {
     icon: Truck,
@@ -42,7 +50,9 @@ export function FeatureCards(): ReactElement {
             <span className="flex h-12 w-12 items-center justify-center rounded-card border border-gray-200 bg-white text-brand">
               <f.icon className="h-[22px] w-[22px]" />
             </span>
-            <div className="text-[16.5px] font-semibold text-ink">{f.title}</div>
+            <div className="text-[16.5px] font-semibold text-ink">
+              {f.title}
+            </div>
             <div className="text-sm leading-relaxed text-body">
               {f.description}
             </div>

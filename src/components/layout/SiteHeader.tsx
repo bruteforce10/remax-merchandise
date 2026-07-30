@@ -19,10 +19,10 @@ import * as React from "react";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { Drawer } from "@/components/ui/Drawer";
+import { searchSuggestions } from "@/lib/catalog";
+import { COMPANY } from "@/lib/constants";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCart } from "@/providers/CartProvider";
-import { COMPANY } from "@/lib/constants";
-import { searchSuggestions } from "@/lib/catalog";
 import type { Category } from "@/types/category";
 import type { Product } from "@/types/product";
 
@@ -84,12 +84,11 @@ export function SiteHeader({
 
   return (
     <>
-      {/* Top info bar */}
       <div className="bg-gray-900 text-[12.5px] text-gray-300">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-6 py-2">
           <span className="inline-flex items-center gap-[7px]">
             <BadgeCheck className="h-[15px] w-[15px] text-brand" />
-            Merchandise resmi untuk jaringan RE/MAX Indonesia
+            Official gifts untuk jaringan REMAX Indonesia
           </span>
           <span className="hidden items-center gap-4 sm:inline-flex">
             <span className="inline-flex items-center gap-1.5">
@@ -104,7 +103,6 @@ export function SiteHeader({
         </div>
       </div>
 
-      {/* Main header */}
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-[10px] backdrop-saturate-150">
         <div className="mx-auto flex max-w-[1280px] items-center gap-5 px-6 py-3.5">
           <Link href="/" className="flex flex-none items-center gap-2.5">
@@ -116,12 +114,11 @@ export function SiteHeader({
               priority
               className="h-[26px] w-auto"
             />
-            <span className="hidden border-l border-gray-200 pl-2.5 mt-1.5 text-[13px] font-semibold tracking-[0.02em] text-gray-400 sm:inline">
-              Merchandise
+            <span className="mt-1.5 hidden border-l border-gray-200 pl-2.5 text-[13px] font-semibold tracking-[0.02em] text-gray-400 sm:inline">
+              Gifts
             </span>
           </Link>
 
-          {/* Desktop: categories + search */}
           <div className="hidden flex-1 items-center gap-[18px] lg:flex">
             <div className="relative" ref={catMenuRef}>
               <button
@@ -167,7 +164,7 @@ export function SiteHeader({
                   onKeyDown={(e) => {
                     if (e.key === "Enter") submitSearch(query);
                   }}
-                  placeholder="Cari produk merchandise…"
+                  placeholder="Cari produk merchandise..."
                   className="flex-1 border-none bg-transparent text-[14px] text-ink outline-none placeholder:text-muted"
                   aria-label="Cari produk"
                 />
@@ -224,7 +221,6 @@ export function SiteHeader({
         </div>
       </header>
 
-      {/* Mobile menu drawer */}
       <Drawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
@@ -257,7 +253,7 @@ export function SiteHeader({
               onKeyDown={(e) => {
                 if (e.key === "Enter") submitSearch(query);
               }}
-              placeholder="Cari produk…"
+              placeholder="Cari produk..."
               className="flex-1 border-none bg-transparent text-[15px] outline-none placeholder:text-gray-400"
               aria-label="Cari produk"
             />

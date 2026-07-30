@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Keranjang Penawaran",
   description:
-    "Daftar produk merchandise RE/MAX untuk permintaan penawaran (quotation) via WhatsApp.",
+    "Daftar produk merchandise REMAX untuk permintaan penawaran (quotation) via WhatsApp.",
   alternates: { canonical: "/cart" },
   robots: { index: false, follow: true },
 };

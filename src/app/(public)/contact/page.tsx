@@ -10,14 +10,13 @@ import { generalMessage, waLink } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Kontak",
   description:
-    "Hubungi tim RE/MAX Merchandise via WhatsApp, email, atau kunjungi kantor kami di Jakarta Selatan. Konsultasi kebutuhan merchandise custom Anda.",
+    "Hubungi tim REMAX Gifts via WhatsApp, email, atau kunjungi kantor kami di Jakarta Selatan. Konsultasi kebutuhan gifts custom Anda.",
   alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage(): ReactNode {
   return (
     <div className="animate-[rmx-fade_.3s_ease]">
-      {/* Hero */}
       <section className="bg-gradient-to-br from-gray-900 to-[#2a1114] text-white">
         <div className="mx-auto max-w-[1280px] px-6 pt-11 pb-13 text-center">
           <span className="mb-[18px] inline-flex items-center gap-[7px] rounded-pill bg-white/12 px-3.5 py-1.5 text-[12.5px] font-semibold">
@@ -34,7 +33,6 @@ export default function ContactPage(): ReactNode {
         </div>
       </section>
 
-      {/* Contact cards */}
       <section className="mx-auto max-w-[1280px] px-6 pt-9 pb-5">
         <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-2.5 rounded-card border border-gray-200 p-6">
@@ -49,7 +47,7 @@ export default function ContactPage(): ReactNode {
               rel="noopener noreferrer"
               className="text-[13.5px] font-semibold"
             >
-              Chat sekarang →
+              Chat sekarang
             </a>
           </div>
 
@@ -80,15 +78,14 @@ export default function ContactPage(): ReactNode {
             </span>
             <div className="text-[15px] font-semibold text-ink">Jam Operasional</div>
             <div className="text-sm leading-relaxed text-gray-500">
-              Senin – Sabtu
+              Senin - Jumat
               <br />
-              09.00 – 18.00 WIB
+              09:00 - 18:00 WIB
             </div>
           </div>
         </div>
       </section>
 
-      {/* Map + FAQ */}
       <section className="mx-auto max-w-[1280px] px-6 pt-5 pb-13">
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           <div className="overflow-hidden rounded-card border border-gray-200">
@@ -97,7 +94,7 @@ export default function ContactPage(): ReactNode {
               <div className="relative text-center text-gray-500">
                 <MapPin className="mx-auto h-[34px] w-[34px] text-brand" />
                 <div className="mt-1.5 text-[13.5px] font-semibold">
-                  RE/MAX Indonesia HQ
+                  REMAX Indonesia HQ
                 </div>
                 <div className="text-[12.5px] text-gray-400">Google Maps</div>
               </div>
@@ -110,7 +107,7 @@ export default function ContactPage(): ReactNode {
                 rel="noopener noreferrer"
                 className="text-[13.5px] font-semibold"
               >
-                Buka Maps →
+                Buka Maps
               </a>
             </div>
           </div>
