@@ -7,7 +7,7 @@ export const WA_NUMBER: string =
   process.env.NEXT_PUBLIC_WA_NUMBER ?? "6289509046152";
 
 export const SITE_URL: string =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://remax-merchandise.vercel.app";
 
 export const SITE_NAME = "RE/MAX Merchandise";
 
