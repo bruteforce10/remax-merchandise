@@ -1,10 +1,10 @@
 "use client";
 
 import { CreditCard, Info, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
+import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Badge } from "@/components/ui/Badge";
 import { useCheckout } from "@/hooks/useCheckout";
@@ -51,7 +51,6 @@ export function ProductDetailView({
       ? productDims
       : productOptions(category.colors, category.sizes, []);
 
-  const [galleryIndex, setGalleryIndex] = React.useState(0);
   const [qty, setQty] = React.useState(1);
   const [selected, setSelected] = React.useState<Record<string, string>>(() =>
     Object.fromEntries(dims.map((d) => [d.name, d.values[0]])),
@@ -80,6 +79,14 @@ export function ProductDetailView({
     { k: "Metode Branding", v: category.branding },
     { k: "Kategori", v: category.name },
   ];
+
+  // Gallery images: full set from Hygraph, falling back to the primary image.
+  const galleryImages =
+    product.images.length > 0
+      ? product.images
+      : product.imageUrl
+        ? [product.imageUrl]
+        : [];
 
   function addToCart(): void {
     if (soldOut) return;
@@ -132,45 +139,7 @@ export function ProductDetailView({
     <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-[22px] pb-12">
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
         {/* Gallery */}
-        <div>
-          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-card border border-gray-200 bg-gradient-to-br from-[#f4f4f6] to-[#e6e7ec]">
-            {product.imageUrl ? (
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 600px"
-                className="object-cover"
-              />
-            ) : (
-              <>
-                <div className="h-[52%] w-[52%] rounded-[18px] bg-[repeating-linear-gradient(45deg,#e4e5e9,#e4e5e9_12px,#eeeef1_12px,#eeeef1_24px)]" />
-                <span className="absolute bottom-[18px] left-[18px] text-xs font-bold tracking-[0.1em] text-gray-300 uppercase">
-                  Foto {galleryIndex + 1}/4
-                </span>
-              </>
-            )}
-          </div>
-          {!product.imageUrl && (
-            <div className="mt-3.5 grid grid-cols-4 gap-3">
-              {[0, 1, 2, 3].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  aria-label={`Foto ${n + 1}`}
-                  onClick={() => setGalleryIndex(n)}
-                  className={cn(
-                    "flex aspect-square items-center justify-center rounded-[12px] border-2 bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] text-[11px] font-bold text-gray-300",
-                    n === galleryIndex ? "border-brand" : "border-gray-200",
-                  )}
-                >
-                  {n + 1}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductGallery images={galleryImages} alt={product.name} />
 
         {/* Info */}
         <div>

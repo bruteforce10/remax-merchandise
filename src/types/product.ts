@@ -41,6 +41,8 @@ export interface ProductVariant {
 /** Full product shape for the detail page — adds option definitions + variants. */
 export interface ProductDetail extends Product {
   description: string;
+  /** All gallery image URLs (Hygraph asset order); first is the primary. */
+  images: string[];
   colors: string[];
   sizes: string[];
   customVariants: ProductCustomVariant[];

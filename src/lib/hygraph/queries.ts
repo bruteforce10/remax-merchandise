@@ -67,7 +67,7 @@ export const PRODUCT_DETAIL_FIELDS = gql`
     category {
       slug
     }
-    images(first: 1) {
+    images {
       url
     }
     variants {

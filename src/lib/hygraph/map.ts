@@ -128,6 +128,7 @@ export function mapProductDetail(p: RawProductDetail): ProductDetail {
   return {
     ...mapProduct(p),
     description: p.description ?? "",
+    images: (p.images ?? []).map((img) => img.url),
     colors: p.colors ?? [],
     sizes: p.sizes ?? [],
     customVariants: parseCustomVariants(p.customVariants),
