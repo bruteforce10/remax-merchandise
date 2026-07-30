@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { createProduct, updateProduct } from "@/actions/products";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CategoryIcon } from "@/components/ui/Icon";
-import { COLOR_HEX, COLOR_PALETTE } from "@/lib/data/catalog";
+import { COLOR_PALETTE } from "@/lib/data/catalog";
 import { formatNumber, slugify } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -88,8 +88,6 @@ export function ProductEditor({
   const [status, setStatus] = React.useState<ProductStatus>(product?.status ?? "draft");
   const [newSize, setNewSize] = React.useState("");
   const [newColor, setNewColor] = React.useState("");
-  const [newColorHex, setNewColorHex] = React.useState("#E11D2E");
-  const [customHex, setCustomHex] = React.useState<Record<string, string>>({});
   const [customVariants, setCustomVariants] = React.useState<CustomVariant[]>(
     product?.customVariants ?? [],
   );
@@ -125,15 +123,10 @@ export function ProductEditor({
     );
   }
 
-  function swatchColor(nameC: string): string {
-    return customHex[nameC] ?? COLOR_HEX[nameC] ?? "#CBD5E1";
-  }
-
   function addColor(): void {
     const v = newColor.trim();
     if (!v) return;
     if (!colors.includes(v)) setColors((c) => [...c, v]);
-    setCustomHex((m) => ({ ...m, [v]: newColorHex }));
     setNewColor("");
   }
 
@@ -287,7 +280,11 @@ export function ProductEditor({
                 <Field label="SKU">
                   <input
                     value={sku}
-                    onChange={(e) => setSku(e.target.value.toUpperCase())}
+                    // SKU becomes a URL segment (/admin/products/[sku]); spaces
+                    // break that, so collapse whitespace to a hyphen on input.
+                    onChange={(e) =>
+                      setSku(e.target.value.toUpperCase().replace(/\s+/g, "-"))
+                    }
                     placeholder="PL001"
                     className={`${FIELD} font-mono`}
                   />
@@ -402,16 +399,12 @@ export function ProductEditor({
                         onClick={() => toggleColor(c)}
                         aria-pressed={active}
                         className={cn(
-                          "inline-flex h-9 items-center gap-2 rounded-pill border px-3 pl-2 text-[13px] font-semibold",
+                          "inline-flex h-9 items-center rounded-pill border px-3.5 text-[13px] font-semibold",
                           active
                             ? "border-brand bg-brand-subtle text-brand-dark"
                             : "border-admin-border bg-admin-bg text-gray-600",
                         )}
                       >
-                        <span
-                          className="h-4 w-4 rounded-full border border-black/10"
-                          style={{ backgroundColor: COLOR_HEX[c] }}
-                        />
                         {c}
                       </button>
                     );
@@ -421,12 +414,8 @@ export function ProductEditor({
                     .map((c) => (
                       <span
                         key={c}
-                        className="inline-flex h-9 items-center gap-2 rounded-pill border border-brand bg-brand-subtle px-3 pl-2 text-[13px] font-semibold text-brand-dark"
+                        className="inline-flex h-9 items-center gap-1.5 rounded-pill border border-brand bg-brand-subtle px-3.5 text-[13px] font-semibold text-brand-dark"
                       >
-                        <span
-                          className="h-4 w-4 rounded-full border border-black/10"
-                          style={{ backgroundColor: swatchColor(c) }}
-                        />
                         {c}
                         <button
                           type="button"
@@ -441,13 +430,6 @@ export function ProductEditor({
                     ))}
                 </div>
                 <div className="mt-2.5 flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={newColorHex}
-                    onChange={(e) => setNewColorHex(e.target.value)}
-                    aria-label="Pilih warna kustom"
-                    className="h-9 w-9 flex-none cursor-pointer rounded-lg border border-admin-border bg-white p-1"
-                  />
                   <input
                     value={newColor}
                     onChange={(e) => setNewColor(e.target.value)}

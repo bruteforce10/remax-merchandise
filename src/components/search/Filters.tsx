@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import type { ReactElement } from "react";
 
-import { COLOR_HEX, COLOR_PALETTE, PRICE_MAX, PRICE_MIN } from "@/lib/data/catalog";
+import { COLOR_PALETTE, PRICE_MAX, PRICE_MIN } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -127,29 +127,24 @@ export function Filters({
       {/* Colors */}
       <div className="border-t border-gray-200 pt-5">
         <div className={SECTION_LABEL}>Warna</div>
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex flex-wrap gap-2">
           {COLOR_PALETTE.map((name) => {
             const checked = value.colors.includes(name);
-            const ring = checked
-              ? "border-brand"
-              : name === "Putih"
-                ? "border-gray-200"
-                : "border-transparent";
             return (
               <button
                 key={name}
                 type="button"
-                title={name}
-                aria-label={name}
                 aria-pressed={checked}
                 onClick={() => toggleColor(name)}
-                style={{ backgroundColor: COLOR_HEX[name] }}
                 className={cn(
-                  "h-[34px] w-[34px] rounded-[10px] border-2",
-                  ring,
-                  checked && "shadow-[0_0_0_3px_rgba(225,29,46,0.18)]",
+                  "h-9 rounded-pill border px-3.5 text-[13px] font-medium",
+                  checked
+                    ? "border-brand bg-brand-subtle text-brand"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-border-strong",
                 )}
-              />
+              >
+                {name}
+              </button>
             );
           })}
         </div>

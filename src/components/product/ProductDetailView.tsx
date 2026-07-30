@@ -8,7 +8,7 @@ import * as React from "react";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Badge } from "@/components/ui/Badge";
 import { useCheckout } from "@/hooks/useCheckout";
-import { BADGE_LABELS, COLOR_HEX } from "@/lib/data/catalog";
+import { BADGE_LABELS } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -228,29 +228,6 @@ export function ProductDetailView({
               <div className="flex flex-wrap gap-2.5">
                 {dim.values.map((value) => {
                   const active = selected[dim.name] === value;
-                  if (dim.kind === "color") {
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        title={value}
-                        aria-label={value}
-                        aria-pressed={active}
-                        onClick={() =>
-                          setSelected((s) => ({ ...s, [dim.name]: value }))
-                        }
-                        style={{ backgroundColor: COLOR_HEX[value] ?? "#CBD5E1" }}
-                        className={cn(
-                          "h-[38px] w-[38px] rounded-[11px] border-2",
-                          active
-                            ? "border-brand shadow-[0_0_0_3px_rgba(225,29,46,0.18)]"
-                            : value === "Putih"
-                              ? "border-gray-200"
-                              : "border-transparent",
-                        )}
-                      />
-                    );
-                  }
                   return (
                     <button
                       key={value}

@@ -23,7 +23,11 @@ export async function generateStaticParams(): Promise<{ sku: string }[]> {
 export default async function EditProductPage({
   params,
 }: PageProps): Promise<ReactNode> {
-  const { sku } = await params;
+  const { sku: rawSku } = await params;
+  // Next.js leaves reserved characters percent-encoded in dynamic params, so a
+  // SKU containing a space (e.g. "TT 001") arrives as "TT%20001". Decode it back
+  // to the stored Hygraph SKU, otherwise the lookup finds nothing and 404s.
+  const sku = decodeSku(rawSku);
   const [product, categories] = await Promise.all([
     getAdminProductBySku(sku),
     getCategories(),
@@ -32,4 +36,13 @@ export default async function EditProductPage({
   return (
     <ProductEditor mode="edit" product={product} categories={categories} />
   );
+}
+
+/** Reverse the URL-encoding of a dynamic route param; tolerate malformed input. */
+function decodeSku(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }

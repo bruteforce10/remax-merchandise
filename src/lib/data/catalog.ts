@@ -8,15 +8,6 @@ import type { ProductBadge } from "@/types/product";
  */
 
 // ── Colors ──────────────────────────────────────────────────────────────────
-export const COLOR_HEX: Record<string, string> = {
-  Merah: "#E11D2E",
-  Navy: "#000E35",
-  Putih: "#FFFFFF",
-  Hitam: "#232323",
-  Abu: "#9AA0AD",
-  Silver: "#C3C7D1",
-};
-
 export const COLOR_PALETTE: string[] = [
   "Merah",
   "Navy",
