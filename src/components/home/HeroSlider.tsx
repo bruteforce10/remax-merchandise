@@ -54,11 +54,6 @@ export function HeroSlider({
           />
         )}
 
-        <div
-          key={index}
-          className="relative w-full animate-[rmx-fade_.45s_ease]"
-        />
-
         {count > 1 && (
           <>
             <button
