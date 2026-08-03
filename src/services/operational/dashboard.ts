@@ -1,8 +1,7 @@
-import { DASHBOARD_VIEWS_CHART, LEADS } from "@/lib/data/admin";
+import { DASHBOARD_VIEWS_CHART } from "@/lib/data/admin";
 import { CATEGORIES } from "@/lib/data/catalog";
 import { getAdminProducts } from "@/services/operational/products";
 import type { AdminProduct, DashboardStats } from "@/types/admin";
-import type { Lead } from "@/types/lead";
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const products = await getAdminProducts();
@@ -27,10 +26,6 @@ export async function getRecentProducts(limit = 4): Promise<AdminProduct[]> {
 export async function getPopularProducts(limit = 5): Promise<AdminProduct[]> {
   const products = await getAdminProducts();
   return [...products].sort((a, b) => b.views - a.views).slice(0, limit);
-}
-
-export async function getRecentLeads(limit = 4): Promise<Lead[]> {
-  return LEADS.slice(0, limit);
 }
 
 export async function getViewsChart(): Promise<number[]> {

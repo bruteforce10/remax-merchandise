@@ -42,6 +42,7 @@ export const PRODUCT_FIELDS = gql`
     price
     stock
     badge
+    keywords
     category {
       slug
     }

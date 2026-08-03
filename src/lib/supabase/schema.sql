@@ -110,3 +110,59 @@ begin
 end;
 $$;
 
+-- Engagement funnel + search log -------------------------------------------
+-- product_stats: per-product counters (maps to the ProductStats model).
+-- search_logs:   one row per committed search (maps to the SearchLog model).
+create table if not exists public.product_stats (
+  product_slug   text primary key,
+  views          integer not null default 0,
+  cart_count     integer not null default 0,
+  checkout_count integer not null default 0,
+  updated_at     timestamptz not null default now()
+);
+
+create table if not exists public.search_logs (
+  id         uuid primary key default gen_random_uuid(),
+  keyword    text not null,
+  session_id text,
+  created_at timestamptz not null default now()
+);
+create index if not exists search_logs_keyword_idx on public.search_logs (lower(trim(keyword)));
+create index if not exists search_logs_created_idx on public.search_logs (created_at desc);
+
+alter table public.product_stats enable row level security;
+alter table public.search_logs   enable row level security;
+
+-- Atomic per-product counter bump (upsert). p_kind in ('view','cart','checkout').
+create or replace function public.bump_product_stat(p_slug text, p_kind text)
+returns void
+language plpgsql
+as $$
+begin
+  insert into public.product_stats (product_slug, views, cart_count, checkout_count)
+  values (
+    p_slug,
+    case when p_kind = 'view'     then 1 else 0 end,
+    case when p_kind = 'cart'     then 1 else 0 end,
+    case when p_kind = 'checkout' then 1 else 0 end
+  )
+  on conflict (product_slug) do update
+    set views          = public.product_stats.views          + (case when p_kind = 'view'     then 1 else 0 end),
+        cart_count     = public.product_stats.cart_count     + (case when p_kind = 'cart'     then 1 else 0 end),
+        checkout_count = public.product_stats.checkout_count + (case when p_kind = 'checkout' then 1 else 0 end),
+        updated_at     = now();
+end;
+$$;
+
+-- Popular search keywords, most-searched first.
+create or replace function public.popular_keywords(p_limit int default 10)
+returns table (keyword text, count bigint)
+language sql
+as $$
+  select lower(trim(keyword)) as keyword, count(*)::bigint as count
+  from public.search_logs
+  group by lower(trim(keyword))
+  order by count desc
+  limit p_limit;
+$$;
+

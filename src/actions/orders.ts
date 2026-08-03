@@ -61,6 +61,29 @@ export async function createOrder(
 
   try {
     const db = supabaseAdmin();
+
+    // Pre-flight: cek stok per SKU sebelum order dibuat.
+    // SKU tanpa row di inventory (produk non-tracked) dibiarkan lolos.
+    const skus = items.map((i) => i.sku);
+    const { data: invRows, error: invErr } = await db
+      .from("inventory")
+      .select("sku, stock")
+      .in("sku", skus);
+    if (invErr) throw invErr;
+
+    const invMap = Object.fromEntries(
+      (invRows ?? []).map((r) => [r.sku as string, r.stock as number]),
+    );
+    const shortfalls = items.filter(
+      (item) => item.sku in invMap && invMap[item.sku] < item.qty,
+    );
+    if (shortfalls.length > 0) {
+      const detail = shortfalls
+        .map((i) => `${i.name} (diminta ${i.qty}, tersisa ${invMap[i.sku]})`)
+        .join("; ");
+      return { success: false, data: null, message: `Stok tidak mencukupi: ${detail}` };
+    }
+
     const { data: order, error: orderError } = await db
       .from("orders")
       .insert({
@@ -88,6 +111,19 @@ export async function createOrder(
       })),
     );
     if (itemsError) throw itemsError;
+
+    // Bump the checkout funnel counter per product (best-effort — an isolated
+    // try/catch so a tracking failure can never fail the order).
+    try {
+      const slugs = [...new Set(items.map((i) => i.productSlug).filter(Boolean))];
+      await Promise.all(
+        slugs.map((slug) =>
+          db.rpc("bump_product_stat", { p_slug: slug, p_kind: "checkout" }),
+        ),
+      );
+    } catch (statError) {
+      console.error("checkout stat bump failed:", statError);
+    }
 
     revalidatePath("/admin/orders");
     return {

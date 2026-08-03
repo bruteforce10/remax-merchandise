@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { ProductDetailView } from "@/components/product/ProductDetailView";
+import { TrackView } from "@/components/product/TrackView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
@@ -114,6 +115,7 @@ export default async function ProductPage({ params }: PageProps): Promise<ReactN
       <JsonLd data={productLd} />
       <JsonLd data={breadcrumbLd} />
       <ProductDetailView product={product} category={category} related={related} />
+      <TrackView slug={slug} />
     </>
   );
 }

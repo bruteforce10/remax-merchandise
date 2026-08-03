@@ -74,6 +74,13 @@ export function ProductDetailView({
     ? !variant || (variant.stock !== null && variant.stock <= 0)
     : product.stock !== null && product.stock <= 0;
 
+  // Clamp qty when variant/stock changes (e.g. user switches to a variant with lower stock)
+  React.useEffect(() => {
+    if (selectionStock !== null && selectionStock > 0 && qty > selectionStock) {
+      setQty(selectionStock);
+    }
+  }, [selectionStock]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const specs: { k: string; v: string }[] = [
     { k: "Bahan", v: category.material },
     { k: "Metode Branding", v: category.branding },
@@ -100,6 +107,7 @@ export function ProductDetailView({
       stock: product.stock,
       badge: product.badge,
       imageUrl: product.imageUrl,
+      keywords: product.keywords ?? "",
     };
     const cartVariant =
       hasVariants && variant
@@ -108,6 +116,7 @@ export function ProductDetailView({
             title: variant.title || variantTitle(variant.options),
             price: unitPrice,
             options: variant.options,
+            stock: variant.stock ?? null,
           }
         : undefined;
     add(base, finalQty, cartVariant);
@@ -236,7 +245,12 @@ export function ProductDetailView({
                 value={finalQty}
                 onChange={(e) => {
                   const v = parseInt(e.target.value, 10);
-                  setQty(Number.isNaN(v) || v < 1 ? 1 : v);
+                  const clamped = Number.isNaN(v) || v < 1 ? 1 : v;
+                  setQty(
+                    selectionStock !== null
+                      ? Math.min(clamped, selectionStock)
+                      : clamped,
+                  );
                 }}
                 inputMode="numeric"
                 aria-label="Jumlah"
@@ -245,8 +259,17 @@ export function ProductDetailView({
               <button
                 type="button"
                 aria-label="Tambah"
-                onClick={() => setQty(finalQty + step)}
-                className="h-[46px] w-11 bg-white text-xl text-gray-600 hover:bg-gray-50"
+                disabled={
+                  selectionStock !== null && finalQty >= selectionStock
+                }
+                onClick={() =>
+                  setQty(
+                    selectionStock !== null
+                      ? Math.min(finalQty + step, selectionStock)
+                      : finalQty + step,
+                  )
+                }
+                className="h-[46px] w-11 bg-white text-xl text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 +
               </button>

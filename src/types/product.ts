@@ -15,6 +15,8 @@ export interface Product {
   badge: ProductBadge | null;
   /** Primary image (Hygraph asset URL), or null when none is attached. */
   imageUrl: string | null;
+  /** Comma-separated SEO keywords, also used to boost search matching. */
+  keywords: string;
 }
 
 /** A user-defined option dimension, e.g. "Bahan" → ["Cotton", "Poly"]. */

@@ -12,9 +12,16 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { cartMessage, waLink } from "@/lib/whatsapp";
-import { lineKey, lineUnitPrice, useCart } from "@/providers/CartProvider";
+import { lineKey, lineUnitPrice, useCart, type CartLine } from "@/providers/CartProvider";
+
+/** Stock for a cart line: variant stock when present, else product-level stock. */
+function lineStock(line: CartLine): number | null {
+  if (line.variant) return line.variant.stock ?? null;
+  return line.product.stock;
+}
 
 interface CartViewProps {
   isAuthenticated: boolean;
@@ -89,8 +96,8 @@ export function CartView({
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-6 pb-15">
-      <div className="mb-[18px]">
+    <div className="mx-auto max-w-[1280px] animate-[rmx-fade_.3s_ease] px-6 pt-6 pb-24">
+      <div className="mb-4">
         <Breadcrumb
           items={[{ label: "Beranda", href: "/" }, { label: "Keranjang" }]}
         />
@@ -98,7 +105,7 @@ export function CartView({
       <h1 className="text-[26px] font-semibold tracking-tight text-ink sm:text-[30px]">
         Keranjang Penawaran
       </h1>
-      <p className="mt-1 mb-6.5 text-[15px] text-muted">
+      <p className="mt-2 mb-8 text-[15px] text-muted">
         Kirim daftar produk ini ke tim kami untuk mendapatkan penawaran harga
         (quotation).
       </p>
@@ -106,14 +113,14 @@ export function CartView({
       {!hydrated ? (
         <div className="min-h-[240px]" />
       ) : lines.length === 0 ? (
-        <div className="rounded-[20px] border border-dashed border-gray-200 px-5 py-20 text-center">
-          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-[22px] bg-gray-50 text-gray-300">
+        <div className="rounded-card border border-hairline px-5 py-20 text-center">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-[22px] bg-surface-soft text-muted-soft">
             <ShoppingCart className="h-[38px] w-[38px]" />
           </div>
           <div className="mb-1.5 text-xl font-semibold text-ink">
             Keranjang masih kosong
           </div>
-          <div className="mx-auto mb-[22px] max-w-[360px] text-[14.5px] text-muted">
+          <div className="mx-auto mb-6 max-w-[360px] text-[14.5px] text-muted">
             Jelajahi katalog dan tambahkan produk yang ingin Anda tanyakan
             penawarannya.
           </div>
@@ -126,7 +133,7 @@ export function CartView({
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-4">
             {lines.map((line) => {
               const step = 1;
               const key = lineKey(line);
@@ -134,11 +141,11 @@ export function CartView({
               return (
                 <div
                   key={key}
-                  className="flex flex-wrap items-center gap-4 rounded-card border border-gray-200 bg-white p-4"
+                  className="flex flex-wrap items-center gap-4 rounded-card border border-hairline bg-white p-4"
                 >
                   <Link
                     href={`/products/${line.product.slug}`}
-                    className="relative flex h-[84px] w-[84px] flex-none items-center justify-center overflow-hidden rounded-[12px] bg-gradient-to-br from-[#f4f4f6] to-[#e9eaee] p-1.5 text-center text-[10px] font-bold text-gray-400"
+                    className="relative flex h-[84px] w-[84px] flex-none items-center justify-center overflow-hidden rounded-[12px] bg-surface-soft text-center text-[10px] font-bold text-muted-soft"
                   >
                     {line.product.imageUrl ? (
                       <Image
@@ -152,8 +159,9 @@ export function CartView({
                       line.product.short
                     )}
                   </Link>
+
                   <div className="min-w-[160px] flex-1">
-                    <div className="text-[11px] font-semibold tracking-[0.05em] text-gray-400 uppercase">
+                    <div className="text-[11px] font-semibold tracking-[0.05em] text-muted-soft uppercase">
                       {categoryName(line.product.categorySlug)}
                     </div>
                     <Link
@@ -168,7 +176,7 @@ export function CartView({
                           {Object.entries(line.variant.options).map(([k, v]) => (
                             <span
                               key={k}
-                              className="inline-flex items-center rounded-pill bg-gray-100 px-2.5 py-0.5 text-[11.5px] font-semibold text-gray-600"
+                              className="inline-flex items-center rounded-pill bg-surface-soft px-2.5 py-0.5 text-[11.5px] font-semibold text-body"
                             >
                               {k}: {v}
                             </span>
@@ -177,36 +185,69 @@ export function CartView({
                       )}
                     <div className="text-[13px] text-muted">
                       SKU {line.variant?.sku ?? line.product.sku} ·{" "}
-                      <span className="font-mono font-bold text-brand">
+                      <span className="font-semibold text-ink">
                         {formatPrice(unitPrice)}
                       </span>
                       /pcs
                     </div>
+                    {(() => {
+                      const stock = lineStock(line);
+                      if (stock === null) return null;
+                      return (
+                        <div
+                          className={cn(
+                            "mt-1 text-[12px] font-semibold",
+                            stock > 0 ? "text-green-600" : "text-red-500",
+                          )}
+                        >
+                          {stock > 0 ? `Stok tersedia: ${stock} pcs` : "Stok habis"}
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <div className="flex flex-col items-end gap-1.5">
-                    <div className="inline-flex items-center overflow-hidden rounded-btn border border-gray-200">
+
+                  <div className="flex flex-col items-end gap-2.5">
+                    <div className="inline-flex items-center overflow-hidden rounded-btn border border-hairline">
                       <button
                         type="button"
                         aria-label="Kurangi"
                         onClick={() => setQty(key, line.qty - step)}
-                        className="h-[42px] w-[38px] bg-white text-lg text-gray-600 hover:bg-gray-50"
+                        className="h-[42px] w-[38px] bg-white text-lg text-body hover:bg-surface-soft"
                       >
                         −
                       </button>
                       <input
                         value={line.qty}
-                        onChange={(e) =>
-                          setQty(key, parseInt(e.target.value, 10))
-                        }
+                        onChange={(e) => {
+                          const v = parseInt(e.target.value, 10);
+                          const clamped = Number.isNaN(v) || v < 1 ? 1 : v;
+                          const stock = lineStock(line);
+                          setQty(
+                            key,
+                            stock !== null ? Math.min(clamped, stock) : clamped,
+                          );
+                        }}
                         inputMode="numeric"
                         aria-label={`Jumlah ${line.product.name}`}
-                        className="h-[42px] w-[60px] border-x border-gray-200 text-center font-mono text-[15px] font-bold outline-none"
+                        className="h-[42px] w-[60px] border-x border-hairline text-center font-mono text-[15px] font-bold text-ink outline-none"
                       />
                       <button
                         type="button"
                         aria-label="Tambah"
-                        onClick={() => setQty(key, line.qty + step)}
-                        className="h-[42px] w-[38px] bg-white text-lg text-gray-600 hover:bg-gray-50"
+                        disabled={(() => {
+                          const stock = lineStock(line);
+                          return stock !== null && line.qty >= stock;
+                        })()}
+                        onClick={() => {
+                          const stock = lineStock(line);
+                          setQty(
+                            key,
+                            stock !== null
+                              ? Math.min(line.qty + step, stock)
+                              : line.qty + step,
+                          );
+                        }}
+                        className="h-[42px] w-[38px] bg-white text-lg text-body hover:bg-surface-soft disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         +
                       </button>
@@ -214,7 +255,7 @@ export function CartView({
                     <button
                       type="button"
                       onClick={() => remove(key)}
-                      className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-gray-400 hover:text-brand"
+                      className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-muted-soft hover:text-brand"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Hapus
@@ -225,30 +266,32 @@ export function CartView({
             })}
           </div>
 
-          <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <div className="rounded-card border border-gray-200 bg-surface-soft p-6">
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Summary */}
+            <div className="rounded-card border border-hairline bg-white p-6">
               <h3 className="mb-4 text-lg font-semibold text-ink">
                 Ringkasan Penawaran
               </h3>
               <SummaryRow label="Jumlah jenis produk" value={String(count)} />
               <SummaryRow label="Estimasi total qty" value={`${totalQty} pcs`} />
-              <div className="flex items-center justify-between pt-3.5 pb-0.5">
+              <div className="flex items-center justify-between pt-4 pb-1">
                 <span className="text-[14.5px] text-muted">Estimasi nilai</span>
                 <span className="font-mono text-xl font-extrabold text-brand">
                   {formatPrice(estimatedTotal)}
                 </span>
               </div>
-              <div className="mt-3 flex items-center gap-2 rounded-[10px] bg-amber-50 px-3 py-2.5 text-[13px] font-semibold text-amber-700">
-                <Info className="h-[16px] w-[16px] flex-none text-amber-500" />
+              <div className="mt-4 flex items-center gap-2 rounded-[10px] bg-warning-subtle px-3 py-2.5 text-[13px] font-semibold text-warning-fg">
+                <Info className="h-4 w-4 flex-none" />
                 Harga belum termasuk ongkos kirim
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-gray-400">
+              <p className="mt-2.5 text-xs leading-relaxed text-muted-soft">
                 *Estimasi berdasarkan harga mulai. Harga final menyesuaikan
                 spesifikasi &amp; jumlah, dikonfirmasi oleh tim kami.
               </p>
             </div>
 
-            <div className="flex flex-col justify-center gap-3 rounded-card border border-gray-200 p-6">
+            {/* Actions */}
+            <div className="flex flex-col justify-center gap-3 rounded-card border border-hairline bg-white p-6">
               {isAuthenticated ? (
                 <button
                   type="button"
@@ -271,27 +314,27 @@ export function CartView({
               )}
               <Link
                 href="/search"
-                className="inline-flex h-[52px] items-center justify-center rounded-btn border border-gray-200 bg-white text-[15px] font-medium text-ink hover:border-border-strong"
+                className="inline-flex h-[52px] items-center justify-center rounded-btn border border-hairline bg-white text-[15px] font-medium text-ink hover:border-border-strong"
               >
                 Lanjut Belanja
               </Link>
               {isAuthenticated ? (
-                <div className="mt-0.5 flex flex-wrap items-center justify-center gap-1.5 text-[12.5px] text-gray-400">
+                <div className="mt-1 flex flex-wrap items-center justify-center gap-1.5 text-[12.5px] text-muted">
                   <span className="truncate">
                     Masuk sebagai{" "}
-                    <span className="font-semibold text-gray-500">{userEmail}</span>
+                    <span className="font-semibold text-body">{userEmail}</span>
                   </span>
                   <span aria-hidden>·</span>
                   <button
                     type="button"
                     onClick={() => void handleSignOut()}
-                    className="font-semibold text-gray-500 underline underline-offset-2 hover:text-brand"
+                    className="font-semibold text-body underline underline-offset-2 hover:text-brand"
                   >
                     Keluar
                   </button>
                 </div>
               ) : (
-                <div className="mt-0.5 flex items-center justify-center gap-2 text-[12.5px] text-gray-400">
+                <div className="mt-1 flex items-center justify-center gap-2 text-[12.5px] text-muted">
                   <Lock className="h-[13px] w-[13px]" />
                   Login diperlukan untuk checkout
                 </div>
@@ -312,7 +355,7 @@ function SummaryRow({
   value: string;
 }): React.JSX.Element {
   return (
-    <div className="flex items-center justify-between border-b border-gray-200 py-2.5">
+    <div className="flex items-center justify-between border-b border-hairline py-3">
       <span className="text-[14.5px] text-muted">{label}</span>
       <span className="font-mono text-[15px] font-bold text-ink">{value}</span>
     </div>

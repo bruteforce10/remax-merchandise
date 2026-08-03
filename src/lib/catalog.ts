@@ -55,6 +55,17 @@ export interface ProductFilters {
   colors: string[];
 }
 
+function matchesQuery(p: Product, q: string): boolean {
+  if (p.name.toLowerCase().includes(q)) return true;
+  if (categoryName(p.categorySlug).toLowerCase().includes(q)) return true;
+  if (p.short.toLowerCase().includes(q)) return true;
+  if (p.keywords) {
+    const kws = p.keywords.split(",").map((k) => k.trim().toLowerCase());
+    if (kws.some((k) => k.includes(q) || q.includes(k))) return true;
+  }
+  return false;
+}
+
 export function filterProducts(
   list: Product[],
   filters: ProductFilters,
@@ -62,10 +73,7 @@ export function filterProducts(
   return list.filter((p) => {
     if (filters.query) {
       const q = filters.query.toLowerCase();
-      const catName = categoryName(p.categorySlug).toLowerCase();
-      if (!(p.name.toLowerCase().includes(q) || catName.includes(q))) {
-        return false;
-      }
+      if (!matchesQuery(p, q)) return false;
     }
     if (filters.categories.length && !filters.categories.includes(p.categorySlug)) {
       return false;
@@ -115,7 +123,7 @@ export function searchSuggestions(
       icon: c.icon,
     }));
   const productHits: Suggestion[] = products.filter((p) =>
-    p.name.toLowerCase().includes(q),
+    matchesQuery(p, q),
   )
     .slice(0, 5)
     .map((p) => ({

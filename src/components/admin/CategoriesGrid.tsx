@@ -9,6 +9,7 @@ import {
   deleteCategory,
   updateCategory,
 } from "@/actions/categories";
+import { CategoryVisual } from "@/components/category/CategoryVisual";
 import { Modal } from "@/components/admin/Modal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { CategoryIcon } from "@/components/ui/Icon";
@@ -142,8 +143,15 @@ export function CategoriesGrid({
             className="overflow-hidden rounded-card border border-admin-border bg-white transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-hover"
           >
             <div className="relative flex h-[88px] items-center justify-center bg-gradient-to-br from-[#f1f2f4] to-[#e6e7ea]">
-              <span className="flex h-12 w-12 items-center justify-center rounded-card bg-white text-brand shadow-sm">
-                <CategoryIcon name={c.icon} className="h-6 w-6" />
+              <span className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-card bg-white text-brand shadow-sm">
+                <CategoryVisual
+                  slug={c.slug}
+                  name={c.name}
+                  icon={c.icon}
+                  imageClassName="p-1"
+                  iconClassName="h-6 w-6"
+                  sizes="48px"
+                />
               </span>
               {c.featured && (
                 <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-pill bg-gray-900 px-2.5 py-1 text-[10.5px] font-bold text-white">

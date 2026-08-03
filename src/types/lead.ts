@@ -1,15 +1,17 @@
-/** Lead / inquiry model (maps to Supabase `Lead` + `Event` in Phase 2). */
+/** Status labels shared by StatusBadge (also used for orders/products). */
 export type LeadStatus = "new" | "contacted" | "completed";
 
-export type DeviceType = "Desktop" | "Mobile" | "Tablet";
-
-export interface Lead {
-  id: string;
-  date: string;
-  product: string;
-  qty: number;
-  session: string;
-  country: string;
-  device: DeviceType;
-  status: LeadStatus;
+/**
+ * Per-product engagement funnel row, backed by Supabase `product_stats`.
+ * Tracks the discovery funnel: views → cart → checkout, plus a conversion ratio.
+ */
+export interface LeadFunnelRow {
+  slug: string;
+  name: string;
+  imageUrl: string | null;
+  views: number;
+  cartCount: number;
+  checkoutCount: number;
+  /** checkoutCount / views (0 when there are no views). */
+  conversion: number;
 }

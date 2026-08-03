@@ -4,6 +4,7 @@ import { Clock, Search, SearchX, SlidersHorizontal, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 
+import { logSearch } from "@/actions/tracking";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Filters, type FilterValue } from "@/components/search/Filters";
@@ -80,6 +81,7 @@ export function SearchClient({
     if (committedQuery) {
       setLoading(true);
       const t = window.setTimeout(() => setLoading(false), 350);
+      void logSearch(committedQuery);
       setRecent((prev) => {
         const next = [committedQuery, ...prev.filter((x) => x !== committedQuery)].slice(0, 6);
         try {

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { toast } from "sonner";
 
+import { trackAddToCart } from "@/actions/tracking";
 import type { Product } from "@/types/product";
 
 /**
@@ -21,6 +22,7 @@ export interface CartVariant {
   title: string;
   price: number;
   options: Record<string, string>;
+  stock: number | null;
 }
 
 export interface CartLine {
@@ -125,6 +127,7 @@ export function CartProvider({
           qty: (prev[key]?.qty ?? 0) + amount,
         },
       }));
+      void trackAddToCart(product.slug);
       toast.success(`${product.name} ditambahkan`);
     },
     [],

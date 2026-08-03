@@ -5,25 +5,12 @@ import type {
   MediaItem,
   MetricCard,
 } from "@/types/admin";
-import type { Lead } from "@/types/lead";
 
 /**
- * Static operational seed (Phase 1). Leads, banners, media, and analytics
- * demo data. Products are now sourced from Hygraph via `services/operational`.
- * Replaced by Supabase (Prisma) queries in Phase 2.
+ * Static operational seed (Phase 1). Media, banners, and analytics demo data.
+ * Products come from Hygraph via `services/operational`; the leads funnel and
+ * search stats come from Supabase (`product_stats` / `search_logs`).
  */
-
-// ── Leads ────────────────────────────────────────────────────────────────────
-export const LEADS: Lead[] = [
-  { id: "l1", date: "21 Jul, 09:42", product: "Jaket Bomber Corporate", qty: 24, session: "#a4f92c", country: "Indonesia", device: "Desktop", status: "new" },
-  { id: "l2", date: "21 Jul, 08:15", product: "Polo Shirt Lacoste Premium", qty: 50, session: "#b81e03", country: "Indonesia", device: "Mobile", status: "contacted" },
-  { id: "l3", date: "20 Jul, 16:30", product: "Tumbler Stainless Vacuum", qty: 100, session: "#c92d1a", country: "Indonesia", device: "Mobile", status: "completed" },
-  { id: "l4", date: "20 Jul, 14:08", product: "Hoodie Fleece Premium", qty: 36, session: "#d01f44", country: "Singapura", device: "Desktop", status: "new" },
-  { id: "l5", date: "20 Jul, 11:52", product: "Payung Lipat 3 Otomatis", qty: 200, session: "#e11d2e", country: "Indonesia", device: "Tablet", status: "contacted" },
-  { id: "l6", date: "19 Jul, 15:21", product: "Tote Bag Kanvas Blacu", qty: 150, session: "#f30a1b", country: "Indonesia", device: "Mobile", status: "completed" },
-  { id: "l7", date: "19 Jul, 10:03", product: "Backpack Laptop Corporate", qty: 24, session: "#0a91cd", country: "Malaysia", device: "Desktop", status: "new" },
-  { id: "l8", date: "18 Jul, 17:45", product: "Mug Keramik Custom", qty: 100, session: "#1b7fae", country: "Indonesia", device: "Mobile", status: "contacted" },
-];
 
 // ── Media library ────────────────────────────────────────────────────────────
 export const MEDIA_ITEMS: MediaItem[] = [

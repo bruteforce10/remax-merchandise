@@ -24,10 +24,10 @@ import { formatNumber, formatPrice } from "@/lib/format";
 import {
   getDashboardStats,
   getPopularProducts,
-  getRecentLeads,
   getRecentProducts,
   getViewsChart,
 } from "@/services/operational/dashboard";
+import { getLeadFunnel } from "@/services/operational/leads";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -41,15 +41,13 @@ const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon }[] = [
 ];
 
 export default async function DashboardPage(): Promise<ReactNode> {
-  const [stats, recentProducts, recentLeads, popular, chart] = await Promise.all(
-    [
-      getDashboardStats(),
-      getRecentProducts(4),
-      getRecentLeads(4),
-      getPopularProducts(5),
-      getViewsChart(),
-    ],
-  );
+  const [stats, recentProducts, topFunnel, popular, chart] = await Promise.all([
+    getDashboardStats(),
+    getRecentProducts(4),
+    getLeadFunnel(),
+    getPopularProducts(5),
+    getViewsChart(),
+  ]);
   const maxChart = Math.max(...chart);
 
   const statCards: {
@@ -153,31 +151,41 @@ export default async function DashboardPage(): Promise<ReactNode> {
             })}
           </div>
 
-          {/* Recent leads */}
+          {/* Top funnel products */}
           <div className={`${PANEL} overflow-hidden`}>
             <div className="flex items-center justify-between border-b border-gray-200 px-5.5 py-4.5">
-              <h3 className="text-base font-semibold text-ink">Leads Terbaru</h3>
+              <h3 className="text-base font-semibold text-ink">
+                Produk Teratas (Funnel)
+              </h3>
               <Link href="/admin/leads" className="text-[13px] font-semibold">
                 Lihat semua
               </Link>
             </div>
-            {recentLeads.map((l) => (
-              <div
-                key={l.id}
-                className="flex items-center gap-3.5 border-b border-gray-50 px-5.5 py-3.5 last:border-b-0"
-              >
-                <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-btn bg-success-subtle text-success">
-                  <MessageCircle className="h-[18px] w-[18px]" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-ink">{l.product}</div>
-                  <div className="text-[12.5px] text-gray-400">
-                    {l.qty} pcs · {l.device} · {l.date}
+            {topFunnel.length === 0 ? (
+              <p className="px-5.5 py-8 text-center text-[13.5px] text-gray-400">
+                Belum ada data engagement.
+              </p>
+            ) : (
+              topFunnel.slice(0, 4).map((r) => (
+                <div
+                  key={r.slug}
+                  className="flex items-center gap-3.5 border-b border-gray-50 px-5.5 py-3.5 last:border-b-0"
+                >
+                  <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-btn bg-info-subtle text-info">
+                    <Eye className="h-[18px] w-[18px]" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-ink">{r.name}</div>
+                    <div className="text-[12.5px] text-gray-400">
+                      {formatNumber(r.views)} lihat · {formatNumber(r.checkoutCount)} checkout
+                    </div>
                   </div>
+                  <span className="font-mono text-[12.5px] font-semibold text-success">
+                    {(r.conversion * 100).toFixed(1)}%
+                  </span>
                 </div>
-                <StatusBadge status={l.status} dot={false} />
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

@@ -51,12 +51,10 @@ function pageTitle(pathname: string, nav: NavItem[]): string {
 
 export function AdminShell({
   children,
-  newLeadsCount,
   newOrdersCount,
   userEmail = "",
 }: {
   children: React.ReactNode;
-  newLeadsCount: number;
   newOrdersCount: number;
   userEmail?: string;
 }): React.JSX.Element {
@@ -77,7 +75,7 @@ export function AdminShell({
     { href: "/admin/products", label: "Produk", icon: Package },
     { href: "/admin/categories", label: "Kategori", icon: Layers },
     { href: "/admin/banners", label: "Banner", icon: GalleryHorizontalEnd },
-    { href: "/admin/leads", label: "Leads", icon: Inbox, badge: newLeadsCount },
+    { href: "/admin/leads", label: "Leads", icon: Inbox },
     {
       href: "/admin/orders",
       label: "Pesanan",

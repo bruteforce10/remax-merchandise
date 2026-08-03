@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+import { CategoryVisual } from "@/components/category/CategoryVisual";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { Drawer } from "@/components/ui/Drawer";
@@ -139,10 +140,14 @@ export function SiteHeader({
                       onClick={() => setCatMenuOpen(false)}
                       className="flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 hover:bg-gray-50"
                     >
-                      <span className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-[9px] bg-brand-subtle text-brand">
-                        <CategoryIcon
-                          name={c.icon}
-                          className="h-[17px] w-[17px]"
+                      <span className="relative flex h-[34px] w-[34px] flex-none items-center justify-center overflow-hidden rounded-[9px] bg-brand-subtle text-brand">
+                        <CategoryVisual
+                          slug={c.slug}
+                          name={c.name}
+                          icon={c.icon}
+                          imageClassName="p-0.5"
+                          iconClassName="h-[17px] w-[17px]"
+                          sizes="34px"
                         />
                       </span>
                       <span className="text-sm font-semibold text-ink">
@@ -324,7 +329,16 @@ export function SiteHeader({
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2.5 rounded-[10px] border border-gray-100 p-2.5"
               >
-                <CategoryIcon name={c.icon} className="h-4 w-4 text-brand" />
+                <span className="relative flex h-7 w-7 flex-none items-center justify-center overflow-hidden rounded-[8px] bg-brand-subtle text-brand">
+                  <CategoryVisual
+                    slug={c.slug}
+                    name={c.name}
+                    icon={c.icon}
+                    imageClassName="p-0.5"
+                    iconClassName="h-4 w-4"
+                    sizes="28px"
+                  />
+                </span>
                 <span className="text-[13px] font-semibold">{c.name}</span>
               </Link>
             ))}

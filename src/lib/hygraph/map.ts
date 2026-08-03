@@ -47,6 +47,7 @@ export interface RawProduct {
   price: number | null;
   stock: number | null;
   badge: string | null;
+  keywords: string | null;
   category: { slug: string } | null;
   images: { url: string }[] | null;
 }
@@ -84,6 +85,7 @@ export function mapProduct(p: RawProduct): Product {
     stock: p.stock ?? null,
     badge: mapBadge(p.badge),
     imageUrl: p.images?.[0]?.url ?? null,
+    keywords: p.keywords ?? "",
   };
 }
 
@@ -219,6 +221,7 @@ export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
     stock: p.stock ?? null,
     badge: mapBadge(p.badge),
     imageUrl: p.images?.[0]?.url ?? null,
+    keywords: p.keywords ?? "",
     status:
       p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
     views: 0,

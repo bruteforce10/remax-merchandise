@@ -10,6 +10,7 @@ import { useCheckout } from "@/hooks/useCheckout";
 import { categoryName } from "@/lib/catalog";
 import { BADGE_LABELS } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { productMessage } from "@/lib/whatsapp";
 import { useCart } from "@/providers/CartProvider";
 import type { Product } from "@/types/product";
@@ -61,6 +62,16 @@ export function ProductCard({ product }: { product: Product }): ReactElement {
             {formatPrice(product.price)}
           </span>
         </div>
+        {product.stock !== null && (
+          <div
+            className={cn(
+              "mt-1 text-[12px] font-semibold",
+              product.stock > 0 ? "text-green-600" : "text-red-500",
+            )}
+          >
+            {product.stock > 0 ? `Stok: ${product.stock} pcs` : "Stok Habis"}
+          </div>
+        )}
         <div className="mt-3 flex gap-2">
           <button
             type="button"
