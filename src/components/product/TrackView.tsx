@@ -13,13 +13,15 @@ export function TrackView({ slug }: { slug: string }): null {
   React.useEffect(() => {
     if (!slug) return;
     const key = `remax_viewed_${slug}`;
+    let sessionId: string | undefined;
     try {
       if (sessionStorage.getItem(key)) return;
       sessionStorage.setItem(key, "1");
+      sessionId = localStorage.getItem("remax_session") ?? undefined;
     } catch {
       /* private-mode / quota — fall through and still track */
     }
-    void trackProductView(slug);
+    void trackProductView(slug, sessionId);
   }, [slug]);
 
   return null;

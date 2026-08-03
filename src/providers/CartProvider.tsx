@@ -127,10 +127,10 @@ export function CartProvider({
           qty: (prev[key]?.qty ?? 0) + amount,
         },
       }));
-      void trackAddToCart(product.slug);
+      void trackAddToCart(product.slug, sessionId);
       toast.success(`${product.name} ditambahkan`);
     },
-    [],
+    [sessionId],
   );
 
   const setQty = React.useCallback((key: string, qty: number): void => {

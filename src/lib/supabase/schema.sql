@@ -166,3 +166,128 @@ as $$
   limit p_limit;
 $$;
 
+-- Engagement events (time-series) ------------------------------------------
+-- One row per tracked engagement, powering the admin Analytics charts:
+-- daily views/WA-clicks, device + country breakdown, and windowed totals.
+-- Maps to the Event model (id, type, productId->product_slug, sessionId, ...).
+-- device is derived from the User-Agent, country from the Vercel geo header.
+create table if not exists public.events (
+  id           uuid primary key default gen_random_uuid(),
+  type         text not null check (type in ('view', 'cart', 'wa')),
+  product_slug text,
+  session_id   text,
+  device       text check (device in ('mobile', 'desktop', 'tablet')),
+  country      text,
+  created_at   timestamptz not null default now()
+);
+create index if not exists events_created_idx on public.events (created_at desc);
+create index if not exists events_type_created_idx on public.events (type, created_at desc);
+create index if not exists events_product_idx on public.events (product_slug);
+
+alter table public.events enable row level security;
+
+-- Daily views + WA clicks for the last p_days, gap-filled (one row per day,
+-- bucketed in Asia/Jakarta so "today" matches the audience's local day).
+create or replace function public.event_daily(p_days int default 14)
+returns table (day date, views bigint, wa_clicks bigint)
+language sql
+stable
+as $$
+  with bounds as (
+    select (now() at time zone 'Asia/Jakarta')::date as today
+  ),
+  days as (
+    select generate_series(b.today - (p_days - 1), b.today, interval '1 day')::date as day
+    from bounds b
+  )
+  select d.day,
+         count(e.id) filter (where e.type = 'view') as views,
+         count(e.id) filter (where e.type = 'wa')   as wa_clicks
+  from days d
+  left join public.events e
+    on (e.created_at at time zone 'Asia/Jakarta')::date = d.day
+  group by d.day
+  order by d.day;
+$$;
+
+-- Device split (distinct engaged sessions per device) for the last p_days.
+create or replace function public.event_devices(p_days int default 30)
+returns table (device text, sessions bigint)
+language sql
+stable
+as $$
+  select device, count(distinct session_id) as sessions
+  from public.events
+  where created_at >= now() - make_interval(days => p_days)
+    and device is not null
+    and session_id is not null
+  group by device
+  order by sessions desc;
+$$;
+
+-- Country split for the last p_days ('XX' = unknown / geo header absent).
+create or replace function public.event_countries(p_days int default 30)
+returns table (country text, count bigint)
+language sql
+stable
+as $$
+  select coalesce(nullif(country, ''), 'XX') as country, count(*) as count
+  from public.events
+  where created_at >= now() - make_interval(days => p_days)
+  group by coalesce(nullif(country, ''), 'XX')
+  order by count desc;
+$$;
+
+-- View + WA-click totals for the current window and the one before it (deltas).
+create or replace function public.event_totals(p_days int default 30)
+returns table (views_cur bigint, views_prev bigint, wa_cur bigint, wa_prev bigint)
+language sql
+stable
+as $$
+  select
+    count(*) filter (
+      where type = 'view' and created_at >= now() - make_interval(days => p_days)),
+    count(*) filter (
+      where type = 'view'
+        and created_at >= now() - make_interval(days => p_days * 2)
+        and created_at <  now() - make_interval(days => p_days)),
+    count(*) filter (
+      where type = 'wa' and created_at >= now() - make_interval(days => p_days)),
+    count(*) filter (
+      where type = 'wa'
+        and created_at >= now() - make_interval(days => p_days * 2)
+        and created_at <  now() - make_interval(days => p_days))
+  from public.events;
+$$;
+
+-- Search totals for the current window and the one before it (delta).
+create or replace function public.search_totals(p_days int default 30)
+returns table (cur bigint, prev bigint)
+language sql
+stable
+as $$
+  select
+    count(*) filter (where created_at >= now() - make_interval(days => p_days)),
+    count(*) filter (
+      where created_at >= now() - make_interval(days => p_days * 2)
+        and created_at <  now() - make_interval(days => p_days))
+  from public.search_logs;
+$$;
+
+-- Per-product views + WA clicks over the last p_days (most-viewed first). Feeds
+-- the top-products list plus the popular-product and popular-category metrics.
+create or replace function public.event_product_stats(p_days int default 30)
+returns table (product_slug text, views bigint, wa_clicks bigint)
+language sql
+stable
+as $$
+  select product_slug,
+         count(*) filter (where type = 'view') as views,
+         count(*) filter (where type = 'wa')   as wa_clicks
+  from public.events
+  where product_slug is not null
+    and created_at >= now() - make_interval(days => p_days)
+  group by product_slug
+  order by views desc, wa_clicks desc;
+$$;
+

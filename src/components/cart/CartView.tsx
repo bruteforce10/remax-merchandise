@@ -8,6 +8,7 @@ import * as React from "react";
 import { toast } from "sonner";
 
 import { createOrder } from "@/actions/orders";
+import { trackWaClick } from "@/actions/tracking";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { categoryName } from "@/lib/catalog";
@@ -91,6 +92,7 @@ export function CartView({
         res.data.ref,
       ),
     );
+    void trackWaClick(undefined, sessionId);
     clear();
     window.location.href = href;
   }

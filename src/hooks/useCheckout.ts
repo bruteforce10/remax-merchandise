@@ -5,6 +5,7 @@ import * as React from "react";
 import { toast } from "sonner";
 
 import { createOrder, type CreateOrderInput } from "@/actions/orders";
+import { trackWaClick } from "@/actions/tracking";
 import { waLink } from "@/lib/whatsapp";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCart } from "@/providers/CartProvider";
@@ -53,6 +54,7 @@ export function useCheckout(): UseCheckoutResult {
       setPending(false);
       return;
     }
+    void trackWaClick(item.productSlug, sessionId);
     window.location.href = waLink(buildMessage(res.data.ref));
   }
 

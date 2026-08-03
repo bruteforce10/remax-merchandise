@@ -5,6 +5,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { trackWa } from "@/lib/track-wa";
 import { generalMessage, waLink } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -133,6 +134,7 @@ export function ContactForm(): React.JSX.Element {
             href={waLink(generalMessage())}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWa()}
             className="inline-flex h-[50px] items-center gap-2 rounded-btn border border-gray-200 bg-white px-[22px] text-[15px] font-medium text-ink hover:border-border-strong"
           >
             <MessageCircle className="h-[18px] w-[18px] text-success" />
