@@ -44,12 +44,28 @@ export const COMPANY: CompanyInfo = {
 
 export interface SocialLink {
   label: string;
-  short: string;
+  /** Key into the SocialIcon registry (see components/ui/SocialIcon.tsx). */
+  icon: string;
   href: string;
 }
 
 export const SOCIALS: SocialLink[] = [
-  { label: "Instagram", short: "IG", href: "https://instagram.com" },
-  { label: "Facebook", short: "FB", href: "https://facebook.com" },
-  { label: "LinkedIn", short: "IN", href: "https://linkedin.com" },
+  {
+    label: "Instagram",
+    icon: "instagram",
+    href: "https://www.instagram.com/remaxindonesia",
+  },
+  {
+    label: "YouTube",
+    icon: "youtube",
+    href: "https://www.youtube.com/@remaxindo",
+  },
+  {
+    label: "Facebook",
+    icon: "facebook",
+    href: "https://www.facebook.com/remaxindo",
+  },
 ];
+
+/** RE/MAX Indonesia main site — property listings, linked from the navbar. */
+export const PROPERTY_SEARCH_URL = "https://remax.co.id/properties";

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
+import { SocialIcon } from "@/components/ui/SocialIcon";
 import { COMPANY, SOCIALS } from "@/lib/constants";
 import { CATEGORY_MAP, FOOTER_CATEGORY_SLUGS } from "@/lib/data/catalog";
 
@@ -42,9 +43,10 @@ export function SiteFooter(): ReactElement {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="flex h-10 w-10 items-center justify-center rounded-pill bg-surface-strong text-[13px] font-semibold text-ink transition-colors hover:bg-brand hover:text-white"
+                title={s.label}
+                className="flex h-10 w-10 items-center justify-center rounded-pill bg-surface-strong text-ink transition-colors hover:bg-brand hover:text-white"
               >
-                {s.short}
+                <SocialIcon name={s.icon} className="h-[18px] w-[18px]" />
               </a>
             ))}
           </div>

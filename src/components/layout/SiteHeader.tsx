@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowUpRight,
   BadgeCheck,
   ChevronDown,
   Clock,
@@ -21,7 +22,7 @@ import { UserMenu } from "@/components/layout/UserMenu";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { Drawer } from "@/components/ui/Drawer";
 import { searchSuggestions } from "@/lib/catalog";
-import { COMPANY } from "@/lib/constants";
+import { COMPANY, PROPERTY_SEARCH_URL } from "@/lib/constants";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCart } from "@/providers/CartProvider";
 import type { Category } from "@/types/category";
@@ -192,6 +193,16 @@ export function SiteHeader({
             </div>
           </div>
 
+          <a
+            href={PROPERTY_SEARCH_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden flex-none items-center gap-1 text-[15px] font-semibold text-ink hover:text-brand lg:inline-flex"
+          >
+            Cari Properti
+            <ArrowUpRight className="h-[15px] w-[15px] text-gray-400" />
+          </a>
+
           <Link
             href="/contact"
             className="hidden flex-none text-[15px] font-semibold text-ink hover:text-brand lg:inline"
@@ -282,6 +293,16 @@ export function SiteHeader({
               {l.label}
             </Link>
           ))}
+          <a
+            href={PROPERTY_SEARCH_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-1.5 border-b border-gray-100 py-3 text-base font-semibold text-ink"
+          >
+            Cari Properti
+            <ArrowUpRight className="h-4 w-4 text-gray-400" />
+          </a>
           {user ? (
             <>
               <Link
