@@ -113,7 +113,7 @@ export default async function CategoryDetailPage({
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
-                className="flex items-center gap-3.5 rounded-card border border-gray-200 p-5 transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-hover"
+                className="group flex items-center gap-3.5 rounded-card border border-gray-200 p-5 transition-[box-shadow,border-color] duration-200 ease-out-quart hover:border-border-strong hover:shadow-card"
               >
                 <CategoryVisual
                   slug={c.slug}
@@ -122,7 +122,7 @@ export default async function CategoryDetailPage({
                   sizes="46px"
                   imageClassName="p-1"
                   iconClassName="h-[22px] w-[22px]"
-                  wrapClassName="h-[46px] w-[46px] flex-none rounded-card text-brand"
+                  wrapClassName="h-[46px] w-[46px] flex-none rounded-card text-brand transition-transform duration-200 ease-out-quart group-hover:scale-[1.06]"
                   imageWrapClassName="bg-white"
                   iconWrapClassName="bg-brand-subtle"
                 />

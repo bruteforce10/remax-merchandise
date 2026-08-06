@@ -21,6 +21,11 @@ interface CategoryVisualProps {
    * image-vs-icon styling (size, background) without needing to know ahead of
    * time whether the file exists. When omitted, only the inner image/icon is
    * rendered and the caller supplies the container (legacy behavior).
+   *
+   * The wrapper is `overflow-hidden` and the image is `object-contain`, so the
+   * artwork already touches the wrapper's edges on its constrained axis. Hover
+   * zoom therefore belongs HERE (scale the wrapper) — putting it on
+   * imageClassName crops the artwork against the wrapper instead.
    */
   wrapClassName?: string;
   imageWrapClassName?: string;

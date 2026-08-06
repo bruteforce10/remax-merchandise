@@ -93,6 +93,13 @@
   /* Layout */
   --spacing-content: 1280px;
 
+  /* Easing - exponential deceleration. Motion arrives fast and settles soft;
+     no bounce or elastic (they draw attention to the animation, not the
+     state it conveys). Tailwind emits these as `ease-out-quart` etc. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* Named animations */
   --animate-fade-up: rmx-fade 0.3s ease both;
   --animate-shimmer: rmx-shimmer 1.3s infinite linear;

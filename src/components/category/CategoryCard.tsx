@@ -14,7 +14,7 @@ export function CategoryCard({ category, count }: CategoryCardProps): ReactEleme
   return (
     <Link
       href={`/categories/${category.slug}`}
-      className="group flex flex-col gap-4 rounded-card border border-gray-200 bg-white p-6 transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-hover"
+      className="group flex flex-col gap-4 rounded-card border border-gray-200 bg-white p-6 transition-[box-shadow,border-color] duration-200 ease-out-quart hover:border-border-strong hover:shadow-card"
     >
       <div className="flex items-center justify-between">
         <CategoryVisual
@@ -23,11 +23,11 @@ export function CategoryCard({ category, count }: CategoryCardProps): ReactEleme
           icon={category.icon}
           sizes="72px"
           iconClassName="h-6 w-6"
-          wrapClassName="rounded-card text-brand"
+          wrapClassName="rounded-card text-brand transition-transform duration-200 ease-out-quart group-hover:scale-[1.06]"
           imageWrapClassName="h-[72px] w-[72px]"
           iconWrapClassName="h-13 w-13 bg-brand-subtle"
         />
-        <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-brand" />
+        <ArrowRight className="h-5 w-5 text-gray-300 transition-[color,transform] duration-200 ease-out-quart group-hover:translate-x-0.5 group-hover:text-brand" />
       </div>
       <div>
         <div className="text-[17px] font-semibold text-ink">{category.name}</div>
