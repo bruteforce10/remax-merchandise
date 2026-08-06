@@ -79,6 +79,9 @@ export function ProductEditor({
   const [stock, setStock] = React.useState(
     product && product.stock !== null ? String(product.stock) : "",
   );
+  const [weight, setWeight] = React.useState(
+    product?.weight ? String(product.weight) : "",
+  );
   const [sizes, setSizes] = React.useState<string[]>(product?.sizes ?? []);
   const [colors, setColors] = React.useState<string[]>(
     product?.colors ?? ["Merah", "Navy"],
@@ -197,6 +200,7 @@ export function ProductEditor({
       description: fullDesc,
       price: parseInt(price, 10) || 0,
       stock: stock === "" ? null : parseInt(stock, 10) || 0,
+      weight: weight === "" ? 0 : parseInt(weight, 10) || 0,
       sizes,
       colors,
       material,
@@ -345,6 +349,15 @@ export function ProductEditor({
                   onChange={(e) => setStock(e.target.value.replace(/\D/g, ""))}
                   inputMode="numeric"
                   placeholder="240"
+                  className={`${FIELD} font-mono`}
+                />
+              </Field>
+              <Field label="Berat (gram) — untuk ongkir">
+                <input
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value.replace(/\D/g, ""))}
+                  inputMode="numeric"
+                  placeholder="1000"
                   className={`${FIELD} font-mono`}
                 />
               </Field>

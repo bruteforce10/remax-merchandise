@@ -31,7 +31,11 @@ export const BADGE_RANK: Record<ProductBadge, number> = {
 };
 
 // ── Categories ───────────────────────────────────────────────────────────────
-export const CATEGORIES: Category[] = [
+// Fallback/seed category data. `featured` is added below (Hygraph is the live
+// source of truth for the flag once seeded).
+const FEATURED_SLUGS = new Set(["polo", "jacket", "tumbler", "umbrella"]);
+
+const RAW_CATEGORIES: Omit<Category, "featured">[] = [
   {
     slug: "polo",
     name: "Polo Shirt",
@@ -199,23 +203,17 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
+export const CATEGORIES: Category[] = RAW_CATEGORIES.map((c) => ({
+  ...c,
+  featured: FEATURED_SLUGS.has(c.slug),
+}));
+
 // ── Lookup maps ──────────────────────────────────────────────────────────────
 export const CATEGORY_MAP: Record<string, Category> = Object.fromEntries(
   CATEGORIES.map((c) => [c.slug, c]),
 );
 
 // ── UI config ────────────────────────────────────────────────────────────────
-export const POPULAR_CATEGORY_SLUGS: string[] = [
-  "polo",
-  "jacket",
-  "hoodie",
-  "umbrella",
-  "mug",
-  "tumbler",
-  "tote",
-  "cap",
-];
-
 export const FOOTER_CATEGORY_SLUGS: string[] = [
   "polo",
   "tshirt",

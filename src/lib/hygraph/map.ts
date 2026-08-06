@@ -7,6 +7,7 @@ import type {
 } from "@/types/admin";
 import type { Banner } from "@/types/banner";
 import type { Category } from "@/types/category";
+import { productOptions } from "@/lib/variants";
 import type {
   Product,
   ProductBadge,
@@ -37,6 +38,7 @@ export interface RawCategory {
   colors: string[] | null;
   sizes: string[] | null;
   description: string | null;
+  featured: boolean | null;
 }
 
 export interface RawProduct {
@@ -48,6 +50,9 @@ export interface RawProduct {
   stock: number | null;
   badge: string | null;
   keywords: string | null;
+  colors: string[] | null;
+  sizes: string[] | null;
+  customVariants: unknown;
   category: { slug: string } | null;
   images: { url: string }[] | null;
 }
@@ -62,6 +67,7 @@ export function mapCategory(c: RawCategory): Category {
     colors: c.colors ?? [],
     sizes: c.sizes ?? [],
     description: c.description ?? "",
+    featured: c.featured ?? false,
   };
 }
 
@@ -72,6 +78,25 @@ function mapBadge(badge: string | null): ProductBadge | null {
     return value;
   }
   return null;
+}
+
+/**
+ * Whether a product exposes any selectable option dimension (color / size /
+ * custom group). Mirrors the storefront's `productOptions` so the card's
+ * quick-add decision matches what the detail page renders.
+ */
+function computeHasOptions(p: {
+  colors: string[] | null;
+  sizes: string[] | null;
+  customVariants: unknown;
+}): boolean {
+  return (
+    productOptions(
+      p.colors ?? [],
+      p.sizes ?? [],
+      parseCustomVariants(p.customVariants),
+    ).length > 0
+  );
 }
 
 export function mapProduct(p: RawProduct): Product {
@@ -86,6 +111,7 @@ export function mapProduct(p: RawProduct): Product {
     badge: mapBadge(p.badge),
     imageUrl: p.images?.[0]?.url ?? null,
     keywords: p.keywords ?? "",
+    hasOptions: computeHasOptions(p),
   };
 }
 
@@ -176,6 +202,7 @@ export interface RawAdminProduct {
   description: string | null;
   price: number | null;
   stock: number | null;
+  weight: number | null;
   sizes: string[] | null;
   colors: string[] | null;
   material: string | null;
@@ -222,6 +249,7 @@ export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
     badge: mapBadge(p.badge),
     imageUrl: p.images?.[0]?.url ?? null,
     keywords: p.keywords ?? "",
+    hasOptions: computeHasOptions(p),
     status:
       p.publishStatus?.toLowerCase() === "published" ? "published" : "draft",
     views: 0,
@@ -232,6 +260,7 @@ export function mapAdminProduct(p: RawAdminProduct): AdminProduct {
 export function mapAdminProductDetail(p: RawAdminProduct): AdminProductDetail {
   return {
     ...mapAdminProduct(p),
+    weight: p.weight ?? 0,
     description: p.description ?? "",
     sizes: p.sizes ?? [],
     colors: p.colors ?? [],

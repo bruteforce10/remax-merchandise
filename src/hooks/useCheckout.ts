@@ -2,23 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { toast } from "sonner";
 
-import { createOrder, type CreateOrderInput } from "@/actions/orders";
-import { trackWaClick } from "@/actions/tracking";
-import { waLink } from "@/lib/whatsapp";
-import { useAuth } from "@/providers/AuthProvider";
-import { useCart } from "@/providers/CartProvider";
+import { useCart, type CartVariant } from "@/providers/CartProvider";
 
-type CheckoutItem = CreateOrderInput["items"][number];
+import type { Product } from "@/types/product";
 
 interface CheckoutArgs {
-  /** The single line to record as an order. */
-  item: CheckoutItem;
-  /** Build the WhatsApp message once the order reference is known. */
-  buildMessage: (ref: string) => string;
-  /** Where to return after login when the user isn't authenticated yet. */
-  nextPath: string;
+  /** Product snapshot to add before opening the unified cart checkout. */
+  product: Product;
+  qty?: number;
+  variant?: CartVariant;
 }
 
 interface UseCheckoutResult {
@@ -27,35 +20,25 @@ interface UseCheckoutResult {
 }
 
 /**
- * Shared single-item checkout: requires login, records a pending order, then
- * opens WhatsApp with the order reference. Used by product cards + detail page
- * so every checkout is gated + tracked in the customer's order history.
+ * Shared buy-now funnel. Ongkir now requires recipient address + courier, so every
+ * product-level "Checkout" first commits the line to the cart, then opens the
+ * single checkout surface at /cart. The cart page handles login, destination,
+ * courier selection, order creation, and WhatsApp hand-off.
  */
 export function useCheckout(): UseCheckoutResult {
-  const { user } = useAuth();
-  const { sessionId } = useCart();
+  const { add } = useCart();
   const router = useRouter();
   const [pending, setPending] = React.useState(false);
 
   async function checkout({
-    item,
-    buildMessage,
-    nextPath,
+    product,
+    qty = 1,
+    variant,
   }: CheckoutArgs): Promise<void> {
     if (pending) return;
-    if (!user) {
-      router.push(`/account/login?next=${encodeURIComponent(nextPath)}`);
-      return;
-    }
     setPending(true);
-    const res = await createOrder({ sessionId, items: [item] });
-    if (!res.success || !res.data) {
-      toast.error(res.message);
-      setPending(false);
-      return;
-    }
-    void trackWaClick(item.productSlug, sessionId);
-    window.location.href = waLink(buildMessage(res.data.ref));
+    add(product, qty, variant);
+    router.push("/cart");
   }
 
   return { checkout, pending };

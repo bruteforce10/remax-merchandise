@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { z } from "zod";
 
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -22,31 +21,14 @@ const sessionSchema = z.string().trim().min(1).max(100);
 
 type StatKind = "view" | "cart";
 type EventKind = "view" | "cart" | "wa";
-type Device = "mobile" | "desktop" | "tablet";
 
-/** Coarse device class from the User-Agent (tablet checked before mobile). */
-function deviceFromUA(ua: string): Device {
-  const s = ua.toLowerCase();
-  if (/ipad|tablet|playbook|silk|kindle|(android(?!.*mobi))/.test(s)) {
-    return "tablet";
-  }
-  if (/mobi|iphone|ipod|blackberry|iemobile|opera mini|windows phone/.test(s)) {
-    return "mobile";
-  }
-  return "desktop";
-}
-
-/** Log one engagement event with request-derived device + country metadata. */
+/** Log one engagement event to the analytics time-series. */
 async function logEvent(
   type: EventKind,
   slug: string | null,
   sessionId?: string,
 ): Promise<void> {
   try {
-    const h = await headers();
-    const device = deviceFromUA(h.get("user-agent") ?? "");
-    // Vercel injects the visitor's ISO country code; absent in local/dev.
-    const country = h.get("x-vercel-ip-country");
     const session = sessionSchema.safeParse(sessionId);
     const { error } = await supabaseAdmin()
       .from("events")
@@ -54,8 +36,6 @@ async function logEvent(
         type,
         product_slug: slug,
         session_id: session.success ? session.data : null,
-        device,
-        country: country ? country.toUpperCase() : null,
       });
     if (error) throw error;
   } catch (error) {

@@ -19,7 +19,6 @@ import {
   variantPrice,
   variantTitle,
 } from "@/lib/variants";
-import { productMessage } from "@/lib/whatsapp";
 import { useCart } from "@/providers/CartProvider";
 import type { Category } from "@/types/category";
 import type { Product, ProductDetail } from "@/types/product";
@@ -108,6 +107,7 @@ export function ProductDetailView({
       badge: product.badge,
       imageUrl: product.imageUrl,
       keywords: product.keywords ?? "",
+      hasOptions: product.hasOptions,
     };
     const cartVariant =
       hasVariants && variant
@@ -124,24 +124,30 @@ export function ProductDetailView({
 
   function handleCheckout(): void {
     if (soldOut) return;
-    void checkout({
-      item: {
-        sku: variant?.sku ?? product.sku,
-        productSku: product.sku,
-        productSlug: product.slug,
-        name: product.name,
-        options: selected,
-        qty: finalQty,
-        unitPrice,
-      },
-      buildMessage: (ref) =>
-        productMessage(product, finalQty, {
-          options: selected,
-          unitPrice,
-          ref,
-        }),
-      nextPath: `/products/${product.slug}`,
-    });
+    const base: Product = {
+      sku: product.sku,
+      slug: product.slug,
+      name: product.name,
+      short: product.short,
+      categorySlug: product.categorySlug,
+      price: product.price,
+      stock: product.stock,
+      badge: product.badge,
+      imageUrl: product.imageUrl,
+      keywords: product.keywords ?? "",
+      hasOptions: product.hasOptions,
+    };
+    const cartVariant =
+      hasVariants && variant
+        ? {
+            sku: variant.sku,
+            title: variant.title || variantTitle(variant.options),
+            price: unitPrice,
+            options: variant.options,
+            stock: variant.stock ?? null,
+          }
+        : undefined;
+    void checkout({ product: base, qty: finalQty, variant: cartVariant });
   }
 
   return (

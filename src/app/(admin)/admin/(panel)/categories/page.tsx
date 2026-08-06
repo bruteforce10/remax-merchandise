@@ -10,8 +10,6 @@ import { getAdminProducts } from "@/services/operational/products";
 
 export const metadata: Metadata = { title: "Kategori" };
 
-const FEATURED = ["polo", "jacket", "tumbler", "umbrella"];
-
 export default async function AdminCategoriesPage(): Promise<ReactNode> {
   const [categories, products] = await Promise.all([
     getCategories(),
@@ -25,7 +23,6 @@ export default async function AdminCategoriesPage(): Promise<ReactNode> {
     ...c,
     count: counts[c.slug] ?? 0,
     order: i + 1,
-    featured: FEATURED.includes(c.slug),
     status: "published",
   }));
 

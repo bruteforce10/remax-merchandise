@@ -1,4 +1,4 @@
-import { TrendingDown, TrendingUp, type LucideIcon } from "lucide-react";
+import { Minus, TrendingDown, TrendingUp, type LucideIcon } from "lucide-react";
 import type { ReactElement } from "react";
 
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ interface StatCardProps {
   value: string;
   label: string;
   delta: string;
-  trend: "up" | "down";
+  trend: "up" | "down" | "flat";
 }
 
 export function StatCard({
@@ -44,13 +44,19 @@ export function StatCard({
         <span
           className={cn(
             "inline-flex items-center gap-0.5 text-xs font-bold",
-            trend === "up" ? "text-success-fg" : "text-danger",
+            trend === "up"
+              ? "text-success-fg"
+              : trend === "down"
+                ? "text-danger"
+                : "text-gray-400",
           )}
         >
           {trend === "up" ? (
             <TrendingUp className="h-[13px] w-[13px]" />
-          ) : (
+          ) : trend === "down" ? (
             <TrendingDown className="h-[13px] w-[13px]" />
+          ) : (
+            <Minus className="h-[13px] w-[13px]" />
           )}
           {delta}
         </span>

@@ -17,6 +17,13 @@ export interface Product {
   imageUrl: string | null;
   /** Comma-separated SEO keywords, also used to boost search matching. */
   keywords: string;
+  /**
+   * True when the product defines selectable options (color / size / custom).
+   * The storefront card uses this to open a variant picker before adding to the
+   * cart instead of adding a bare, unspecified line. Derived in the mapper from
+   * the product's own option dimensions.
+   */
+  hasOptions: boolean;
 }
 
 /** A user-defined option dimension, e.g. "Bahan" → ["Cotton", "Poly"]. */

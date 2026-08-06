@@ -9,14 +9,21 @@ import { toast } from "sonner";
 
 import { createOrder } from "@/actions/orders";
 import { trackWaClick } from "@/actions/tracking";
+import { CheckoutAddressBook } from "@/components/cart/CheckoutAddressBook";
+import { CourierSelector } from "@/components/cart/CourierSelector";
+import { ShippingDestinationForm } from "@/components/cart/ShippingDestinationForm";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
+import { useShipping } from "@/hooks/useShipping";
 import { categoryName } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { cartMessage, waLink } from "@/lib/whatsapp";
 import { lineKey, lineUnitPrice, useCart, type CartLine } from "@/providers/CartProvider";
+
+import type { CustomerAddress } from "@/types/address";
+import type { RegionOption } from "@/types/shipping";
 
 /** Stock for a cart line: variant stock when present, else product-level stock. */
 function lineStock(line: CartLine): number | null {
@@ -27,11 +34,15 @@ function lineStock(line: CartLine): number | null {
 interface CartViewProps {
   isAuthenticated: boolean;
   userEmail: string | null;
+  initialProvinces: RegionOption[];
+  savedAddresses: CustomerAddress[];
 }
 
 export function CartView({
   isAuthenticated,
   userEmail,
+  initialProvinces,
+  savedAddresses,
 }: CartViewProps): React.JSX.Element {
   const {
     lines,
@@ -45,7 +56,23 @@ export function CartView({
     sessionId,
   } = useCart();
   const router = useRouter();
+  const defaultAddress = savedAddresses.find((a) => a.isDefault) ?? savedAddresses[0] ?? null;
+  const [addressMode, setAddressMode] = React.useState<"saved" | "new">(
+    defaultAddress ? "saved" : "new",
+  );
+  const [selectedAddressId, setSelectedAddressId] = React.useState(defaultAddress?.id ?? "");
   const [checkingOut, setCheckingOut] = React.useState(false);
+  const shipping = useShipping(
+    initialProvinces,
+    lines.map((l) => ({ sku: lineKey(l), qty: l.qty })),
+    defaultAddress,
+  );
+  const shippingCost = shipping.selectedCourier?.price ?? 0;
+  const grandTotal = estimatedTotal + shippingCost;
+  const manualOngkir =
+    shipping.ratesStatus === "error" || shipping.ratesStatus === "empty";
+  const checkoutReady =
+    !!shipping.destination && (!!shipping.selectedCourier || manualOngkir);
 
   async function handleGoogleLogin(): Promise<void> {
     const supabase = createClient();
@@ -63,6 +90,15 @@ export function CartView({
   }
 
   async function handleCheckout(): Promise<void> {
+    if (!shipping.destination) {
+      toast.error("Lengkapi alamat pengiriman");
+      return;
+    }
+    if (!shipping.selectedCourier && !manualOngkir) {
+      toast.error("Pilih kurir pengiriman");
+      return;
+    }
+
     setCheckingOut(true);
     const res = await createOrder({
       sessionId,
@@ -75,6 +111,9 @@ export function CartView({
         qty: l.qty,
         unitPrice: lineUnitPrice(l),
       })),
+      destination: shipping.destination,
+      courierCode: shipping.selectedCourier?.courierCode ?? "",
+      courierService: shipping.selectedCourier?.courierName ?? "",
     });
     if (!res.success || !res.data) {
       toast.error(res.message);
@@ -90,6 +129,16 @@ export function CartView({
           unitPrice: lineUnitPrice(l),
         })),
         res.data.ref,
+        {
+          recipientName: shipping.destination.recipientName,
+          recipientPhone: shipping.destination.recipientPhone,
+          addressDetail: shipping.destination.addressDetail,
+          destinationLabel: shipping.destinationLabel,
+          courier: res.data.courierService || shipping.selectedCourier?.courierName || "",
+          subtotal: estimatedTotal,
+          shippingCost: res.data.shippingCost,
+          grandTotal: res.data.grandTotal,
+        },
       ),
     );
     void trackWaClick(undefined, sessionId);
@@ -268,79 +317,117 @@ export function CartView({
             })}
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Summary */}
-            <div className="rounded-card border border-hairline bg-white p-6">
-              <h3 className="mb-4 text-lg font-semibold text-ink">
-                Ringkasan Penawaran
-              </h3>
-              <SummaryRow label="Jumlah jenis produk" value={String(count)} />
-              <SummaryRow label="Estimasi total qty" value={`${totalQty} pcs`} />
-              <div className="flex items-center justify-between pt-4 pb-1">
-                <span className="text-[14.5px] text-muted">Estimasi nilai</span>
-                <span className="font-mono text-xl font-extrabold text-brand">
-                  {formatPrice(estimatedTotal)}
-                </span>
-              </div>
-              <div className="mt-4 flex items-center gap-2 rounded-[10px] bg-warning-subtle px-3 py-2.5 text-[13px] font-semibold text-warning-fg">
-                <Info className="h-4 w-4 flex-none" />
-                Harga belum termasuk ongkos kirim
-              </div>
-              <p className="mt-2.5 text-xs leading-relaxed text-muted-soft">
-                *Estimasi berdasarkan harga mulai. Harga final menyesuaikan
-                spesifikasi &amp; jumlah, dikonfirmasi oleh tim kami.
-              </p>
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="flex flex-col gap-6">
+              <CheckoutAddressBook
+                addresses={savedAddresses}
+                selectedId={selectedAddressId}
+                mode={addressMode}
+                shipping={shipping}
+                onSelect={(id) => {
+                  setSelectedAddressId(id);
+                  setAddressMode("saved");
+                }}
+                onNew={() => {
+                  setSelectedAddressId("");
+                  setAddressMode("new");
+                  shipping.resetDestination();
+                }}
+              />
+              {addressMode === "new" ? (
+                <ShippingDestinationForm shipping={shipping} />
+              ) : null}
+              <CourierSelector shipping={shipping} disabled={!shipping.destination} />
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col justify-center gap-3 rounded-card border border-hairline bg-white p-6">
-              {isAuthenticated ? (
-                <button
-                  type="button"
-                  onClick={() => void handleCheckout()}
-                  disabled={checkingOut}
-                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-btn bg-brand text-[16.5px] font-medium text-white shadow-cta hover:bg-brand-hover disabled:opacity-60"
-                >
-                  <CreditCard className="h-[21px] w-[21px]" />
-                  {checkingOut ? "Memproses…" : "Checkout Pembayaran"}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void handleGoogleLogin()}
-                  className="inline-flex h-14 items-center justify-center gap-2.5 rounded-btn bg-brand text-[16.5px] font-medium text-white shadow-cta hover:bg-brand-hover"
-                >
-                  <GoogleIcon className="h-[19px] w-[19px]" />
-                  Login dengan Google untuk Checkout
-                </button>
-              )}
-              <Link
-                href="/search"
-                className="inline-flex h-[52px] items-center justify-center rounded-btn border border-hairline bg-white text-[15px] font-medium text-ink hover:border-border-strong"
-              >
-                Lanjut Belanja
-              </Link>
-              {isAuthenticated ? (
-                <div className="mt-1 flex flex-wrap items-center justify-center gap-1.5 text-[12.5px] text-muted">
-                  <span className="truncate">
-                    Masuk sebagai{" "}
-                    <span className="font-semibold text-body">{userEmail}</span>
+            <div className="flex flex-col gap-6 lg:sticky lg:top-[90px]">
+              {/* Summary */}
+              <div className="rounded-card border border-hairline bg-white p-6">
+                <h3 className="mb-4 text-lg font-semibold text-ink">
+                  Ringkasan Checkout
+                </h3>
+                <SummaryRow label="Jumlah jenis produk" value={String(count)} />
+                <SummaryRow label="Estimasi total qty" value={`${totalQty} pcs`} />
+                <SummaryRow label="Subtotal produk" value={formatPrice(estimatedTotal)} />
+                <SummaryRow
+                  label={shipping.selectedCourier ? "Ongkir" : "Ongkir"}
+                  value={shipping.selectedCourier ? formatPrice(shippingCost) : "Pilih kurir"}
+                />
+                <div className="flex items-center justify-between pt-4 pb-1">
+                  <span className="text-[14.5px] font-semibold text-ink">Total</span>
+                  <span className="font-mono text-xl font-extrabold text-brand">
+                    {formatPrice(grandTotal)}
                   </span>
-                  <span aria-hidden>·</span>
+                </div>
+                {shipping.selectedCourier ? (
+                  <p className="mt-2.5 text-xs leading-relaxed text-muted-soft">
+                    Kurir: {shipping.selectedCourier.courierName}
+                    {shipping.selectedCourier.estimation
+                      ? ` · Estimasi ${shipping.selectedCourier.estimation}`
+                      : ""}
+                  </p>
+                ) : (
+                  <div className="mt-4 flex items-center gap-2 rounded-[10px] bg-warning-subtle px-3 py-2.5 text-[13px] font-semibold text-warning-fg">
+                    <Info className="h-4 w-4 flex-none" />
+                    Lengkapi alamat dan hitung ongkir JNE untuk finalisasi total.
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col justify-center gap-3 rounded-card border border-hairline bg-white p-6">
+                {isAuthenticated ? (
                   <button
                     type="button"
-                    onClick={() => void handleSignOut()}
-                    className="font-semibold text-body underline underline-offset-2 hover:text-brand"
+                    onClick={() => void handleCheckout()}
+                    disabled={checkingOut || !checkoutReady}
+                    className="inline-flex h-14 items-center justify-center gap-2.5 rounded-btn bg-brand text-[16.5px] font-medium text-white shadow-cta hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Keluar
+                    <CreditCard className="h-[21px] w-[21px]" />
+                    {checkingOut
+                      ? "Memproses…"
+                      : manualOngkir && !shipping.selectedCourier
+                        ? "Checkout (Ongkir Manual)"
+                        : "Checkout & Kirim WhatsApp"}
                   </button>
-                </div>
-              ) : (
-                <div className="mt-1 flex items-center justify-center gap-2 text-[12.5px] text-muted">
-                  <Lock className="h-[13px] w-[13px]" />
-                  Login diperlukan untuk checkout
-                </div>
-              )}
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void handleGoogleLogin()}
+                    className="inline-flex h-14 items-center justify-center gap-2.5 rounded-btn bg-brand text-[16.5px] font-medium text-white shadow-cta hover:bg-brand-hover"
+                  >
+                    <GoogleIcon className="h-[19px] w-[19px]" />
+                    Login dengan Google untuk Checkout
+                  </button>
+                )}
+                <Link
+                  href="/search"
+                  className="inline-flex h-[52px] items-center justify-center rounded-btn border border-hairline bg-white text-[15px] font-medium text-ink hover:border-border-strong"
+                >
+                  Lanjut Belanja
+                </Link>
+                {isAuthenticated ? (
+                  <div className="mt-1 flex flex-wrap items-center justify-center gap-1.5 text-[12.5px] text-muted">
+                    <span className="truncate">
+                      Masuk sebagai{" "}
+                      <span className="font-semibold text-body">{userEmail}</span>
+                    </span>
+                    <span aria-hidden>·</span>
+                    <button
+                      type="button"
+                      onClick={() => void handleSignOut()}
+                      className="font-semibold text-body underline underline-offset-2 hover:text-brand"
+                    >
+                      Keluar
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-1 flex items-center justify-center gap-2 text-[12.5px] text-muted">
+                    <Lock className="h-[13px] w-[13px]" />
+                    Login diperlukan untuk checkout
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>

@@ -12,6 +12,7 @@ export const CATEGORY_FIELDS = gql`
     colors
     sizes
     description
+    featured
   }
 `;
 
@@ -43,6 +44,9 @@ export const PRODUCT_FIELDS = gql`
     stock
     badge
     keywords
+    colors
+    sizes
+    customVariants
     category {
       slug
     }
@@ -127,6 +131,7 @@ export const ADMIN_PRODUCT_FIELDS = gql`
     description
     price
     stock
+    weight
     sizes
     colors
     material

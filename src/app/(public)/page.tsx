@@ -8,7 +8,6 @@ import {
   PopularCategories,
   type PopularCategoryItem,
 } from "@/components/home/PopularCategories";
-import { POPULAR_CATEGORY_SLUGS } from "@/lib/data/catalog";
 import { getBanners } from "@/services/content/banners";
 import { getCategories } from "@/services/content/categories";
 import { getProducts } from "@/services/content/products";
@@ -28,20 +27,21 @@ export default async function HomePage(): Promise<ReactNode> {
     acc[p.categorySlug] = (acc[p.categorySlug] ?? 0) + 1;
     return acc;
   }, {});
-  const categoryMap = new Map(categories.map((c) => [c.slug, c]));
-  const popularItems: PopularCategoryItem[] = POPULAR_CATEGORY_SLUGS.map(
-    (slug) => {
-      const c = categoryMap.get(slug);
-      return c
-        ? { slug: c.slug, name: c.name, icon: c.icon, count: counts[slug] ?? 0 }
-        : null;
-    },
-  ).filter((x): x is PopularCategoryItem => x !== null);
+  // "Kategori Populer" now mirrors the categories marked as Unggulan (featured)
+  // in the admin, in their Hygraph order.
+  const popularItems: PopularCategoryItem[] = categories
+    .filter((c) => c.featured)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      icon: c.icon,
+      count: counts[c.slug] ?? 0,
+    }));
 
   return (
     <>
       <HeroSlider banners={banners} />
-      <PopularCategories items={popularItems} />
+      {popularItems.length > 0 && <PopularCategories items={popularItems} />}
       <HomeProducts products={products} />
       <FeatureCards />
     </>

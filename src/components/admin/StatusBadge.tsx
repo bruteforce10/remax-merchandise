@@ -14,7 +14,9 @@ const MAP: Record<StatusKey, { label: string; cls: string }> = {
   contacted: { label: "Dihubungi", cls: "bg-warning-subtle text-warning-fg" },
   completed: { label: "Selesai", cls: "bg-success-subtle text-success-fg" },
   pending: { label: "Menunggu", cls: "bg-warning-subtle text-warning-fg" },
-  confirmed: { label: "Dikonfirmasi", cls: "bg-success-subtle text-success-fg" },
+  confirmed: { label: "Dikonfirmasi", cls: "bg-brand-subtle text-brand-dark" },
+  processing: { label: "Diproses", cls: "bg-blue-50 text-blue-700" },
+  shipped: { label: "Dikirim", cls: "bg-violet-50 text-violet-700" },
   rejected: { label: "Ditolak", cls: "bg-gray-100 text-gray-500" },
 };
 

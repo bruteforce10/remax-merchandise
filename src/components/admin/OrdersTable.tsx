@@ -1,10 +1,15 @@
 "use client";
 
-import { Check, Package, X } from "lucide-react";
+import { ArrowRight, Check, FileText, Package, Pencil, Truck, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { confirmOrder, rejectOrder } from "@/actions/orders";
+import { confirmOrder } from "@/actions/orders";
+import {
+  AdvanceOrderDialog,
+  type AdvanceTarget,
+} from "@/components/admin/AdvanceOrderDialog";
+import { ShippingOverrideDialog } from "@/components/admin/ShippingOverrideDialog";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -14,12 +19,19 @@ const STATUS_FILTERS: { value: "all" | OrderStatus; label: string; dot: string }
   [
     { value: "all", label: "Semua", dot: "bg-gray-400" },
     { value: "pending", label: "Menunggu", dot: "bg-warning" },
-    { value: "confirmed", label: "Dikonfirmasi", dot: "bg-success" },
+    { value: "confirmed", label: "Dikonfirmasi", dot: "bg-brand" },
+    { value: "processing", label: "Diproses", dot: "bg-blue-500" },
+    { value: "shipped", label: "Dikirim", dot: "bg-violet-500" },
+    { value: "completed", label: "Selesai", dot: "bg-success" },
     { value: "rejected", label: "Ditolak", dot: "bg-gray-400" },
   ];
 
 const TH =
   "px-4 py-3.5 text-left text-[12px] font-bold tracking-[0.04em] text-gray-400 uppercase";
+const BTN_PRIMARY =
+  "inline-flex h-8 items-center gap-1.5 rounded-btn bg-brand px-3 text-[12.5px] font-semibold text-white hover:bg-brand-hover disabled:opacity-60";
+const BTN_OUTLINE =
+  "inline-flex h-8 items-center gap-1.5 rounded-btn border border-admin-border bg-white px-3 text-[12.5px] font-semibold text-gray-600 hover:text-ink disabled:opacity-60";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("id-ID", {
@@ -34,12 +46,19 @@ function optionsLabel(options: Record<string, string>): string {
   return vals.length ? ` (${vals.join(" / ")})` : "";
 }
 
+interface DialogState {
+  order: Order;
+  target: AdvanceTarget;
+}
+
 export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element {
   const [items, setItems] = React.useState<Order[]>(orders);
   const [statusFilter, setStatusFilter] = React.useState<"all" | OrderStatus>(
     "all",
   );
   const [busyId, setBusyId] = React.useState<string | null>(null);
+  const [dialog, setDialog] = React.useState<DialogState | null>(null);
+  const [shippingDialog, setShippingDialog] = React.useState<Order | null>(null);
 
   const filtered =
     statusFilter === "all"
@@ -50,9 +69,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
     setBusyId(id);
     const res = await confirmOrder(id);
     if (res.success) {
-      setItems((list) =>
-        list.map((o) => (o.id === id ? { ...o, status: "confirmed" } : o)),
-      );
+      patchOrder(id, { status: "confirmed" });
       toast.success(res.message);
     } else {
       toast.error(res.message);
@@ -60,18 +77,91 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
     setBusyId(null);
   }
 
-  async function onReject(id: string): Promise<void> {
-    setBusyId(id);
-    const res = await rejectOrder(id);
-    if (res.success) {
-      setItems((list) =>
-        list.map((o) => (o.id === id ? { ...o, status: "rejected" } : o)),
-      );
-      toast.success(res.message);
-    } else {
-      toast.error(res.message);
+  function patchOrder(id: string, patch: Partial<Order>): void {
+    setItems((list) => list.map((o) => (o.id === id ? { ...o, ...patch } : o)));
+  }
+
+  function pdfLink(o: Order): React.JSX.Element {
+    return (
+      <a href={`/api/admin/orders/${o.id}/form`} className={BTN_OUTLINE}>
+        <FileText className="h-[14px] w-[14px]" />
+        PDF
+      </a>
+    );
+  }
+
+  function renderActions(o: Order): React.JSX.Element {
+    switch (o.status) {
+      case "pending":
+        return (
+          <div className="inline-flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              disabled={busyId === o.id}
+              onClick={() => void onConfirm(o.id)}
+              className={BTN_PRIMARY}
+            >
+              <Check className="h-[14px] w-[14px]" />
+              Konfirmasi
+            </button>
+            <button
+              type="button"
+              disabled={busyId === o.id}
+              onClick={() => setDialog({ order: o, target: "rejected" })}
+              className={cn(BTN_OUTLINE, "hover:text-danger")}
+            >
+              <X className="h-[14px] w-[14px]" />
+              Tolak
+            </button>
+          </div>
+        );
+      case "confirmed":
+        return (
+          <div className="inline-flex flex-wrap justify-end gap-2">
+            {pdfLink(o)}
+            <button
+              type="button"
+              onClick={() => setDialog({ order: o, target: "processing" })}
+              className={BTN_PRIMARY}
+            >
+              <ArrowRight className="h-[14px] w-[14px]" />
+              Proses
+            </button>
+          </div>
+        );
+      case "processing":
+        return (
+          <div className="inline-flex flex-wrap justify-end gap-2">
+            {pdfLink(o)}
+            <button
+              type="button"
+              onClick={() => setDialog({ order: o, target: "shipped" })}
+              className={BTN_PRIMARY}
+            >
+              <Truck className="h-[14px] w-[14px]" />
+              Kirim
+            </button>
+          </div>
+        );
+      case "shipped":
+        return (
+          <div className="inline-flex flex-wrap justify-end gap-2">
+            {pdfLink(o)}
+            <button
+              type="button"
+              onClick={() => setDialog({ order: o, target: "completed" })}
+              className={BTN_PRIMARY}
+            >
+              <Check className="h-[14px] w-[14px]" />
+              Selesai
+            </button>
+          </div>
+        );
+      case "completed":
+        return pdfLink(o);
+      default:
+        return <span className="text-[12.5px] text-gray-300">—</span>;
     }
-    setBusyId(null);
   }
 
   return (
@@ -81,7 +171,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
           Pesanan
         </h1>
         <p className="mt-0.5 text-[14.5px] text-gray-500">
-          Konfirmasi pesanan untuk mengurangi stok
+          Konfirmasi, proses, dan lacak pengiriman pesanan
         </p>
       </div>
 
@@ -109,7 +199,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
 
       <div className="overflow-hidden rounded-card border border-admin-border bg-white">
         <div className="rmx-scrollbar overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse">
+          <table className="w-full min-w-[960px] border-collapse">
             <thead>
               <tr className="border-b border-gray-200 bg-[#FAFBFC]">
                 <th className={TH}>Order</th>
@@ -117,6 +207,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                 <th className={TH}>Customer</th>
                 <th className={TH}>Item</th>
                 <th className={TH}>Total</th>
+                <th className={TH}>Pengiriman</th>
                 <th className={TH}>Status</th>
                 <th className={cn(TH, "text-right")}>Aksi</th>
               </tr>
@@ -125,7 +216,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
               {filtered.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-14 text-center text-[14px] text-gray-400"
                   >
                     Belum ada pesanan.
@@ -165,38 +256,48 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-[13.5px] font-bold whitespace-nowrap text-brand">
-                      {formatPrice(o.estimatedTotal)}
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <div className="font-mono text-[13.5px] font-bold text-brand">
+                        {formatPrice(o.grandTotal)}
+                      </div>
+                      <div className="mt-0.5 text-[11px] text-gray-400">
+                        Subtotal {formatPrice(o.estimatedTotal)} · Ongkir {formatPrice(o.shippingCost)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 text-[12.5px] text-gray-600">
+                      <div className="font-semibold text-ink">
+                        {o.destination.recipientName || "—"}
+                      </div>
+                      {o.destination.villageName ? (
+                        <>
+                          <div className="mt-0.5 max-w-[220px] leading-snug text-gray-500">
+                            {o.destination.addressDetail}, {o.destination.villageName}, {o.destination.districtName}, {o.destination.regencyName}
+                          </div>
+                          <div className="mt-1 font-mono text-[11px] text-gray-400">
+                            {o.courierService || o.courierCode || "Kurir belum dipilih"} · {(o.totalWeightGrams / 1000).toFixed(2)} kg
+                          </div>
+                        </>
+                      ) : null}
+                      {o.status !== "completed" && o.status !== "rejected" ? (
+                        <button
+                          type="button"
+                          onClick={() => setShippingDialog(o)}
+                          className="mt-2 inline-flex h-7 items-center gap-1.5 rounded-btn border border-admin-border bg-white px-2.5 text-[11.5px] font-semibold text-gray-600 hover:text-ink"
+                        >
+                          <Pencil className="h-3 w-3" />
+                          Ubah ongkir
+                        </button>
+                      ) : null}
                     </td>
                     <td className="px-4 py-3.5">
                       <StatusBadge status={o.status} />
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      {o.status === "pending" ? (
-                        <div className="inline-flex gap-2">
-                          <button
-                            type="button"
-                            disabled={busyId === o.id}
-                            onClick={() => void onConfirm(o.id)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-btn bg-brand px-3 text-[12.5px] font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
-                          >
-                            <Check className="h-[14px] w-[14px]" />
-                            Konfirmasi
-                          </button>
-                          <button
-                            type="button"
-                            disabled={busyId === o.id}
-                            onClick={() => void onReject(o.id)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-btn border border-admin-border bg-white px-3 text-[12.5px] font-semibold text-gray-600 hover:text-danger disabled:opacity-60"
-                          >
-                            <X className="h-[14px] w-[14px]" />
-                            Tolak
-                          </button>
+                      {o.resi ? (
+                        <div className="mt-1 font-mono text-[11px] text-gray-400">
+                          {o.courier} · {o.resi}
                         </div>
-                      ) : (
-                        <span className="text-[12.5px] text-gray-300">—</span>
-                      )}
+                      ) : null}
                     </td>
+                    <td className="px-4 py-3.5 text-right">{renderActions(o)}</td>
                   </tr>
                 ))
               )}
@@ -204,6 +305,18 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
           </table>
         </div>
       </div>
+
+      <AdvanceOrderDialog
+        order={dialog?.order ?? null}
+        target={dialog?.target ?? null}
+        onClose={() => setDialog(null)}
+        onDone={patchOrder}
+      />
+      <ShippingOverrideDialog
+        order={shippingDialog}
+        onClose={() => setShippingDialog(null)}
+        onDone={patchOrder}
+      />
     </div>
   );
 }

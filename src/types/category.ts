@@ -11,4 +11,6 @@ export interface Category {
   colors: string[];
   sizes: string[];
   description: string;
+  /** Highlighted/"unggulan" category. Backed by Hygraph Category.featured. */
+  featured: boolean;
 }

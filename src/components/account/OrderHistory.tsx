@@ -1,17 +1,23 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { Badge, type BadgeProps } from "@/components/ui/Badge";
 import { formatPrice } from "@/lib/format";
-import type { Order, OrderStatus } from "@/types/order";
+import {
+  ORDER_STAGES,
+  ORDER_STATUS_META,
+  stageIndex,
+  type StatusTone,
+} from "@/lib/orders/status";
+import { cn } from "@/lib/utils";
+import type { Order } from "@/types/order";
 
-const STATUS_META: Record<
-  OrderStatus,
-  { label: string; variant: NonNullable<BadgeProps["variant"]> }
-> = {
-  pending: { label: "Menunggu Konfirmasi", variant: "warning" },
-  confirmed: { label: "Dikonfirmasi", variant: "success" },
-  rejected: { label: "Ditolak", variant: "danger" },
+const TONE_VARIANT: Record<StatusTone, NonNullable<BadgeProps["variant"]>> = {
+  pending: "warning",
+  progress: "info",
+  success: "success",
+  danger: "danger",
 };
 
 function formatDate(iso: string): string {
@@ -20,6 +26,47 @@ function formatDate(iso: string): string {
     month: "short",
     year: "numeric",
   });
+}
+
+function latestNote(order: Order): string {
+  const last = order.history[order.history.length - 1];
+  return last?.note || ORDER_STATUS_META[order.status].description;
+}
+
+function MiniStepper({ status }: { status: Order["status"] }): ReactElement | null {
+  if (status === "rejected") return null;
+  const currentIdx = stageIndex(status);
+  return (
+    <div className="mt-3.5 flex items-center">
+      {ORDER_STAGES.map((st, idx) => {
+        const active = idx <= currentIdx;
+        return (
+          <div
+            key={st}
+            className={cn(
+              "flex items-center",
+              idx < ORDER_STAGES.length - 1 && "flex-1",
+            )}
+          >
+            <span
+              className={cn(
+                "h-2.5 w-2.5 flex-none rounded-full",
+                active ? "bg-brand" : "bg-gray-200",
+              )}
+            />
+            {idx < ORDER_STAGES.length - 1 && (
+              <span
+                className={cn(
+                  "h-px flex-1",
+                  idx < currentIdx ? "bg-brand" : "bg-gray-200",
+                )}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export function OrderHistory({ orders }: { orders: Order[] }): ReactElement {
@@ -45,7 +92,7 @@ export function OrderHistory({ orders }: { orders: Order[] }): ReactElement {
   return (
     <div className="flex flex-col gap-4">
       {orders.map((order) => {
-        const meta = STATUS_META[order.status];
+        const meta = ORDER_STATUS_META[order.status];
         return (
           <div
             key={order.id}
@@ -57,7 +104,7 @@ export function OrderHistory({ orders }: { orders: Order[] }): ReactElement {
                   <span className="font-mono text-[15px] font-extrabold text-ink">
                     #{order.ref}
                   </span>
-                  <Badge variant={meta.variant}>{meta.label}</Badge>
+                  <Badge variant={TONE_VARIANT[meta.tone]}>{meta.label}</Badge>
                 </div>
                 <div className="mt-1 text-[12.5px] text-gray-400">
                   {formatDate(order.createdAt)} · {order.totalQty} pcs
@@ -71,10 +118,22 @@ export function OrderHistory({ orders }: { orders: Order[] }): ReactElement {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2.5 pt-3.5">
-              {order.items.map((item) => (
+            <MiniStepper status={order.status} />
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+              <p className="text-[13px] text-muted">{latestNote(order)}</p>
+              <Link
+                href={`/lacak/${order.ref}`}
+                className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
+              >
+                Lacak status
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            <div className="mt-3.5 flex flex-col gap-2.5 border-t border-gray-100 pt-3.5">
+              {order.items.map((item, idx) => (
                 <div
-                  key={item.sku}
+                  key={`${item.sku}-${idx}`}
                   className="flex items-start justify-between gap-4"
                 >
                   <div className="min-w-0">

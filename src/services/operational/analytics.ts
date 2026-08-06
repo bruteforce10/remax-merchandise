@@ -3,16 +3,11 @@ import { formatNumber } from "@/lib/format";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getAdminProducts } from "@/services/operational/products";
 import { getPopularKeywords, getTotalSearches } from "@/services/operational/search";
-import type {
-  Analytics,
-  CountryStat,
-  DeviceStat,
-  MetricCard,
-} from "@/types/admin";
+import type { Analytics, MetricCard } from "@/types/admin";
 
-/** Rolling windows: breakdowns over 30 days, the trend chart over 14. */
+/** Rolling windows: momentum deltas over 30 days, the trend chart over 12 weeks. */
 const WINDOW_DAYS = 30;
-const DAILY_DAYS = 14;
+const WEEKLY_WEEKS = 12;
 const KEYWORD_LIMIT = 12;
 
 /** Per-product cumulative funnel (same source as the Leads page). */
@@ -22,18 +17,10 @@ interface StatRow {
   cart_count: number | string;
   checkout_count: number | string;
 }
-interface DailyRow {
-  day: string;
+interface WeeklyRow {
+  week_start: string;
   views: number | string;
   wa_clicks: number | string;
-}
-interface DeviceRow {
-  device: string;
-  sessions: number | string;
-}
-interface CountryRow {
-  country: string;
-  count: number | string;
 }
 interface TotalsRow {
   views_cur: number | string;
@@ -45,31 +32,6 @@ interface SearchTotalsRow {
   cur: number | string;
   prev: number | string;
 }
-
-const DEVICE_LABELS: Record<string, string> = {
-  mobile: "Mobile",
-  desktop: "Desktop",
-  tablet: "Tablet",
-};
-
-/** ISO country code → Indonesian display name (common markets; else the code). */
-const COUNTRY_NAMES: Record<string, string> = {
-  ID: "Indonesia",
-  SG: "Singapura",
-  MY: "Malaysia",
-  US: "Amerika Serikat",
-  AU: "Australia",
-  GB: "Inggris",
-  NL: "Belanda",
-  JP: "Jepang",
-  CN: "Tiongkok",
-  KR: "Korea Selatan",
-  IN: "India",
-  TH: "Thailand",
-  PH: "Filipina",
-  VN: "Vietnam",
-  XX: "Tidak diketahui",
-};
 
 /** Percent-change delta vs. the preceding window, formatted id-ID. */
 function pctDelta(
@@ -87,43 +49,14 @@ function pctDelta(
   return { delta: `${sign}${value}%`, trend: pct >= 0 ? "up" : "down" };
 }
 
-function countryName(code: string): string {
-  return COUNTRY_NAMES[code] ?? code;
-}
-
-/** Top devices as display rows, ordered by session share (drops empty data). */
-function toDeviceStats(rows: DeviceRow[]): DeviceStat[] {
-  const total = rows.reduce((sum, r) => sum + Number(r.sessions), 0);
-  if (total === 0) return [];
-  return rows.map((r) => ({
-    label: DEVICE_LABELS[r.device] ?? r.device,
-    pct: Math.round((Number(r.sessions) / total) * 100),
-  }));
-}
-
-/** Top 3 countries by share + an aggregated "Lainnya" for the remainder. */
-function toCountryStats(rows: CountryRow[]): CountryStat[] {
-  const total = rows.reduce((sum, r) => sum + Number(r.count), 0);
-  if (total === 0) return [];
-  const pct = (n: number): string => `${Math.round((n / total) * 100)}%`;
-  const top = rows.slice(0, 3);
-  const restTotal = rows.slice(3).reduce((sum, r) => sum + Number(r.count), 0);
-  const stats: CountryStat[] = top.map((r) => ({
-    name: countryName(r.country),
-    pct: pct(Number(r.count)),
-  }));
-  if (restTotal > 0) stats.push({ name: "Lainnya", pct: pct(restTotal) });
-  return stats;
-}
-
 /**
  * Real analytics for the admin dashboard. Totals, top products, and popular
  * category come from `product_stats` (the accumulated funnel data the Leads
  * page also uses) plus `search_logs` — so they are populated immediately. The
- * daily trend, device and country breakdowns, and WhatsApp-click totals come
- * from the `events` time-series (recorded from now on; no historical backfill
- * is possible, so those panels fill in as traffic arrives). Every panel
- * degrades to an empty state when its data source is not yet available.
+ * weekly trend and WhatsApp-click totals come from the `events` time-series
+ * (recorded from now on; no historical backfill is possible, so the chart fills
+ * in as traffic arrives). Every panel degrades to an empty state when its data
+ * source is not yet available.
  */
 export async function getAnalytics(): Promise<Analytics> {
   const db = supabaseAdmin();
@@ -133,9 +66,7 @@ export async function getAnalytics(): Promise<Analytics> {
     totalSearches,
     statsRes,
     waCountRes,
-    dailyRes,
-    deviceRes,
-    countryRes,
+    weeklyRes,
     totalsRes,
     searchTotalsRes,
   ] = await Promise.all([
@@ -144,9 +75,7 @@ export async function getAnalytics(): Promise<Analytics> {
     getTotalSearches(),
     db.from("product_stats").select("product_slug, views, cart_count, checkout_count"),
     db.from("events").select("*", { count: "exact", head: true }).eq("type", "wa"),
-    db.rpc("event_daily", { p_days: DAILY_DAYS }),
-    db.rpc("event_devices", { p_days: WINDOW_DAYS }),
-    db.rpc("event_countries", { p_days: WINDOW_DAYS }),
+    db.rpc("event_weekly", { p_weeks: WEEKLY_WEEKS }),
     db.rpc("event_totals", { p_days: WINDOW_DAYS }),
     db.rpc("search_totals", { p_days: WINDOW_DAYS }),
   ]);
@@ -182,12 +111,18 @@ export async function getAnalytics(): Promise<Analytics> {
 
   const waTotal = waCountRes.count ?? 0;
 
-  // Time-series panels from `events` (fill in from now on).
-  const daily: [number, number][] = ((dailyRes.data as DailyRow[]) ?? []).map(
-    (r) => [Number(r.views), Number(r.wa_clicks)],
-  );
-  const devices = toDeviceStats((deviceRes.data as DeviceRow[]) ?? []);
-  const countries = toCountryStats((countryRes.data as CountryRow[]) ?? []);
+  // Weekly trend from `events` (fills in from now on). Label each bar by its
+  // week-start date, formatted in UTC so the day shown matches week_start.
+  const weekFmt = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+  const weekly = ((weeklyRes.data as WeeklyRow[]) ?? []).map((r) => ({
+    label: weekFmt.format(new Date(r.week_start)),
+    views: Number(r.views),
+    wa: Number(r.wa_clicks),
+  }));
 
   // 30-day momentum deltas (real once the `events`/RPCs exist and see traffic).
   const totals = ((totalsRes.data as TotalsRow[]) ?? [])[0];
@@ -227,7 +162,12 @@ export async function getAnalytics(): Promise<Analytics> {
     { label: "Total Pencarian", value: formatNumber(totalSearches), ...searchDelta },
   ];
 
-  const keywords = keywordRows.map((k) => ({ label: k.keyword, count: k.count }));
+  const keywords = keywordRows.map((k) => ({
+    label: k.keyword,
+    count: k.count,
+    weekCount: k.weekCount,
+    lastSearched: k.lastSearched,
+  }));
 
-  return { metrics, daily, devices, keywords, countries, topProducts };
+  return { metrics, weekly, keywords, topProducts };
 }

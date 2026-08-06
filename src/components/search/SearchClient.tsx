@@ -6,25 +6,18 @@ import * as React from "react";
 
 import { logSearch } from "@/actions/tracking";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
-import { ProductGrid } from "@/components/product/ProductGrid";
+import { InfiniteProductGrid } from "@/components/product/InfiniteProductGrid";
 import { Filters, type FilterValue } from "@/components/search/Filters";
-import { Pagination } from "@/components/search/Pagination";
 import { ProductSkeletonGrid } from "@/components/search/ProductSkeletonGrid";
 import { SortSelect } from "@/components/search/SortSelect";
 import { Drawer } from "@/components/ui/Drawer";
 import { CategoryIcon } from "@/components/ui/Icon";
 import {
   filterProducts,
-  paginate,
   searchSuggestions,
   sortProducts,
 } from "@/lib/catalog";
-import {
-  CATEGORIES,
-  PAGE_SIZE,
-  POPULAR_SEARCHES,
-  PRICE_MAX,
-} from "@/lib/data/catalog";
+import { CATEGORIES, POPULAR_SEARCHES, PRICE_MAX } from "@/lib/data/catalog";
 import { generalMessage, waLink } from "@/lib/whatsapp";
 import type { Product, SortOption } from "@/types/product";
 
@@ -59,7 +52,6 @@ export function SearchClient({
   const [focused, setFocused] = React.useState(false);
   const [filters, setFilters] = React.useState<FilterValue>(DEFAULT_FILTERS);
   const [sort, setSort] = React.useState<SortOption>("popular");
-  const [page, setPage] = React.useState(1);
   const [recent, setRecent] = React.useState<string[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -74,10 +66,10 @@ export function SearchClient({
     }
   }, []);
 
-  // Sync input + reset page + brief skeleton whenever the committed query changes.
+  // Sync input + brief skeleton whenever the committed query changes. The result
+  // grid resets to the top on its own once the new results render.
   React.useEffect(() => {
     setQuery(committedQuery);
-    setPage(1);
     if (committedQuery) {
       setLoading(true);
       const t = window.setTimeout(() => setLoading(false), 350);
@@ -103,12 +95,10 @@ export function SearchClient({
 
   function updateFilters(patch: Partial<FilterValue>): void {
     setFilters((prev) => ({ ...prev, ...patch }));
-    setPage(1);
   }
 
   function resetFilters(): void {
     setFilters(DEFAULT_FILTERS);
-    setPage(1);
   }
 
   const activeCount =
@@ -129,12 +119,6 @@ export function SearchClient({
     });
     return sortProducts(filtered, sort);
   }, [products, committedQuery, filters, sort]);
-
-  const { items: pageCards, page: currentPage, pageCount } = paginate(
-    results,
-    page,
-    PAGE_SIZE,
-  );
 
   const suggestions = React.useMemo(
     () => searchSuggestions(products, query),
@@ -239,13 +223,7 @@ export function SearchClient({
                   </span>
                 )}
               </button>
-              <SortSelect
-                value={sort}
-                onChange={(v) => {
-                  setSort(v);
-                  setPage(1);
-                }}
-              />
+              <SortSelect value={sort} onChange={setSort} />
             </div>
           </div>
 
@@ -264,10 +242,7 @@ export function SearchClient({
               {loading ? (
                 <ProductSkeletonGrid />
               ) : results.length > 0 ? (
-                <>
-                  <ProductGrid products={pageCards} />
-                  <Pagination page={currentPage} pageCount={pageCount} onPage={setPage} />
-                </>
+                <InfiniteProductGrid products={results} />
               ) : (
                 <EmptyState onReset={resetFilters} />
               )}

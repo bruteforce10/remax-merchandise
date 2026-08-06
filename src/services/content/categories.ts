@@ -12,23 +12,29 @@ import type { Category } from "@/types/category";
  * on failure so a transient CMS error degrades gracefully.
  */
 
-async function fetchCategories(): Promise<Category[]> {
-  try {
+// Only successful responses are cached. If the request throws it propagates out
+// of unstable_cache (which does NOT cache rejections), so a transient CMS error
+// is retried on the next call instead of poisoning the cache with an empty list.
+const fetchCategoriesCached: () => Promise<Category[]> = unstable_cache(
+  async () => {
     const { categories } = await hygraphRead().request<{
       categories: RawCategory[];
     }>(CATEGORIES_QUERY);
     return categories.map(mapCategory);
+  },
+  ["categories"],
+  { revalidate: 300, tags: ["categories"] },
+);
+
+export async function getCategories(): Promise<Category[]> {
+  try {
+    return await fetchCategoriesCached();
   } catch (error) {
+    // Degrade gracefully for the caller, but the failure itself is not cached.
     console.error("getCategories failed:", error);
     return [];
   }
 }
-
-export const getCategories: () => Promise<Category[]> = unstable_cache(
-  fetchCategories,
-  ["categories"],
-  { revalidate: 300, tags: ["categories"] },
-);
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const categories = await getCategories();

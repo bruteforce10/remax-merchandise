@@ -21,7 +21,6 @@ import type { ProductStatus } from "@/types/admin";
 export interface AdminCategory extends Category {
   count: number;
   order: number;
-  featured: boolean;
   status: ProductStatus;
 }
 
@@ -42,6 +41,16 @@ const ICON_OPTIONS = [
 
 const FIELD =
   "h-[46px] rounded-btn border border-admin-border bg-admin-bg px-3.5 text-[14.5px] outline-none focus:border-brand focus:bg-white";
+
+// Light normalizer for live slug typing: keeps single hyphens (incl. a trailing
+// one) so the field stays usable while typing. Final cleanup happens via
+// slugify() on blur and on save.
+function normalizeSlugInput(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-{2,}/g, "-");
+}
 
 export function CategoriesGrid({
   initial,
@@ -85,17 +94,21 @@ export function CategoriesGrid({
       branding: data.branding,
       colors: data.colors,
       sizes: data.sizes,
+      featured: data.featured,
     };
     const isNew = editing === "new";
+    // The original slug identifies the row to update/replace; the new slug in
+    // `data` may differ when the admin renames it.
+    const originalSlug = isNew || editing === null ? data.slug : editing.slug;
     const res = isNew
       ? await createCategory(input)
-      : await updateCategory(data.slug, input);
+      : await updateCategory(originalSlug, input);
     if (!res.success) {
       toast.error(res.message);
       return false;
     }
     setItems((list) => {
-      const idx = list.findIndex((c) => c.slug === data.slug);
+      const idx = list.findIndex((c) => c.slug === originalSlug);
       if (idx >= 0) {
         const next = [...list];
         next[idx] = data;
@@ -266,13 +279,24 @@ function CategoryForm({
   onSave: (c: AdminCategory) => Promise<boolean>;
 }): React.JSX.Element {
   const [name, setName] = React.useState(initial?.name ?? "");
+  const [slug, setSlug] = React.useState(initial?.slug ?? "");
+  const [slugEdited, setSlugEdited] = React.useState(false);
   const [icon, setIcon] = React.useState(initial?.icon ?? "shirt");
   const [description, setDescription] = React.useState(initial?.description ?? "");
   const [featured, setFeatured] = React.useState(initial?.featured ?? false);
   const [status, setStatus] = React.useState<ProductStatus>(initial?.status ?? "published");
   const [pending, setPending] = React.useState(false);
 
-  const slug = initial?.slug ?? (name ? slugify(name) : "");
+  // Slug auto-follows the name until the admin edits the slug field directly.
+  function handleNameChange(value: string): void {
+    setName(value);
+    if (!slugEdited) setSlug(slugify(value));
+  }
+
+  function handleSlugChange(value: string): void {
+    setSlugEdited(true);
+    setSlug(normalizeSlugInput(value));
+  }
 
   return (
     <div>
@@ -293,7 +317,7 @@ function CategoryForm({
       <div className="flex flex-col gap-3.5">
         <label className="flex flex-col gap-1.5">
           <span className="text-[13px] font-semibold text-gray-600">Nama</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} className={FIELD} />
+          <input value={name} onChange={(e) => handleNameChange(e.target.value)} className={FIELD} />
         </label>
         <div className="grid grid-cols-2 gap-3.5">
           <label className="flex flex-col gap-1.5">
@@ -308,7 +332,13 @@ function CategoryForm({
           </label>
           <label className="flex flex-col gap-1.5">
             <span className="text-[13px] font-semibold text-gray-600">Slug</span>
-            <input value={slug} readOnly className={`${FIELD} font-mono text-gray-500`} />
+            <input
+              value={slug}
+              onChange={(e) => handleSlugChange(e.target.value)}
+              onBlur={() => setSlug((s) => slugify(s))}
+              placeholder="otomatis-dari-nama"
+              className={`${FIELD} font-mono`}
+            />
           </label>
         </div>
         <label className="flex flex-col gap-1.5">
@@ -372,9 +402,14 @@ function CategoryForm({
               toast.error("Nama kategori wajib diisi");
               return;
             }
+            const finalSlug = slugify(slug) || slugify(name);
+            if (!finalSlug) {
+              toast.error("Slug tidak valid");
+              return;
+            }
             setPending(true);
             const ok = await onSave({
-              slug: slug || slugify(name),
+              slug: finalSlug,
               name: name.trim(),
               icon,
               description,

@@ -4,7 +4,7 @@ import Image from "next/image";
 import * as React from "react";
 
 import { CategoryIcon } from "@/components/ui/Icon";
-import { CATEGORY_IMAGE_PATHS } from "@/lib/categoryImages";
+import { categoryImageSrc } from "@/lib/categoryImages";
 import { cn } from "@/lib/utils";
 
 interface CategoryVisualProps {
@@ -14,6 +14,17 @@ interface CategoryVisualProps {
   imageClassName?: string;
   iconClassName?: string;
   sizes?: string;
+  /**
+   * Optional adaptive container. When any wrap class is provided, CategoryVisual
+   * renders its own <span> and swaps imageWrapClassName / iconWrapClassName
+   * depending on whether the product image actually loaded — so callers get
+   * image-vs-icon styling (size, background) without needing to know ahead of
+   * time whether the file exists. When omitted, only the inner image/icon is
+   * rendered and the caller supplies the container (legacy behavior).
+   */
+  wrapClassName?: string;
+  imageWrapClassName?: string;
+  iconWrapClassName?: string;
 }
 
 export function CategoryVisual({
@@ -23,17 +34,16 @@ export function CategoryVisual({
   imageClassName,
   iconClassName,
   sizes = "52px",
+  wrapClassName,
+  imageWrapClassName,
+  iconWrapClassName,
 }: CategoryVisualProps): React.JSX.Element {
   const [failed, setFailed] = React.useState(false);
-  const src = CATEGORY_IMAGE_PATHS[slug];
+  const showImage = !failed;
 
-  if (!src || failed) {
-    return <CategoryIcon name={icon} className={iconClassName} />;
-  }
-
-  return (
+  const content = showImage ? (
     <Image
-      src={src}
+      src={categoryImageSrc(slug)}
       alt=""
       fill
       sizes={sizes}
@@ -41,5 +51,23 @@ export function CategoryVisual({
       onError={() => setFailed(true)}
       aria-label={name}
     />
+  ) : (
+    <CategoryIcon name={icon} className={iconClassName} />
+  );
+
+  if (!wrapClassName && !imageWrapClassName && !iconWrapClassName) {
+    return content;
+  }
+
+  return (
+    <span
+      className={cn(
+        "relative flex items-center justify-center overflow-hidden",
+        wrapClassName,
+        showImage ? imageWrapClassName : iconWrapClassName,
+      )}
+    >
+      {content}
+    </span>
   );
 }

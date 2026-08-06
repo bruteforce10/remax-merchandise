@@ -22,12 +22,14 @@ const categorySchema = z.object({
   branding: z.string().default(""),
   colors: z.array(z.string()).default([]),
   sizes: z.array(z.string()).default([]),
+  featured: z.boolean().default(false),
 });
 
 export type CategoryInput = z.input<typeof categorySchema>;
 
 function revalidateCategories(): void {
   revalidateTag("categories");
+  revalidatePath("/");
   revalidatePath("/categories");
   revalidatePath("/admin/categories");
 }
@@ -75,10 +77,10 @@ export async function updateCategory(
 
   try {
     const client = hygraphWrite();
-    // slug is the stable identifier and is not editable in the form, so the
-    // parsed slug always equals the target slug (updating it is a no-op).
+    // `slug` is the current identifier; the admin may rename it, so `data.slug`
+    // can differ. Update by the old slug, then publish the (possibly new) slug.
     await client.request(UPDATE_CATEGORY, { slug, data: parsed.data });
-    await client.request(PUBLISH_CATEGORY, { slug });
+    await client.request(PUBLISH_CATEGORY, { slug: parsed.data.slug });
     revalidateCategories();
     return { success: true, data: null, message: "Kategori diperbarui" };
   } catch (error) {

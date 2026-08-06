@@ -140,16 +140,17 @@ export function SiteHeader({
                       onClick={() => setCatMenuOpen(false)}
                       className="flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 hover:bg-gray-50"
                     >
-                      <span className="relative flex h-[34px] w-[34px] flex-none items-center justify-center overflow-hidden rounded-[9px] bg-brand-subtle text-brand">
-                        <CategoryVisual
-                          slug={c.slug}
-                          name={c.name}
-                          icon={c.icon}
-                          imageClassName="p-0.5"
-                          iconClassName="h-[17px] w-[17px]"
-                          sizes="34px"
-                        />
-                      </span>
+                      <CategoryVisual
+                        slug={c.slug}
+                        name={c.name}
+                        icon={c.icon}
+                        imageClassName="p-0.5"
+                        iconClassName="h-[17px] w-[17px]"
+                        sizes="34px"
+                        wrapClassName="h-[34px] w-[34px] flex-none rounded-[9px] text-brand"
+                        imageWrapClassName="bg-white"
+                        iconWrapClassName="bg-brand-subtle"
+                      />
                       <span className="text-sm font-semibold text-ink">
                         {c.name}
                       </span>
@@ -329,16 +330,17 @@ export function SiteHeader({
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2.5 rounded-[10px] border border-gray-100 p-2.5"
               >
-                <span className="relative flex h-7 w-7 flex-none items-center justify-center overflow-hidden rounded-[8px] bg-brand-subtle text-brand">
-                  <CategoryVisual
-                    slug={c.slug}
-                    name={c.name}
-                    icon={c.icon}
-                    imageClassName="p-0.5"
-                    iconClassName="h-4 w-4"
-                    sizes="28px"
-                  />
-                </span>
+                <CategoryVisual
+                  slug={c.slug}
+                  name={c.name}
+                  icon={c.icon}
+                  imageClassName="p-0.5"
+                  iconClassName="h-4 w-4"
+                  sizes="28px"
+                  wrapClassName="h-7 w-7 flex-none rounded-[8px] text-brand"
+                  imageWrapClassName="bg-white"
+                  iconWrapClassName="bg-brand-subtle"
+                />
                 <span className="text-[13px] font-semibold">{c.name}</span>
               </Link>
             ))}

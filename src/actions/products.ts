@@ -17,7 +17,35 @@ import {
   UPSERT_PRODUCT_VARIANT,
 } from "@/lib/hygraph/mutations";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getProductDetailBySlug } from "@/services/content/products";
 import type { ActionResult } from "@/types/action";
+import type { ProductDetail } from "@/types/product";
+
+const slugSchema = z.string().trim().min(1);
+
+/**
+ * Read the full option/variant matrix for one product. Used by the storefront
+ * quick-add sheet to load choices on demand (the lean catalog list omits them),
+ * so a card can force variant selection before adding to the cart.
+ */
+export async function getProductOptions(
+  slug: string,
+): Promise<ActionResult<ProductDetail>> {
+  const parsed = slugSchema.safeParse(slug);
+  if (!parsed.success) {
+    return { success: false, data: null, message: "Produk tidak valid" };
+  }
+  try {
+    const detail = await getProductDetailBySlug(parsed.data);
+    if (!detail) {
+      return { success: false, data: null, message: "Produk tidak ditemukan" };
+    }
+    return { success: true, data: detail, message: "" };
+  } catch (error) {
+    console.error("getProductOptions failed:", error);
+    return { success: false, data: null, message: "Gagal memuat pilihan produk" };
+  }
+}
 
 const productSchema = z.object({
   name: z.string().trim().min(1, "Nama produk wajib diisi"),
@@ -28,6 +56,8 @@ const productSchema = z.object({
   description: z.string().default(""),
   price: z.number().int().min(0).default(0),
   stock: z.number().int().min(0).nullable().default(null),
+  /** Shipping weight per unit in grams (0 = unset → global fallback at checkout). */
+  weight: z.number().int().min(0).default(0),
   sizes: z.array(z.string()).default([]),
   colors: z.array(z.string()).default([]),
   material: z.string().default(""),
@@ -78,6 +108,7 @@ function toHygraphData(
     description: data.description,
     price: data.price,
     stock: data.stock,
+    weight: data.weight,
     sizes: data.sizes,
     colors: data.colors,
     material: data.material,
@@ -174,6 +205,7 @@ async function syncInventory(data: ProductData): Promise<void> {
           product_sku: data.sku,
           name: v.title ? `${data.name} — ${v.title}` : data.name,
           stock: v.stock ?? 0,
+          weight_grams: data.weight,
         }))
       : [
           {
@@ -181,6 +213,7 @@ async function syncInventory(data: ProductData): Promise<void> {
             product_sku: data.sku,
             name: data.name,
             stock: data.stock ?? 0,
+            weight_grams: data.weight,
           },
         ];
 

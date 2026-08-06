@@ -58,8 +58,26 @@ export interface CartMessageLine {
   unitPrice?: number;
 }
 
-/** Quotation request for the whole cart. */
-export function cartMessage(lines: CartMessageLine[], ref?: string): string {
+/** Delivery + ongkir breakdown appended to the cart quotation message. */
+export interface CartMessageShipping {
+  recipientName: string;
+  recipientPhone: string;
+  addressDetail: string;
+  /** "Kelurahan, Kecamatan, Kota, Provinsi" (+ postal when known). */
+  destinationLabel: string;
+  /** Chosen courier service name; "" when ongkir is quoted manually. */
+  courier: string;
+  subtotal: number;
+  shippingCost: number;
+  grandTotal: number;
+}
+
+/** Quotation request for the whole cart, optionally with the delivery + ongkir. */
+export function cartMessage(
+  lines: CartMessageLine[],
+  ref?: string,
+  shipping?: CartMessageShipping,
+): string {
   const productCount = lines.length;
   const totalQty = lines.reduce((sum, l) => sum + l.qty, 0);
   const body = lines
@@ -74,14 +92,26 @@ export function cartMessage(lines: CartMessageLine[], ref?: string): string {
       return `${i + 1}. ${l.product.name}${opts}\n   SKU: ${l.product.sku} | Qty: ${l.qty} pcs | Mulai ${formatPrice(price)}/pcs`;
     })
     .join("\n");
+  const shippingBlock = shipping
+    ? "\n\n" +
+      "Pengiriman:\n" +
+      `Penerima: ${shipping.recipientName} (${shipping.recipientPhone})\n` +
+      `Alamat: ${shipping.addressDetail}, ${shipping.destinationLabel}\n` +
+      (shipping.courier ? `Kurir: ${shipping.courier}\n` : "") +
+      "\n" +
+      `Subtotal: ${formatPrice(shipping.subtotal)}\n` +
+      `Ongkir: ${shipping.courier ? formatPrice(shipping.shippingCost) : "(dihitung tim)"}\n` +
+      `Total: ${formatPrice(shipping.grandTotal)}`
+    : "";
   return (
     "Halo Admin,\n" +
     (ref ? `No. Pesanan: ${ref}\n` : "") +
     "Saya ingin meminta penawaran (quotation) untuk produk berikut:\n\n" +
     `${body}\n\n` +
     `Total jenis produk: ${productCount}\n` +
-    `Estimasi total qty: ${totalQty} pcs\n\n` +
-    "Mohon info harga & ketersediaannya. Terima kasih."
+    `Estimasi total qty: ${totalQty} pcs` +
+    shippingBlock +
+    "\n\nMohon info harga & ketersediaannya. Terima kasih."
   );
 }
 

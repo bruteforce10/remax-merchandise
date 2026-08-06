@@ -1,10 +1,10 @@
 import type { MediaItem } from "@/types/admin";
 
 /**
- * Static operational seed (Phase 1). Media library + the dashboard sparkline.
- * Products come from Hygraph via `services/operational`; analytics, the leads
- * funnel, and search stats are all real Supabase data (`events`,
- * `product_stats`, `search_logs`).
+ * Static operational seed (Phase 1) — the media library only. Everything else is
+ * live: products come from Hygraph via `services/operational`, and the dashboard
+ * stats, analytics, leads funnel, and search stats are real Supabase data
+ * (`events`, `orders`, `product_stats`, `search_logs`).
  */
 
 // ── Media library ────────────────────────────────────────────────────────────
@@ -21,9 +21,4 @@ export const MEDIA_ITEMS: MediaItem[] = [
   { id: "m10", name: "icon-cart.svg", type: "icon", size: "8 KB" },
   { id: "m11", name: "tote-bag-02.jpg", type: "image", size: "1.4 MB" },
   { id: "m12", name: "spec-sheet.pdf", type: "pdf", size: "2.1 MB" },
-];
-
-// ── Analytics ────────────────────────────────────────────────────────────────
-export const DASHBOARD_VIEWS_CHART: number[] = [
-  42, 55, 48, 62, 70, 58, 75, 80, 68, 88, 95, 82, 90, 100,
 ];

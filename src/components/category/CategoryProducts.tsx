@@ -2,11 +2,9 @@
 
 import * as React from "react";
 
-import { ProductGrid } from "@/components/product/ProductGrid";
-import { Pagination } from "@/components/search/Pagination";
+import { InfiniteProductGrid } from "@/components/product/InfiniteProductGrid";
 import { SortSelect } from "@/components/search/SortSelect";
-import { paginate, sortProducts } from "@/lib/catalog";
-import { PAGE_SIZE } from "@/lib/data/catalog";
+import { sortProducts } from "@/lib/catalog";
 import type { Product, SortOption } from "@/types/product";
 
 export function CategoryProducts({
@@ -15,10 +13,11 @@ export function CategoryProducts({
   products: Product[];
 }): React.JSX.Element {
   const [sort, setSort] = React.useState<SortOption>("popular");
-  const [page, setPage] = React.useState(1);
 
-  const sorted = React.useMemo(() => sortProducts(products, sort), [products, sort]);
-  const { items, page: current, pageCount } = paginate(sorted, page, PAGE_SIZE);
+  const sorted = React.useMemo(
+    () => sortProducts(products, sort),
+    [products, sort],
+  );
 
   return (
     <>
@@ -26,16 +25,9 @@ export function CategoryProducts({
         <div className="text-[15px] text-muted">
           <strong className="text-ink">{products.length}</strong> produk
         </div>
-        <SortSelect
-          value={sort}
-          onChange={(v) => {
-            setSort(v);
-            setPage(1);
-          }}
-        />
+        <SortSelect value={sort} onChange={setSort} />
       </div>
-      <ProductGrid products={items} />
-      <Pagination page={current} pageCount={pageCount} onPage={setPage} />
+      <InfiniteProductGrid products={sorted} />
     </>
   );
 }

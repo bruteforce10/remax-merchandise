@@ -3,8 +3,6 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { CategoryVisual } from "@/components/category/CategoryVisual";
-import { hasCategoryImage } from "@/lib/categoryImages";
-import { cn } from "@/lib/utils";
 
 export interface PopularCategoryItem {
   slug: string;
@@ -39,22 +37,16 @@ export function PopularCategories({
             href={`/categories/${c.slug}`}
             className="flex w-[172px] flex-none flex-col gap-3.5 rounded-card border border-gray-200 bg-white px-[18px] py-[22px] transition-[box-shadow,transform,border-color] duration-200 [scroll-snap-align:start] hover:-translate-y-[3px] hover:border-[#F6C9CE] hover:shadow-hover"
           >
-            <span
-              className={cn(
-                "relative flex items-center justify-center overflow-hidden rounded-card text-brand",
-                hasCategoryImage(c.slug)
-                  ? "h-[72px] w-[72px]"
-                  : "h-13 w-13 bg-gradient-to-br from-brand-subtle to-[#FBD8DC]",
-              )}
-            >
-              <CategoryVisual
-                slug={c.slug}
-                name={c.name}
-                icon={c.icon}
-                sizes="72px"
-                iconClassName="h-6 w-6"
-              />
-            </span>
+            <CategoryVisual
+              slug={c.slug}
+              name={c.name}
+              icon={c.icon}
+              sizes="72px"
+              iconClassName="h-6 w-6"
+              wrapClassName="rounded-card text-brand"
+              imageWrapClassName="h-[72px] w-[72px]"
+              iconWrapClassName="h-13 w-13 bg-gradient-to-br from-brand-subtle to-[#FBD8DC]"
+            />
             <div>
               <div className="text-[15.5px] font-semibold text-ink">{c.name}</div>
               <div className="mt-0.5 text-[12.5px] text-muted">
