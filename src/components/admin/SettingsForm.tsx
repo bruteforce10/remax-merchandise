@@ -56,10 +56,7 @@ export function SettingsForm(): React.JSX.Element {
               <input defaultValue={COMPANY.email} className={FIELD} />
             </Field>
             <Field label="Google Maps">
-              <input
-                defaultValue="maps.google.com/remax-id"
-                className={FIELD}
-              />
+              <input defaultValue={COMPANY.mapsUrl} className={FIELD} />
             </Field>
             <Field label="Alamat" full>
               <input defaultValue={COMPANY.address} className={FIELD} />

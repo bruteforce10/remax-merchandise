@@ -25,8 +25,19 @@ export interface CompanyInfo {
   addressShort: string;
   hours: string;
   hoursShort: string;
+  /** Google Maps place link for the office ("Buka Maps"). */
   mapsUrl: string;
+  /** Keyless Google Maps embed of {@link mapsUrl} — no API key required. */
+  mapsEmbedUrl: string;
 }
+
+/**
+ * Office coordinates, read off the Google Maps place link for RE/MAX Indonesia.
+ * Reverse-geocoding puts them in kelurahan Senayan, Kebayoran Baru (3174071006)
+ * — the same village as `SHIP_ORIGIN_VILLAGE_CODE`, which is what every ongkir
+ * quote ships from. Keep the two in step if the office moves.
+ */
+const OFFICE_LAT_LNG = "-6.2262628,106.8084354";
 
 export const COMPANY: CompanyInfo = {
   name: "REMAX Gifts",
@@ -35,11 +46,13 @@ export const COMPANY: CompanyInfo = {
   phoneDisplay: "087716289585",
   whatsappDisplay: "087716289585",
   email: "support@remax.co.id",
-  address: "Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan 12190",
-  addressShort: "Jakarta Selatan, DKI Jakarta",
+  address:
+    "Sudirman Central Business District (SCBD), Senayan, Kebayoran Baru, Jakarta Selatan 12190",
+  addressShort: "Kebayoran Baru, Jakarta Selatan",
   hours: "Senin - Jumat, 09:00 - 18:00 WIB",
   hoursShort: "Sen-Jum, 09:00-18:00",
-  mapsUrl: "https://maps.google.com",
+  mapsUrl: "https://maps.app.goo.gl/Rr7qyzTc1a6V19nWA",
+  mapsEmbedUrl: `https://maps.google.com/maps?q=${OFFICE_LAT_LNG}&z=16&output=embed`,
 };
 
 export interface SocialLink {

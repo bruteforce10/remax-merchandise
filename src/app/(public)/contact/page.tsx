@@ -89,16 +89,16 @@ export default function ContactPage(): ReactNode {
       <section className="mx-auto max-w-[1280px] px-6 pt-5 pb-13">
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           <div className="overflow-hidden rounded-card border border-gray-200">
-            <div className="relative flex h-[220px] items-center justify-center bg-gradient-to-br from-[#e9eaee] to-gray-200">
-              <div className="absolute inset-0 bg-[linear-gradient(#d3d5db_1px,transparent_1px),linear-gradient(90deg,#d3d5db_1px,transparent_1px)] bg-[length:36px_36px] opacity-60" />
-              <div className="relative text-center text-gray-500">
-                <MapPin className="mx-auto h-[34px] w-[34px] text-brand" />
-                <div className="mt-1.5 text-[13.5px] font-semibold">
-                  REMAX Indonesia HQ
-                </div>
-                <div className="text-[12.5px] text-gray-400">Google Maps</div>
-              </div>
-            </div>
+            <iframe
+              src={COMPANY.mapsEmbedUrl}
+              title={`Peta lokasi kantor ${COMPANY.name}`}
+              width="100%"
+              height="220"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              className="block h-[220px] w-full border-0"
+            />
             <div className="flex items-center justify-between px-[18px] py-4">
               <span className="text-sm text-gray-600">{COMPANY.addressShort}</span>
               <a
