@@ -11,7 +11,7 @@ export function waLink(text: string): string {
 export function generalMessage(): string {
   return (
     "Halo Admin REMAX Gifts,\n" +
-    "Saya ingin menanyakan produk merchandise / custom untuk kebutuhan corporate. " +
+    "Saya ingin menanyakan produk merchandise resmi REMAX yang tersedia. " +
     "Mohon dibantu ya. Terima kasih."
   );
 }

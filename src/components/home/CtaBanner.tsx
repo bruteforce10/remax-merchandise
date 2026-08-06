@@ -9,11 +9,11 @@ export function CtaBanner(): ReactElement {
       <div className="flex flex-wrap items-center justify-between gap-6 overflow-hidden rounded-[20px] bg-gradient-to-br from-brand to-brand-dark px-8 py-12 text-white sm:px-11">
         <div className="max-w-[560px]">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-[30px]">
-            Butuh Gifts Custom?
+            Butuh Bantuan Memilih?
           </h2>
           <p className="mt-2.5 text-base leading-relaxed text-[#FCE4E6]">
-            Konsultasikan kebutuhan seragam, event kit, dan corporate gift Anda.
-            Tim kami bantu dari desain hingga produksi.
+            Tanya ketersediaan stok, ukuran, dan harga merchandise resmi REMAX.
+            Tim kami siap bantu di jam kerja.
           </p>
         </div>
         <a

@@ -11,15 +11,15 @@ interface Faq {
 const FAQS: Faq[] = [
   {
     q: "Apakah ada minimum order?",
-    a: "Banyak produk tersedia ready stock dan bisa dipesan dalam jumlah fleksibel. Untuk item custom, jumlah minimum menyesuaikan jenis produk — konfirmasikan kebutuhan Anda ke tim kami via WhatsApp.",
+    a: "Tidak ada minimum order. Semua produk tersedia ready stock dan bisa dipesan sesuai jumlah stok yang tertera di halaman produk.",
   },
   {
-    q: "Berapa lama waktu produksi?",
-    a: "Waktu produksi berkisar 3–14 hari kerja tergantung jenis produk dan jumlah, dihitung setelah desain dan pembayaran DP disetujui.",
+    q: "Berapa lama pesanan diproses?",
+    a: "Pesanan diproses paling lama 7 hari kerja setelah pembayaran diterima, lalu dikirim sesuai kurir yang Anda pilih. Status pesanan bisa dipantau di halaman lacak.",
   },
   {
-    q: "Apakah bisa custom logo dan warna?",
-    a: "Tentu. Kami melayani custom penuh: bordir, sablon, laser engrave, sublimasi, hingga pemilihan warna sesuai brand Anda.",
+    q: "Apakah warna dan ukuran bisa dipilih?",
+    a: "Bisa, sebatas pilihan yang tersedia pada tiap produk. Katalog ini hanya menjual merchandise resmi REMAX dengan desain yang sudah ditentukan — tidak melayani pesanan desain atau logo sendiri.",
   },
   {
     q: "Bagaimana cara memesan?",

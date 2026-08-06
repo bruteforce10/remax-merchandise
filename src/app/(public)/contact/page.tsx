@@ -10,7 +10,7 @@ import { generalMessage, waLink } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Kontak",
   description:
-    "Hubungi tim REMAX Gifts via WhatsApp, email, atau kunjungi kantor kami di Jakarta Selatan. Konsultasi kebutuhan gifts custom Anda.",
+    "Hubungi tim REMAX Gifts via WhatsApp, email, atau kunjungi kantor kami di Jakarta Selatan. Tanya ketersediaan dan harga merchandise resmi REMAX.",
   alternates: { canonical: "/contact" },
 };
 
@@ -27,8 +27,8 @@ export default function ContactPage(): ReactNode {
             Butuh Bantuan?
           </h1>
           <p className="mx-auto mt-3 max-w-[560px] text-base leading-relaxed text-gray-300">
-            Konsultasikan kebutuhan merchandise Anda. Tim corporate kami akan
-            merespons dengan cepat di jam kerja.
+            Tanya ketersediaan stok, ukuran, harga, atau status pesanan Anda.
+            Tim kami akan merespons dengan cepat di jam kerja.
           </p>
         </div>
       </section>

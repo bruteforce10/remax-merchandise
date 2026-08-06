@@ -28,7 +28,7 @@ export default async function CategoriesPage(): Promise<ReactNode> {
       </h1>
       <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-muted">
         Temukan produk berdasarkan jenisnya - dari apparel hingga corporate gift,
-        semua bisa dikustomisasi dengan brand Anda.
+        semua tersedia dalam desain resmi REMAX Indonesia.
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

@@ -72,14 +72,14 @@ export function SettingsForm(): React.JSX.Element {
           <div className="flex flex-col gap-3.5">
             <Field label="Default Meta Title">
               <input
-                defaultValue="REMAX Gifts - Premium Corporate Gifts"
+                defaultValue="REMAX Gifts - Merchandise Resmi REMAX Indonesia"
                 className={FIELD}
               />
             </Field>
             <Field label="Default Meta Description">
               <textarea
                 rows={2}
-                defaultValue="Katalog gifts premium & custom untuk jaringan REMAX Indonesia."
+                defaultValue="Katalog merchandise resmi untuk jaringan REMAX Indonesia."
                 className="resize-y rounded-btn border border-admin-border bg-admin-bg px-3.5 py-3 text-sm outline-none focus:border-brand focus:bg-white"
               />
             </Field>

@@ -114,7 +114,7 @@ export function ContactForm(): React.JSX.Element {
               value={values.message}
               onChange={(e) => update("message", e.target.value)}
               rows={4}
-              placeholder="Ceritakan kebutuhan merchandise Anda…"
+              placeholder="Tulis pertanyaan Anda tentang produk atau pesanan…"
               className={cn(
                 "resize-y rounded-input border bg-white px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-brand",
                 errors.message ? "border-danger" : "border-gray-200",

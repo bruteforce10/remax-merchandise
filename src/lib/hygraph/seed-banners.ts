@@ -27,7 +27,7 @@ if (!endpoint || !token) {
 const SEED_BANNERS = [
   { alt: "Banner premium merchandise REMAX", link: "/search", order: 1 },
   {
-    alt: "Banner seragam & event kit custom",
+    alt: "Banner seragam & event kit resmi REMAX",
     link: "/categories/jacket",
     order: 2,
   },

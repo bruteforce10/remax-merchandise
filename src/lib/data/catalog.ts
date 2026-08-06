@@ -89,7 +89,7 @@ const RAW_CATEGORIES: Omit<Category, "featured">[] = [
     colors: ["Merah", "Navy", "Hitam", "Putih"],
     sizes: [],
     description:
-      "Payung custom kokoh anti angin dengan cetak logo penuh warna. Corporate gift yang fungsional dan selalu terlihat.",
+      "Payung kokoh anti angin dengan cetak logo REMAX penuh warna. Corporate gift yang fungsional dan selalu terlihat.",
   },
   {
     slug: "mug",
@@ -122,7 +122,7 @@ const RAW_CATEGORIES: Omit<Category, "featured">[] = [
     colors: ["Merah", "Hitam", "Navy", "Silver"],
     sizes: [],
     description:
-      "Pulpen custom dengan cetak atau gravir logo. Merchandise promosi hemat biaya dengan jangkauan luas.",
+      "Pulpen dengan cetak atau gravir logo REMAX. Merchandise promosi hemat biaya dengan jangkauan luas.",
   },
   {
     slug: "notebook",
@@ -199,7 +199,7 @@ const RAW_CATEGORIES: Omit<Category, "featured">[] = [
     colors: ["Merah", "Silver", "Hitam"],
     sizes: [],
     description:
-      "Gantungan kunci custom akrilik atau metal. Souvenir kecil berkesan untuk berbagai acara.",
+      "Gantungan kunci akrilik atau metal berlogo REMAX. Souvenir kecil berkesan untuk berbagai acara.",
   },
 ];
 
