@@ -199,6 +199,11 @@ export async function createOrder(
     // unconfigured or no courier was chosen, shipping stays 0 (team quotes it via
     // WhatsApp); a chosen-but-unverifiable courier is rejected so the customer
     // re-picks rather than being charged a stale/tampered rate.
+    //
+    // getShippingRates is cached per (origin, destination, kg), so this resolves
+    // to the very entry the customer was quoted from — they are charged exactly
+    // what the cart showed. A tariff that moves upstream applies from the next
+    // revalidation; admins can override ongkir on the order until it completes.
     let shippingCost = 0;
     let courierService = parsed.data.courierService;
     if (courierCode && isShippingConfigured()) {

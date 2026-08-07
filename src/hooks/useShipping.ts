@@ -68,6 +68,31 @@ async function getRegions(url: string): Promise<RegionOption[]> {
   return body.data;
 }
 
+interface QuoteResult {
+  rate: ShippingRate | null;
+  weightGrams: number;
+}
+
+/**
+ * Quotes already fetched this page-load, keyed by destination + exact cart. The
+ * same cart shipped to the same address always bills the same, so re-entering
+ * /cart, toggling back to a saved address, or undoing a qty change reuses the
+ * answer instead of re-hitting the route. Module-level so it survives component
+ * remounts; a full reload starts empty and falls through to the server-side
+ * cache in lib/shipping/cost.ts, which is what actually spares the paid API.
+ *
+ * Only settled quotes land here — a failure must stay retryable.
+ */
+const quoteCache = new Map<string, QuoteResult>();
+
+/** Cache key for a quote — order-independent, so a reordered cart still hits. */
+function quoteKey(villageCode: string, items: CartItemRef[]): string {
+  return `${villageCode}|${items
+    .map((i) => `${i.sku}:${i.qty}`)
+    .sort()
+    .join(",")}`;
+}
+
 const NO_LOADING: Record<RegionLevel, boolean> = {
   province: false,
   regency: false,
@@ -153,6 +178,15 @@ export function useShipping(
         return;
       }
       const seq = ++quoteSeq.current;
+      const cacheKey = quoteKey(villageCode, current);
+      const hit = quoteCache.get(cacheKey);
+      if (hit) {
+        setRate(hit.rate);
+        setWeightGrams(hit.weightGrams);
+        setRatesStatus(hit.rate ? "ready" : "empty");
+        setError("");
+        return;
+      }
       setRatesStatus("loading");
       setError("");
       try {
@@ -178,9 +212,14 @@ export function useShipping(
         }
         // One courier only (JNE Express) — apply it straight to the total so the
         // customer never has to pick anything.
-        setRate(body.data.rates[0] ?? null);
+        const quoted = body.data.rates[0] ?? null;
+        quoteCache.set(cacheKey, {
+          rate: quoted,
+          weightGrams: body.data.weightGrams,
+        });
+        setRate(quoted);
         setWeightGrams(body.data.weightGrams);
-        setRatesStatus(body.data.rates.length > 0 ? "ready" : "empty");
+        setRatesStatus(quoted ? "ready" : "empty");
       } catch {
         if (seq !== quoteSeq.current) return;
         setRate(null);
@@ -289,7 +328,14 @@ export function useShipping(
   // this effect stays out of the way and never double-quotes.
   const itemsSig = items.map((i) => `${i.sku}:${i.qty}`).join(",");
   React.useEffect(() => {
-    if (!villageRef.current || !itemsSig || !canQuote) return;
+    const village = villageRef.current;
+    if (!village || !itemsSig || !canQuote) return;
+    // Already known (revisit, or an undone qty change)? Apply it synchronously —
+    // debouncing a cached answer would only flash "Menghitung…" for nothing.
+    if (quoteCache.has(quoteKey(village.code, itemsRef.current))) {
+      void fetchRates(village.code);
+      return;
+    }
     // Drop the old price immediately: it was quoted for the previous cart
     // weight, so pairing it with the new subtotal would show a wrong total.
     setRate(null);
