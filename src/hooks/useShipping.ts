@@ -14,6 +14,10 @@ import type {
  * → district → village) plus live courier rates (ongkir). Provinces are fetched
  * server-side and passed in; deeper levels + rates load on demand from our proxy
  * routes inside event handlers (never useEffect, per the data-fetching rules).
+ *
+ * Ongkir is fully automatic — there is no courier picker. Picking a village (or
+ * a saved address) quotes immediately and the single JNE Express rate is applied
+ * to the total; a later cart edit re-quotes on its own after a short debounce.
  */
 
 export type RegionLevel = "province" | "regency" | "district" | "village";
@@ -40,12 +44,13 @@ export interface UseShippingResult {
   setRecipientName: (v: string) => void;
   setRecipientPhone: (v: string) => void;
   setAddressDetail: (v: string) => void;
-  rates: ShippingRate[];
+  /** Auto-quoted JNE Express rate for the current destination + cart, else null. */
+  rate: ShippingRate | null;
   ratesStatus: RatesStatus;
   weightGrams: number;
-  selectedCourier: ShippingRate | null;
-  selectCourier: (rate: ShippingRate) => void;
-  /** Re-fetch rates for the currently selected village (e.g. after a cart edit). */
+  /** False while quoting is gated (the rate API requires a logged-in customer). */
+  canQuote: boolean;
+  /** Manual retry, used only when an automatic quote failed. */
   quote: () => void;
   /** Full destination once every level + recipient field is set, else null. */
   destination: ShippingDestination | null;
@@ -74,6 +79,13 @@ export function useShipping(
   initialProvinces: RegionOption[],
   items: CartItemRef[],
   initialDestination?: ShippingDestination | null,
+  /**
+   * The rate API is login-gated (it proxies a paid service), so quoting is
+   * suppressed for guests — otherwise every guest quote 401s and the UI
+   * misreports it as "courier doesn't serve this address". Defaults to true for
+   * callers that never quote (e.g. the address book).
+   */
+  canQuote = true,
 ): UseShippingResult {
   const initialProvince = initialDestination
     ? { code: initialDestination.provinceCode, name: initialDestination.provinceName }
@@ -116,11 +128,9 @@ export function useShipping(
   const [addressDetail, setAddressDetail] = React.useState(
     initialDestination?.addressDetail ?? "",
   );
-  const [rates, setRates] = React.useState<ShippingRate[]>([]);
+  const [rate, setRate] = React.useState<ShippingRate | null>(null);
   const [ratesStatus, setRatesStatus] = React.useState<RatesStatus>("idle");
   const [weightGrams, setWeightGrams] = React.useState(0);
-  const [selectedCourier, setSelectedCourier] =
-    React.useState<ShippingRate | null>(null);
   const [error, setError] = React.useState("");
 
   // Latest cart contents / selected village kept in refs so the memoized handlers
@@ -129,15 +139,20 @@ export function useShipping(
   itemsRef.current = items;
   const villageRef = React.useRef<RegionOption | null>(null);
   villageRef.current = selected.village;
+  // Guards a late response from an earlier quote overwriting a newer one.
+  const quoteSeq = React.useRef(0);
+  const canQuoteRef = React.useRef(canQuote);
+  canQuoteRef.current = canQuote;
 
   const fetchRates = React.useCallback(
     async (villageCode: string): Promise<void> => {
       const current = itemsRef.current;
-      if (!villageCode) return;
+      if (!villageCode || !canQuoteRef.current) return;
       if (current.length === 0) {
         setRatesStatus("idle");
         return;
       }
+      const seq = ++quoteSeq.current;
       setRatesStatus("loading");
       setError("");
       try {
@@ -153,18 +168,22 @@ export function useShipping(
           rates: ShippingRate[];
           weightGrams: number;
         }>;
+        if (seq !== quoteSeq.current) return;
         if (!body.success || !body.data) {
-          setRates([]);
+          setRate(null);
           setWeightGrams(0);
           setRatesStatus("error");
           setError(body.message || "Gagal menghitung ongkir");
           return;
         }
-        setRates(body.data.rates);
+        // One courier only (JNE Express) — apply it straight to the total so the
+        // customer never has to pick anything.
+        setRate(body.data.rates[0] ?? null);
         setWeightGrams(body.data.weightGrams);
         setRatesStatus(body.data.rates.length > 0 ? "ready" : "empty");
       } catch {
-        setRates([]);
+        if (seq !== quoteSeq.current) return;
+        setRate(null);
         setRatesStatus("error");
         setError("Gagal menghitung ongkir. Coba lagi.");
       }
@@ -174,14 +193,13 @@ export function useShipping(
 
   const selectRegion = React.useCallback(
     (level: RegionLevel, option: RegionOption | null): void => {
-      setSelectedCourier(null);
       setError("");
       if (level === "province") {
         setSelected({ province: option, regency: null, district: null, village: null });
         setRegencies([]);
         setDistricts([]);
         setVillages([]);
-        setRates([]);
+        setRate(null);
         setRatesStatus("idle");
         if (option) {
           setLoading((l) => ({ ...l, regency: true }));
@@ -194,7 +212,7 @@ export function useShipping(
         setSelected((s) => ({ ...s, regency: option, district: null, village: null }));
         setDistricts([]);
         setVillages([]);
-        setRates([]);
+        setRate(null);
         setRatesStatus("idle");
         if (option) {
           setLoading((l) => ({ ...l, district: true }));
@@ -206,7 +224,7 @@ export function useShipping(
       } else if (level === "district") {
         setSelected((s) => ({ ...s, district: option, village: null }));
         setVillages([]);
-        setRates([]);
+        setRate(null);
         setRatesStatus("idle");
         if (option) {
           setLoading((l) => ({ ...l, village: true }));
@@ -217,7 +235,7 @@ export function useShipping(
         }
       } else {
         setSelected((s) => ({ ...s, village: option }));
-        setRates([]);
+        setRate(null);
         setRatesStatus(option ? "loading" : "idle");
         if (option) void fetchRates(option.code);
       }
@@ -238,8 +256,7 @@ export function useShipping(
       setRecipientName(destination.recipientName);
       setRecipientPhone(destination.recipientPhone);
       setAddressDetail(destination.addressDetail);
-      setSelectedCourier(null);
-      setRates([]);
+      setRate(null);
       setRatesStatus("loading");
       void fetchRates(destination.villageCode);
     },
@@ -247,6 +264,7 @@ export function useShipping(
   );
 
   const resetDestination = React.useCallback((): void => {
+    quoteSeq.current += 1;
     setSelected({ province: null, regency: null, district: null, village: null });
     setRegencies([]);
     setDistricts([]);
@@ -254,8 +272,7 @@ export function useShipping(
     setRecipientName("");
     setRecipientPhone("");
     setAddressDetail("");
-    setSelectedCourier(null);
-    setRates([]);
+    setRate(null);
     setRatesStatus("idle");
     setError("");
   }, []);
@@ -264,22 +281,30 @@ export function useShipping(
     if (villageRef.current) void fetchRates(villageRef.current.code);
   }, [fetchRates]);
 
-  const selectCourier = React.useCallback((rate: ShippingRate): void => {
-    setSelectedCourier(rate);
-  }, []);
-
-  // A cart edit (add/remove/qty) makes any quoted ongkir stale — clear it so the
-  // customer re-quotes. State reset only (no fetch), guarded so it never fires on
-  // the initial render.
+  // Quote whenever the billed weight can change: on mount with a saved default
+  // address (the cart hydrates from localStorage, so this also covers the empty
+  // → hydrated transition) and on every later cart edit. Debounced so holding
+  // "+" fires one request, not one per click. Picking a region quotes instantly
+  // from selectRegion/applyDestination instead — itemsSig is unchanged there, so
+  // this effect stays out of the way and never double-quotes.
   const itemsSig = items.map((i) => `${i.sku}:${i.qty}`).join(",");
-  const prevSig = React.useRef(itemsSig);
   React.useEffect(() => {
-    if (prevSig.current === itemsSig) return;
-    prevSig.current = itemsSig;
-    setRates([]);
-    setRatesStatus("idle");
-    setSelectedCourier(null);
-  }, [itemsSig]);
+    if (!villageRef.current || !itemsSig || !canQuote) return;
+    // Drop the old price immediately: it was quoted for the previous cart
+    // weight, so pairing it with the new subtotal would show a wrong total.
+    setRate(null);
+    setRatesStatus("loading");
+    // Resolve the village when the timer FIRES, not when it was armed: the
+    // customer may have cleared or switched addresses during the debounce, and
+    // quoting the address they just abandoned would price a destination that is
+    // no longer on screen.
+    const timer = window.setTimeout(() => {
+      const village = villageRef.current;
+      if (village) void fetchRates(village.code);
+      else setRatesStatus("idle");
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [itemsSig, fetchRates, canQuote]);
 
   const destination = React.useMemo<ShippingDestination | null>(() => {
     const { province, regency, district, village } = selected;
@@ -332,11 +357,10 @@ export function useShipping(
     setRecipientName,
     setRecipientPhone,
     setAddressDetail,
-    rates,
+    rate,
     ratesStatus,
     weightGrams,
-    selectedCourier,
-    selectCourier,
+    canQuote,
     quote,
     destination,
     destinationLabel,

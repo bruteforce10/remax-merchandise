@@ -10,13 +10,13 @@ import { toast } from "sonner";
 import { createOrder } from "@/actions/orders";
 import { trackWaClick } from "@/actions/tracking";
 import { CheckoutAddressBook } from "@/components/cart/CheckoutAddressBook";
-import { CourierSelector } from "@/components/cart/CourierSelector";
 import { ShippingDestinationForm } from "@/components/cart/ShippingDestinationForm";
+import { ShippingRateCard } from "@/components/cart/ShippingRateCard";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { useShipping } from "@/hooks/useShipping";
 import { categoryName } from "@/lib/catalog";
-import { formatPrice } from "@/lib/format";
+import { formatEstimation, formatKg, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { cartMessage, waLink } from "@/lib/whatsapp";
@@ -66,13 +66,20 @@ export function CartView({
     initialProvinces,
     lines.map((l) => ({ sku: lineKey(l), qty: l.qty })),
     defaultAddress,
+    isAuthenticated,
   );
-  const shippingCost = shipping.selectedCourier?.price ?? 0;
+  const shippingCost = shipping.rate?.price ?? 0;
   const grandTotal = estimatedTotal + shippingCost;
   const manualOngkir =
     shipping.ratesStatus === "error" || shipping.ratesStatus === "empty";
+  // "idle" while a village is already selected = a quote is queued (the cart is
+  // still hydrating), so treat it as in-flight rather than as a missing address.
+  const quoting =
+    shipping.canQuote &&
+    (shipping.ratesStatus === "loading" ||
+      (shipping.ratesStatus === "idle" && !!shipping.selected.village));
   const checkoutReady =
-    !!shipping.destination && (!!shipping.selectedCourier || manualOngkir);
+    !!shipping.destination && !quoting && (!!shipping.rate || manualOngkir);
 
   async function handleGoogleLogin(): Promise<void> {
     const supabase = createClient();
@@ -94,8 +101,8 @@ export function CartView({
       toast.error("Lengkapi alamat pengiriman");
       return;
     }
-    if (!shipping.selectedCourier && !manualOngkir) {
-      toast.error("Pilih kurir pengiriman");
+    if (!shipping.rate && !manualOngkir) {
+      toast.error("Ongkir sedang dihitung, tunggu sebentar");
       return;
     }
 
@@ -112,8 +119,8 @@ export function CartView({
         unitPrice: lineUnitPrice(l),
       })),
       destination: shipping.destination,
-      courierCode: shipping.selectedCourier?.courierCode ?? "",
-      courierService: shipping.selectedCourier?.courierName ?? "",
+      courierCode: shipping.rate?.courierCode ?? "",
+      courierService: shipping.rate?.courierName ?? "",
     });
     if (!res.success || !res.data) {
       toast.error(res.message);
@@ -134,7 +141,7 @@ export function CartView({
           recipientPhone: shipping.destination.recipientPhone,
           addressDetail: shipping.destination.addressDetail,
           destinationLabel: shipping.destinationLabel,
-          courier: res.data.courierService || shipping.selectedCourier?.courierName || "",
+          courier: res.data.courierService || shipping.rate?.courierName || "",
           subtotal: estimatedTotal,
           shippingCost: res.data.shippingCost,
           grandTotal: res.data.grandTotal,
@@ -337,7 +344,7 @@ export function CartView({
               {addressMode === "new" ? (
                 <ShippingDestinationForm shipping={shipping} />
               ) : null}
-              <CourierSelector shipping={shipping} disabled={!shipping.destination} />
+              <ShippingRateCard shipping={shipping} />
             </div>
 
             <div className="flex flex-col gap-6 lg:sticky lg:top-[90px]">
@@ -350,8 +357,18 @@ export function CartView({
                 <SummaryRow label="Estimasi total qty" value={`${totalQty} pcs`} />
                 <SummaryRow label="Subtotal produk" value={formatPrice(estimatedTotal)} />
                 <SummaryRow
-                  label={shipping.selectedCourier ? "Ongkir" : "Ongkir"}
-                  value={shipping.selectedCourier ? formatPrice(shippingCost) : "Pilih kurir"}
+                  label="Ongkir JNE Express"
+                  value={
+                    shipping.rate
+                      ? formatPrice(shippingCost)
+                      : !isAuthenticated
+                        ? "Login dulu"
+                        : quoting
+                          ? "Menghitung…"
+                          : manualOngkir
+                            ? "Konfirmasi manual"
+                            : "Isi alamat dulu"
+                  }
                 />
                 <div className="flex items-center justify-between pt-4 pb-1">
                   <span className="text-[14.5px] font-semibold text-ink">Total</span>
@@ -359,17 +376,26 @@ export function CartView({
                     {formatPrice(grandTotal)}
                   </span>
                 </div>
-                {shipping.selectedCourier ? (
+                {shipping.rate ? (
                   <p className="mt-2.5 text-xs leading-relaxed text-muted-soft">
-                    Kurir: {shipping.selectedCourier.courierName}
-                    {shipping.selectedCourier.estimation
-                      ? ` · Estimasi ${shipping.selectedCourier.estimation}`
+                    {shipping.rate.courierName}
+                    {formatEstimation(shipping.rate.estimation)
+                      ? ` · estimasi ${formatEstimation(shipping.rate.estimation)}`
+                      : ""}
+                    {shipping.weightGrams > 0
+                      ? ` · ${formatKg(shipping.weightGrams)}`
                       : ""}
                   </p>
                 ) : (
                   <div className="mt-4 flex items-center gap-2 rounded-[10px] bg-warning-subtle px-3 py-2.5 text-[13px] font-semibold text-warning-fg">
                     <Info className="h-4 w-4 flex-none" />
-                    Lengkapi alamat dan hitung ongkir JNE untuk finalisasi total.
+                    {!isAuthenticated
+                      ? "Login untuk menghitung ongkir JNE otomatis."
+                      : quoting
+                        ? "Ongkir JNE sedang dihitung otomatis…"
+                        : manualOngkir
+                          ? "Ongkir akan dikonfirmasi tim via WhatsApp."
+                          : "Lengkapi alamat — ongkir JNE terisi otomatis."}
                   </div>
                 )}
               </div>
@@ -386,9 +412,11 @@ export function CartView({
                     <CreditCard className="h-[21px] w-[21px]" />
                     {checkingOut
                       ? "Memproses…"
-                      : manualOngkir && !shipping.selectedCourier
-                        ? "Checkout (Ongkir Manual)"
-                        : "Checkout & Kirim WhatsApp"}
+                      : quoting
+                        ? "Menghitung ongkir…"
+                        : manualOngkir && !shipping.rate
+                          ? "Checkout (Ongkir Manual)"
+                          : "Checkout & Kirim WhatsApp"}
                   </button>
                 ) : (
                   <button
