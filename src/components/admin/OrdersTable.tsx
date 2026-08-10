@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowRight, Check, FileText, Package, Pencil, Truck, X } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ChevronRight,
+  FileText,
+  Package,
+  Pencil,
+  Truck,
+  X,
+} from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -9,6 +18,7 @@ import {
   AdvanceOrderDialog,
   type AdvanceTarget,
 } from "@/components/admin/AdvanceOrderDialog";
+import { OrderDetailDialog } from "@/components/admin/OrderDetailDialog";
 import { ShippingOverrideDialog } from "@/components/admin/ShippingOverrideDialog";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice } from "@/lib/format";
@@ -25,6 +35,9 @@ const STATUS_FILTERS: { value: "all" | OrderStatus; label: string; dot: string }
     { value: "completed", label: "Selesai", dot: "bg-success" },
     { value: "rejected", label: "Ditolak", dot: "bg-gray-400" },
   ];
+
+/** Items shown inline in the table; the rest live in the detail dialog. */
+const ITEM_PREVIEW_COUNT = 2;
 
 const TH =
   "px-4 py-3.5 text-left text-[12px] font-bold tracking-[0.04em] text-gray-400 uppercase";
@@ -59,6 +72,9 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
   const [busyId, setBusyId] = React.useState<string | null>(null);
   const [dialog, setDialog] = React.useState<DialogState | null>(null);
   const [shippingDialog, setShippingDialog] = React.useState<Order | null>(null);
+  const [detailId, setDetailId] = React.useState<string | null>(null);
+
+  const detailOrder = items.find((o) => o.id === detailId) ?? null;
 
   const filtered =
     statusFilter === "all"
@@ -238,22 +254,34 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                       {o.customerEmail}
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="flex flex-col gap-1">
-                        {o.items.map((it, idx) => (
+                      <div className="flex max-w-[260px] flex-col items-start gap-1">
+                        {o.items.slice(0, ITEM_PREVIEW_COUNT).map((it, idx) => (
                           <div
                             key={`${it.sku}-${idx}`}
                             className="flex items-center gap-2 text-[13px] text-ink"
                           >
                             <Package className="h-[14px] w-[14px] flex-none text-gray-300" />
-                            <span className="font-semibold">{it.name}</span>
-                            <span className="text-gray-400">
-                              {optionsLabel(it.options)}
+                            <span className="truncate font-semibold">
+                              {it.name}
+                              <span className="font-normal text-gray-400">
+                                {optionsLabel(it.options)}
+                              </span>
                             </span>
-                            <span className="font-mono text-gray-500">
+                            <span className="font-mono whitespace-nowrap text-gray-500">
                               ×{it.qty}
                             </span>
                           </div>
                         ))}
+                        <button
+                          type="button"
+                          onClick={() => setDetailId(o.id)}
+                          className="mt-0.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand hover:underline"
+                        >
+                          {o.items.length > ITEM_PREVIEW_COUNT
+                            ? `+${o.items.length - ITEM_PREVIEW_COUNT} lainnya · Lihat detail`
+                            : "Lihat detail"}
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </td>
                     <td className="px-4 py-3.5 whitespace-nowrap">
@@ -316,6 +344,10 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
         order={shippingDialog}
         onClose={() => setShippingDialog(null)}
         onDone={patchOrder}
+      />
+      <OrderDetailDialog
+        order={detailOrder}
+        onClose={() => setDetailId(null)}
       />
     </div>
   );

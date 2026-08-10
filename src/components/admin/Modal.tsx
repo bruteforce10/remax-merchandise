@@ -3,10 +3,14 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 
+import { cn } from "@/lib/utils";
+
 export interface ModalProps {
   open: boolean;
   onClose: () => void;
   ariaLabel?: string;
+  /** Overrides panel width/padding defaults (e.g. wider detail dialogs). */
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -15,6 +19,7 @@ export function Modal({
   open,
   onClose,
   ariaLabel,
+  className,
   children,
 }: ModalProps): React.ReactNode {
   const [mounted, setMounted] = React.useState(false);
@@ -50,7 +55,12 @@ export function Modal({
         className="absolute inset-0 cursor-default bg-black/50"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-[440px] animate-[rmx-pop_.2s_ease] rounded-modal border border-hairline bg-white p-6 shadow-menu">
+      <div
+        className={cn(
+          "relative w-full max-w-[440px] animate-[rmx-pop_.2s_ease] rounded-modal border border-hairline bg-white p-6 shadow-menu",
+          className,
+        )}
+      >
         {children}
       </div>
     </div>,
