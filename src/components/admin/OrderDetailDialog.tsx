@@ -4,6 +4,7 @@ import { MapPin, Package, Truck, X } from "lucide-react";
 import * as React from "react";
 
 import { Modal } from "@/components/admin/Modal";
+import { OrderItemThumb } from "@/components/admin/OrderItemThumb";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatKg, formatPrice } from "@/lib/format";
 import { ORDER_STATUS_META, trackingUrl } from "@/lib/orders/status";
@@ -65,12 +66,15 @@ function Row({
 
 interface OrderDetailDialogProps {
   order: Order | null;
+  /** Primary product image URL keyed by product slug (order items store slugs). */
+  productImages: Record<string, string>;
   onClose: () => void;
 }
 
 /** Read-only full breakdown of an order (items, biaya, pengiriman, timeline). */
 export function OrderDetailDialog({
   order,
+  productImages,
   onClose,
 }: OrderDetailDialogProps): React.ReactNode {
   const track = order ? trackingUrl(order.resi) : null;
@@ -115,9 +119,14 @@ export function OrderDetailDialog({
               {order.items.map((it, idx) => (
                 <div
                   key={`${it.sku}-${idx}`}
-                  className="flex items-start justify-between gap-4 rounded-btn border border-admin-border px-3 py-2.5"
+                  className="flex items-start gap-3 rounded-btn border border-admin-border px-3 py-2.5"
                 >
-                  <div className="min-w-0">
+                  <OrderItemThumb
+                    src={productImages[it.productSlug] ?? null}
+                    alt={it.name}
+                    size={52}
+                  />
+                  <div className="min-w-0 flex-1">
                     <div className="text-[14px] font-semibold text-ink">
                       {it.name}
                     </div>

@@ -5,7 +5,6 @@ import {
   Check,
   ChevronRight,
   FileText,
-  Package,
   Pencil,
   Truck,
   X,
@@ -19,6 +18,7 @@ import {
   type AdvanceTarget,
 } from "@/components/admin/AdvanceOrderDialog";
 import { OrderDetailDialog } from "@/components/admin/OrderDetailDialog";
+import { OrderItemThumb } from "@/components/admin/OrderItemThumb";
 import { ShippingOverrideDialog } from "@/components/admin/ShippingOverrideDialog";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice } from "@/lib/format";
@@ -64,7 +64,16 @@ interface DialogState {
   target: AdvanceTarget;
 }
 
-export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element {
+interface OrdersTableProps {
+  orders: Order[];
+  /** Primary product image URL keyed by product slug (order items store slugs). */
+  productImages: Record<string, string>;
+}
+
+export function OrdersTable({
+  orders,
+  productImages,
+}: OrdersTableProps): React.JSX.Element {
   const [items, setItems] = React.useState<Order[]>(orders);
   const [statusFilter, setStatusFilter] = React.useState<"all" | OrderStatus>(
     "all",
@@ -258,10 +267,14 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
                         {o.items.slice(0, ITEM_PREVIEW_COUNT).map((it, idx) => (
                           <div
                             key={`${it.sku}-${idx}`}
-                            className="flex items-center gap-2 text-[13px] text-ink"
+                            className="flex w-full items-center gap-2 text-[13px] text-ink"
                           >
-                            <Package className="h-[14px] w-[14px] flex-none text-gray-300" />
-                            <span className="truncate font-semibold">
+                            <OrderItemThumb
+                              src={productImages[it.productSlug] ?? null}
+                              alt={it.name}
+                              size={32}
+                            />
+                            <span className="min-w-0 flex-1 truncate font-semibold">
                               {it.name}
                               <span className="font-normal text-gray-400">
                                 {optionsLabel(it.options)}
@@ -347,6 +360,7 @@ export function OrdersTable({ orders }: { orders: Order[] }): React.JSX.Element 
       />
       <OrderDetailDialog
         order={detailOrder}
+        productImages={productImages}
         onClose={() => setDetailId(null)}
       />
     </div>

@@ -66,3 +66,16 @@ export async function getAdminProductSkus(): Promise<string[]> {
   const products = await getAdminProducts();
   return products.map((p) => p.sku);
 }
+
+/**
+ * Primary product image keyed by slug. Order items only snapshot the slug, so
+ * admin views that want a thumbnail resolve it through this map.
+ */
+export async function getProductImagesBySlug(): Promise<Record<string, string>> {
+  const products = await getAdminProducts();
+  const map: Record<string, string> = {};
+  for (const p of products) {
+    if (p.imageUrl) map[p.slug] = p.imageUrl;
+  }
+  return map;
+}
