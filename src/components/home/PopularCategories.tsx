@@ -30,12 +30,14 @@ export function PopularCategories({
           <ArrowRight className="h-[15px] w-[15px]" />
         </Link>
       </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {/* pb-3 clears the hover shadow: `overflow-x-auto` forces overflow-y to
+          `auto` per spec, so the scroller clips anything below the card. */}
+      <div className="rmx-scrollbar flex gap-3 overflow-x-auto pb-3 [scroll-snap-type:x_mandatory]">
         {items.map((c) => (
           <Link
             key={c.slug}
             href={`/categories/${c.slug}`}
-            className="group flex items-center gap-3.5 rounded-card border border-gray-200 bg-white px-4 py-3 transition-[box-shadow,border-color] duration-200 ease-out-quart hover:border-border-strong hover:shadow-card"
+            className="group flex w-[230px] flex-none items-center gap-3.5 rounded-card border border-gray-200 bg-white px-4 py-3 transition-[box-shadow,border-color] duration-200 ease-out-quart [scroll-snap-align:start] hover:border-border-strong hover:shadow-card"
           >
             <CategoryVisual
               slug={c.slug}
