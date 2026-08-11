@@ -30,31 +30,32 @@ export function PopularCategories({
           <ArrowRight className="h-[15px] w-[15px]" />
         </Link>
       </div>
-      {/* pb-3 clears the hover shadow: `overflow-x-auto` forces overflow-y to
-          `auto` per spec, so the scroller clips anything below the card. */}
-      <div className="rmx-scrollbar flex gap-4 overflow-x-auto pb-3 [scroll-snap-type:x_mandatory]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((c) => (
           <Link
             key={c.slug}
             href={`/categories/${c.slug}`}
-            className="group flex w-[172px] flex-none flex-col gap-3.5 rounded-card border border-gray-200 bg-white px-[18px] py-[22px] transition-[box-shadow,border-color] duration-200 ease-out-quart [scroll-snap-align:start] hover:border-border-strong hover:shadow-card"
+            className="group flex items-center gap-3.5 rounded-card border border-gray-200 bg-white px-4 py-3 transition-[box-shadow,border-color] duration-200 ease-out-quart hover:border-border-strong hover:shadow-card"
           >
             <CategoryVisual
               slug={c.slug}
               name={c.name}
               icon={c.icon}
-              sizes="72px"
-              iconClassName="h-6 w-6"
-              wrapClassName="rounded-card text-brand transition-transform duration-200 ease-out-quart group-hover:scale-[1.06]"
-              imageWrapClassName="h-[72px] w-[72px]"
-              iconWrapClassName="h-13 w-13 bg-brand-subtle"
+              sizes="48px"
+              iconClassName="h-5 w-5"
+              wrapClassName="flex-none rounded-card text-brand transition-transform duration-200 ease-out-quart group-hover:scale-[1.06]"
+              imageWrapClassName="h-12 w-12"
+              iconWrapClassName="h-10 w-10 bg-brand-subtle"
             />
-            <div>
-              <div className="text-[15.5px] font-semibold text-ink">{c.name}</div>
+            <div className="min-w-0">
+              <div className="truncate text-[15.5px] font-semibold text-ink">
+                {c.name}
+              </div>
               <div className="mt-0.5 text-[12.5px] text-muted">
                 {c.count} produk
               </div>
             </div>
+            <ArrowRight className="ml-auto h-4 w-4 flex-none text-gray-300 transition-[color,transform] duration-200 ease-out-quart group-hover:translate-x-0.5 group-hover:text-brand" />
           </Link>
         ))}
       </div>
