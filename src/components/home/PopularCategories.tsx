@@ -32,7 +32,7 @@ export function PopularCategories({
       </div>
       {/* pb-3 clears the hover shadow: `overflow-x-auto` forces overflow-y to
           `auto` per spec, so the scroller clips anything below the card. */}
-      <div className="rmx-scrollbar flex gap-3 overflow-x-auto pb-3 [scroll-snap-type:x_mandatory]">
+      <div className="rmx-scrollbar rmx-fade-x flex gap-3 overflow-x-auto pb-3 [scroll-snap-type:x_mandatory]">
         {items.map((c) => (
           <Link
             key={c.slug}

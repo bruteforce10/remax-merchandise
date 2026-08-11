@@ -414,6 +414,63 @@
     background-size: 800px 100%;
     animation: var(--animate-shimmer);
   }
+  /* Fades whatever the horizontal scroller clips at its edges. The two widths
+     are separate custom properties so the scroll-driven block below can pull
+     the leading edge back to 0 while the list sits at scroll start. */
+  .rmx-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--rmx-fade-l),
+      #000 calc(100% - var(--rmx-fade-r)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--rmx-fade-l),
+      #000 calc(100% - var(--rmx-fade-r)),
+      transparent 100%
+    );
+  }
+}
+
+@property --rmx-fade-l {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --rmx-fade-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 56px;
+}
+
+/* Scoped to no-preference: the reduced-motion block below forces a 0.01ms
+   duration, which would snap a scroll-timeline animation to its last keyframe
+   and leave the leading edge faded forever. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll(x self)) {
+    .rmx-fade-x {
+      animation: rmx-fade-x linear both;
+      animation-timeline: scroll(x self);
+    }
+    @keyframes rmx-fade-x {
+      0% {
+        --rmx-fade-l: 0px;
+        --rmx-fade-r: 56px;
+      }
+      8%,
+      92% {
+        --rmx-fade-l: 56px;
+        --rmx-fade-r: 56px;
+      }
+      100% {
+        --rmx-fade-l: 56px;
+        --rmx-fade-r: 0px;
+      }
+    }
+  }
 }
 
 /* Respect reduced-motion everywhere (WCAG, non-optional). */
