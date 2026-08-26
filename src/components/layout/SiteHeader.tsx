@@ -22,7 +22,7 @@ import { UserMenu } from "@/components/layout/UserMenu";
 import { CategoryIcon } from "@/components/ui/Icon";
 import { Drawer } from "@/components/ui/Drawer";
 import { searchSuggestions } from "@/lib/catalog";
-import { COMPANY, PROPERTY_SEARCH_URL } from "@/lib/constants";
+import { COMPANY, PROPERTY_SEARCH_URL, withBasePath } from "@/lib/constants";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCart } from "@/providers/CartProvider";
 import type { Category } from "@/types/category";
@@ -109,7 +109,7 @@ export function SiteHeader({
         <div className="mx-auto flex max-w-[1280px] items-center gap-5 px-6 py-3.5">
           <Link href="/" className="flex flex-none items-center gap-2.5">
             <Image
-              src="/assets/logo-full.png"
+              src={withBasePath("/assets/logo-full.png")}
               alt="RE/MAX"
               width={866}
               height={238}
@@ -246,7 +246,7 @@ export function SiteHeader({
         <div className="flex flex-col overflow-y-auto p-5">
           <div className="mb-4 flex items-center justify-between">
             <Image
-              src="/assets/logo-full.png"
+              src={withBasePath("/assets/logo-full.png")}
               alt="RE/MAX"
               width={866}
               height={238}

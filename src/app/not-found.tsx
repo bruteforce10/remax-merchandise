@@ -2,13 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { withBasePath } from "@/lib/constants";
+
 export default function NotFound(): ReactNode {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="mx-auto w-full max-w-[1280px] px-6 py-5">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <Image
-            src="/assets/logo-full.png"
+            src={withBasePath("/assets/logo-full.png")}
             alt="REMAX"
             width={866}
             height={238}

@@ -6,6 +6,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { GoogleIcon } from "@/components/ui/GoogleIcon";
+import { withBasePath } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 
 export function CustomerLogin({ next }: { next: string }): React.JSX.Element {
@@ -27,7 +28,7 @@ export function CustomerLogin({ next }: { next: string }): React.JSX.Element {
       <div className="w-full rounded-card border border-gray-200 bg-white p-8 shadow-card">
         <div className="mb-7 flex flex-col items-center text-center">
           <Image
-            src="/assets/logo-mark.png"
+            src={withBasePath("/assets/logo-mark.png")}
             alt="REMAX"
             width={182}
             height={207}

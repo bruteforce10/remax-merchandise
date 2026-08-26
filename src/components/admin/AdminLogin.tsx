@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
+import { withBasePath } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 
 export function AdminLogin(): React.JSX.Element {
@@ -38,7 +39,7 @@ export function AdminLogin(): React.JSX.Element {
       <div className="w-full max-w-[400px]">
         <div className="mb-6 flex flex-col items-center text-center">
           <Image
-            src="/assets/logo-mark.png"
+            src={withBasePath("/assets/logo-mark.png")}
             alt="REMAX"
             width={182}
             height={207}

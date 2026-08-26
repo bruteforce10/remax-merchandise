@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, withBasePath } from "@/lib/constants";
 
 import "./globals.css";
 
@@ -53,7 +53,10 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/assets/logo-mark.png", apple: "/assets/logo-mark.png" },
+  icons: {
+    icon: withBasePath("/assets/logo-mark.png"),
+    apple: withBasePath("/assets/logo-mark.png"),
+  },
 };
 
 export default function RootLayout({

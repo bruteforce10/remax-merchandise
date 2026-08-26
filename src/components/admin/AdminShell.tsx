@@ -24,6 +24,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Drawer } from "@/components/ui/Drawer";
+import { withBasePath } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -98,7 +99,7 @@ export function AdminShell({
       {showLogo && (
         <div className="flex items-center gap-2.5 border-b border-gray-200 px-5 pt-5 pb-[18px]">
           <Image
-            src="/assets/logo-mark.png"
+            src={withBasePath("/assets/logo-mark.png")}
             alt="REMAX"
             width={182}
             height={207}
@@ -205,7 +206,7 @@ export function AdminShell({
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
           <div className="flex items-center gap-2.5">
             <Image
-              src="/assets/logo-mark.png"
+              src={withBasePath("/assets/logo-mark.png")}
               alt="RE/MAX"
               width={182}
               height={207}

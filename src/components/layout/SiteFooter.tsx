@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { SocialIcon } from "@/components/ui/SocialIcon";
-import { COMPANY, SOCIALS } from "@/lib/constants";
+import { COMPANY, SOCIALS, withBasePath } from "@/lib/constants";
 import { CATEGORY_MAP, FOOTER_CATEGORY_SLUGS } from "@/lib/data/catalog";
 
 const QUICK_LINKS = [
@@ -25,7 +25,7 @@ export function SiteFooter(): ReactElement {
         <div className="min-w-[200px]">
           <div className="mb-4 flex items-center gap-2.5">
             <Image
-              src="/assets/logo-mark.png"
+              src={withBasePath("/assets/logo-mark.png")}
               alt="RE/MAX"
               width={182}
               height={207}

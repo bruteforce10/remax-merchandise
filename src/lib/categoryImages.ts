@@ -9,10 +9,12 @@
  * Missing files degrade gracefully on the client: <CategoryVisual> falls back to
  * the Lucide icon, <CategoryCover> falls back to the hero gradient (via onError).
  */
+import { withBasePath } from "@/lib/constants";
+
 export function categoryImageSrc(slug: string): string {
-  return `/category-products/${slug}.webp`;
+  return withBasePath(`/category-products/${slug}.webp`);
 }
 
 export function categoryCoverSrc(slug: string): string {
-  return `/category-covers/${slug}.webp`;
+  return withBasePath(`/category-covers/${slug}.webp`);
 }

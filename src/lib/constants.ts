@@ -9,6 +9,21 @@ export const WA_NUMBER: string =
 export const SITE_URL: string =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://remax-merchandise.vercel.app";
 
+/**
+ * Deployment sub-path. The app is served under this prefix (remax.co.id/gifts),
+ * configured as `basePath` in next.config.ts — keep the two in sync.
+ */
+export const BASE_PATH = "/gifts";
+
+/**
+ * Prefix a public/ asset path (e.g. "/assets/logo.png") with {@link BASE_PATH}.
+ * Next.js does NOT auto-add basePath to string `src`/`href` written by hand, so
+ * static files in public/ must be wrapped or they 404 under the sub-path.
+ */
+export function withBasePath(path: string): string {
+  return `${BASE_PATH}${path}`;
+}
+
 export const SITE_NAME = "REMAX Gifts";
 
 export const SITE_DESCRIPTION =
