@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   basePath: "/gifts",
-  assetPrefix: "/gifts",
   reactStrictMode: true,
   experimental: {
     serverActions: {
