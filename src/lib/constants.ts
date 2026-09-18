@@ -7,7 +7,7 @@ export const WA_NUMBER: string =
   process.env.NEXT_PUBLIC_WA_NUMBER ?? "6287716289585";
 
 export const SITE_URL: string =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://remax-merchandise.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://remax.co.id/gifts";
 
 /**
  * Deployment sub-path. The app is served under this prefix (remax.co.id/gifts),
@@ -22,6 +22,58 @@ export const BASE_PATH = "/gifts";
  */
 export function withBasePath(path: string): string {
   return `${BASE_PATH}${path}`;
+}
+
+/**
+ * Canonical public origin — scheme + host only, WITHOUT {@link BASE_PATH} —
+ * derived from {@link SITE_URL} (e.g. "https://remax.co.id").
+ *
+ * Server-side post-login redirects are built from this instead of the request
+ * host. The app is served at remax.co.id/gifts via a reverse proxy to Vercel, so
+ * the request host / `x-forwarded-host` seen by the callback can be the raw
+ * Vercel domain — redirecting there would bounce the user off remax.co.id, where
+ * the session cookie (set for remax.co.id) is not even valid.
+ */
+export function siteOrigin(): string {
+  try {
+    return new URL(SITE_URL).origin;
+  } catch {
+    return SITE_URL.replace(/\/+$/, "");
+  }
+}
+
+/**
+ * Absolute OAuth redirect target for Supabase `signInWithOAuth`.
+ *
+ * Supabase redirects the browser to this URL verbatim — it never learns about
+ * {@link BASE_PATH}, so the prefix must be baked in here or Google lands the
+ * user on `/auth/callback`, which does not exist under the sub-path (404).
+ * Whatever origin the user logged in from (remax.co.id or the Vercel domain) is
+ * the one we come back to, so it is passed in rather than hardcoded.
+ *
+ * The resulting URL must also be listed verbatim in Supabase → Authentication →
+ * URL Configuration → Redirect URLs.
+ */
+export function authCallbackUrl(origin: string, next: string): string {
+  const safeNext = next.startsWith("/") ? next : "/";
+  return `${origin}${withBasePath("/auth/callback")}?next=${encodeURIComponent(safeNext)}`;
+}
+
+/**
+ * Absolute redirect target for email-link flows: signup confirmation
+ * (`signUp` → `emailRedirectTo`) and password recovery
+ * (`resetPasswordForEmail` → `redirectTo`).
+ *
+ * Points at `/auth/confirm`, which establishes the session (via either the
+ * `token_hash` OTP or the PKCE `code`) before forwarding to `next`. As with
+ * {@link authCallbackUrl} the {@link BASE_PATH} prefix must be baked in — Supabase
+ * uses this URL verbatim and knows nothing about the sub-path — and the resulting
+ * URL must be listed under Supabase → Authentication → URL Configuration →
+ * Redirect URLs.
+ */
+export function authConfirmUrl(origin: string, next: string): string {
+  const safeNext = next.startsWith("/") ? next : "/";
+  return `${origin}${withBasePath("/auth/confirm")}?next=${encodeURIComponent(safeNext)}`;
 }
 
 export const SITE_NAME = "REMAX Gifts";

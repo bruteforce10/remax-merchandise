@@ -282,6 +282,7 @@ function GalleryLightbox({
             src={images[index]}
             alt={`${alt} — foto ${index + 1}`}
             fill
+            quality={90}
             sizes="(max-width: 640px) 100vw, 920px"
             style={zoomed ? { transformOrigin: origin } : undefined}
             className={cn(
